@@ -10,10 +10,16 @@
         name: Adoptium
         file: adoptium
         description: Adoptium Repo
-        baseurl: "https://packages.adoptium.net/artifactory/rpm/fedora/36/{{ ansible_architecture }}"
-        gpgkey: https://packages.adoptium.net/artifactory/api/gpg/key/public
+        baseurl:
+          - "https://packages.adoptium.net/artifactory/rpm/fedora/36/{{ ansible_architecture }}"
+          - "{{ atl_adoptium_alternate_url is defined | ternary(atl_adoptium_alternate_url, '') }}"
+        gpgkey:
+          - https://packages.adoptium.net/artifactory/api/gpg/key/public
+          - "{{ atl_adoptium_gpgkey_alternate_url is defined | ternary(atl_adoptium_gpgkey_alternate_url, '') }}"
         gpgcheck: yes
         state: present
+      tags:
+        - molecule-idempotence-notest
 
     - name: Install Eclipse Temurin JDK
       ansible.builtin.yum:

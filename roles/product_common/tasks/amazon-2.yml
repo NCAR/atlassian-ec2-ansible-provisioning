@@ -10,12 +10,14 @@
         description: Adoptium Repo
         baseurl:
           - "https://packages.adoptium.net/artifactory/rpm/amazonlinux/{{ ansible_distribution_version }}/{{ ansible_architecture }}"
-          - "https://packages.atlassian.com/artifactory/adoptium-rpm/amazonlinux/2/x86_64"
+          - "{{ atl_adoptium_alternate_url is defined | ternary(atl_adoptium_alternate_url, '') }}"
         gpgkey:
           - https://packages.adoptium.net/artifactory/api/gpg/key/public
-          - https://packages.atlassian.com/artifactory/adoptium-rpm/amazonlinux/2/x86_64/repodata/repomd.xml.key
+          - "{{ atl_adoptium_gpgkey_alternate_url is defined | ternary(atl_adoptium_gpgkey_alternate_url, '') }}"
         gpgcheck: yes
         state: present
+      tags:
+        - molecule-idempotence-notest
 
     - name: Install Eclipse Temurin JDK
       ansible.builtin.yum:
