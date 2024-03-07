@@ -59,9 +59,15 @@
     {% endif %}
     {# config specific to opensearch #}
     {% if atl_opensearch_endpoint is defined and atl_opensearch_endpoint != '' %}
+    {% if atl_opensearch_password is defined and atl_opensearch_endpoint = '' %}
     <property name="opensearch.aws.region">{{ atl_hazelcast_network_aws_iam_region }}</property>
-    <property name="opensearch.http.url">{{ atl_opensearch_endpoint }}</property>
+    {% else %}
+    <property name="opensearch.password">{{ atl_opensearch_password }}</property>
+    <property name="opensearch.user">{{ atl_opensearch_user }}</property>
+    {% endif %}
+    <property name="opensearch.http.url">https://{{ atl_opensearch_endpoint }}</property>
     <property name="search.platform">opensearch</property>
+    {% endif %}
     {% endif %}
   </properties>
 </confluence-configuration>

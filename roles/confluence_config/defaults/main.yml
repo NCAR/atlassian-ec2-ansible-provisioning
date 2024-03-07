@@ -20,6 +20,8 @@ atl_hazelcast_network_aws_iam_role: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS
 atl_hazelcast_network_aws_tag_value: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_TAG_VALUE') }}"
 
 atl_opensearch_endpoint: "{{ lookup('env', 'ATL_OPENSEARCH_ENDPOINT') }}"
+atl_opensearch_password: "{{ lookup('env', 'ATL_OPENSEARCH_PASSWORD') }}"
+atl_opensearch_user: "{{ lookup('env', 'ATL_OPENSEARCH_USER') }}"
 
 atl_catalina_opts: ""
 atl_catalina_opts_extra: >-
