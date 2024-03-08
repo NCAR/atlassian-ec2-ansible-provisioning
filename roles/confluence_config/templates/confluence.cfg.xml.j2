@@ -63,7 +63,7 @@
     {% if atl_opensearch_password is defined and atl_opensearch_password != '' %}
 
     <property name="opensearch.password">{{ atl_opensearch_password }}</property>
-    <property name="opensearch.user">{{ atl_opensearch_user }}</property>
+    <property name="opensearch.username">{{ atl_opensearch_user }}</property>
     {%- else %}
 
     <property name="opensearch.aws.region">{{ atl_hazelcast_network_aws_iam_region }}</property>
