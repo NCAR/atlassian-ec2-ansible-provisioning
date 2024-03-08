@@ -33,17 +33,4 @@ repos:
       - id: encryption-check
         always_run: true
         files: vault.ya?ml$
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.55.0
-    hooks:
-      - id: eslint
-        language_version: 14.19.1
-        files: nginx-rewrite-scripts/.*\.[jt]sx?$
-        args:
-          - --config=scripts/nginx-rewrite-scripts/.eslintrc.cjs
-        additional_dependencies:
-          - eslint@8.17.0
-          - eslint-config-airbnb-base@15.0.0
-          - eslint-plugin-import@2.26.0
-        stages:
-          - manual
+
