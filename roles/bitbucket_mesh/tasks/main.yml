@@ -13,6 +13,7 @@
     - "{{ atl_home_base }}/{{ atl_product_user }}"
     - "{{ mesh_install_dir }}"
 
+
 # optionally grab basic_auth creds from secrets_manager secret called 'download_atlassian'
 - name: set basic_auth facts if the secret exists
   ansible.builtin.set_fact:
@@ -39,23 +40,7 @@
     group: "{{ atl_product_user }}"
     mode: 0644
     force: false
-  register: atl_product_completed
-
-# - name: download the mesh distribution using maven
-#   community.general.maven_artifact:
-#     artifact_id: "mesh-distribution"
-#     dest: "{{ mesh_install_dir }}"
-#     extension: "tar.gz"
-#     group_id: "com.atlassian.bitbucket.mesh"
-#     keep_name: yes
-#     password: "{{ download_atlassian_password | default(omit) }}"
-#     repository_url: "{{ bitbucket_mesh_maven_repo }}"
-#     username: "{{ download_atlassian_username | default(omit) }}"
-#     version: "{{ atl_product_version }}"
-#     mode: "0644"
-#     owner: "{{ atl_product_user_uid }}"
-#     group: "{{ atl_product_user_uid }}"
-#   register: maven_download
+  register: maven_download
 
 - name: extract the downloaded artifact
   ansible.builtin.unarchive:
