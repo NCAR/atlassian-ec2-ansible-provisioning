@@ -8,12 +8,18 @@
     mode: 0750
     state: directory
 
+- name: Check if Bitbucket config file exists
+  ansible.builtin.stat:
+    path: "{{ atl_product_home_shared }}/bitbucket.properties"
+  register: bitbucket_config
+
 - name: Create Bitbucket config file
   ansible.builtin.template:
     src: bitbucket.properties.j2
     dest: "{{ atl_product_home_shared }}/bitbucket.properties"
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
+  when: not bitbucket_config.stat.exists
 
 - name: Remove write permissions from installation directory
   ansible.builtin.file:
