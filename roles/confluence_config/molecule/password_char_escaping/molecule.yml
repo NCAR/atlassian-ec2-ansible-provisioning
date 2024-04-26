@@ -8,7 +8,7 @@ platforms:
     groups:
       - aws_node_local
   - name: ubuntu_lts
-    image: ubuntu:bionic
+    image: ubuntu:jammy
     groups:
       - aws_node_local
 provisioner:

@@ -5,7 +5,7 @@ platforms:
   - name: amazon_linux2023
     image: amazonlinux:2023
   - name: ubuntu_lts
-    image: ubuntu:bionic
+    image: ubuntu:jammy
 provisioner:
   name: ansible
   env:

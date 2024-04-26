@@ -9,7 +9,7 @@ platforms:
     ulimits:
       - nofile:262144:262144
   - name: ubuntu_lts
-    image: ubuntu:bionic
+    image: ubuntu:jammy
     groups:
       - aws_node_local
     ulimits:
