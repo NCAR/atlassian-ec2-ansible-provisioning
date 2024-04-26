@@ -61,6 +61,20 @@ them in the `Custom command-line parameters for Ansible` field:
 
     -e atl_product_download_url=http://s3.amazon.com/atlassian/jira-9.0.0-PRE-TEST.tar.gz -e atl_use_system_jdk=true -e atl_download_format=tarball
 
+## Supported operating systems and environments
+
+The roles in this repository currently target:
+
+* Ansible-core 2.16
+* Python >= 3.10 (as required by ansible-core 2.16)
+* Amazon Linux 2023 and Debian 12+ (including derivatives, i.e., Ubuntu 22.04+) where the system-installable Python meets the above requirement
+
+To use a previous version of this repository and the roles/playbooks within, your application nodes must clone/checkout
+a previous commit that supports the desired OS and/or Ansible version. For instance, to continue using Ansible 2.13 on
+Amazon Linux 2, use branch "ansible-core-2.13" and/or commit ID `e5af2cf649f72bb5c9d50d0057ddae4a5c99b6f9`. If using one
+of the previously-provided AWS CloudFormation templates, you must set set the **Deployment Automation Branch** parameter
+to "ansible-core-2.13" and/or manually set the stack's "pinned-ansible-sha" SSM Parameter to the referenced commit ID.
+
 ### Other customizable parameters
 
 For more deployment customization options, consult the following files for parameters you can 
