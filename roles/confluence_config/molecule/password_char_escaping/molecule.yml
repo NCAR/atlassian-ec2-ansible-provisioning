@@ -18,7 +18,7 @@ platforms:
 provisioner:
   name: ansible
   env:
-    ANSIBLE_COLLECTIONS_PATH: "../../"
+    ANSIBLE_COLLECTIONS_PATH: "../../../../"
   options:
     skip-tags: runtime_pkg
   inventory:

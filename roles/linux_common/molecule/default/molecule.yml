@@ -17,7 +17,7 @@ platforms:
 provisioner:
   name: ansible
   env:
-    ANSIBLE_COLLECTIONS_PATH: "../../"
+    ANSIBLE_COLLECTIONS_PATH: "../../../../"
   inventory:
     links:
       group_vars: ../../../../group_vars/

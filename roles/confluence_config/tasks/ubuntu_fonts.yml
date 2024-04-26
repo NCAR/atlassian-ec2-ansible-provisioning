@@ -10,6 +10,5 @@
   ansible.builtin.shell:
     cmd: "ln -sf /usr/share/fonts/truetype/noto/* {{ item }}/"
     creates: "{{ item }}/NotoSansJavanese-Regular.ttf"
-    warn: false
   with_items: "{{ atl_fonts_fallback_dirs }}"
   changed_when: false  # For Molecule idempotence check
