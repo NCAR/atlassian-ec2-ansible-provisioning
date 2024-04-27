@@ -6,12 +6,14 @@ platforms:
     image: amazonlinux:2023
     groups:
       - aws_node_local
+    platform: linux/amd64
     ulimits:
       - nofile:262144:262144
   - name: ubuntu_lts
     image: ubuntu:jammy
     groups:
       - aws_node_local
+    platform: linux/amd64
     ulimits:
       - nofile:262144:262144
 provisioner:

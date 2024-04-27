@@ -7,10 +7,12 @@ platforms:
     image: amazonlinux:2023
     groups:
       - aws_node_local
+    platform: linux/amd64
   - name: ubuntu_lts
     image: ubuntu:jammy
     groups:
       - aws_node_local
+    platform: linux/amd64
 provisioner:
   name: ansible
   env:
