@@ -61,7 +61,7 @@ them in the `Custom command-line parameters for Ansible` field:
 
     -e atl_product_download_url=http://s3.amazon.com/atlassian/jira-9.0.0-PRE-TEST.tar.gz -e atl_use_system_jdk=true -e atl_download_format=tarball
 
-## Supported operating systems and environments
+## Operating system/environment requirements
 
 The roles in this repository currently target:
 
