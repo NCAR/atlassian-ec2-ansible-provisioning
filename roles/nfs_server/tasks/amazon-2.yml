@@ -1,8 +1,5 @@
 ---
 
-- name: Install Amazon-Linux-2-specific NFS packages
-  ansible.builtin.yum:
-    name:
-      - nfs-utils
-  vars:
-    ansible_python_interpreter: /usr/bin/python2
+- name: Amazon Linux 2 no longer supported
+  fail:
+    msg: "Amazon Linux 2 is no longer supported; see README.md for supported operating systems/environments."

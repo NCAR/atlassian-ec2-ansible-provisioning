@@ -1,22 +1,5 @@
 ---
 
-- name: Install Amazon-Linux-2-specific support packages
-  ansible.builtin.yum:
-    name:
-      - dejavu-sans-fonts
-      - file
-      - git-{{ git_version }}
-      - libxml2
-      - shadow-utils
-  vars:
-    ansible_python_interpreter: /usr/bin/python2
-
-- name: Limit the SSH ciphers
-  ansible.builtin.lineinfile:
-    path: "/etc/ssh/sshd_config"
-    # Drop insecure ciphers, currently 3des-cbc only. You can get the
-    # full list with `sshd -T | grep -i ciphers`
-    regexp: '^[Cc]iphers'
-    line: "Ciphers chacha20-poly1305@openssh.com,aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes128-cbc,aes192-cbc,aes256-cbc,blowfish-cbc,cast128-cbc"
-    insertbefore: "BOF"
-  ignore_errors: yes  # No sshd == no problem
+- name: Amazon Linux 2 no longer supported
+  fail:
+    msg: "Amazon Linux 2 is no longer supported; see README.md for supported operating systems/environments."

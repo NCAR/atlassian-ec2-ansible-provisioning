@@ -2,28 +2,24 @@
 driver:
   name: docker
 platforms:
-  - name: amazon_linux2
-    image: amazonlinux:2
-    groups:
-      - aws_node_local
-    ulimits:
-      - nofile:262144:262144
   - name: amazon_linux2023
     image: amazonlinux:2023
     groups:
       - aws_node_local
+    platform: linux/amd64
     ulimits:
       - nofile:262144:262144
   - name: ubuntu_lts
-    image: ubuntu:bionic
+    image: ubuntu:jammy
     groups:
       - aws_node_local
+    platform: linux/amd64
     ulimits:
       - nofile:262144:262144
 provisioner:
   name: ansible
   env:
-    ANSIBLE_COLLECTIONS_PATH: "../../"
+    ANSIBLE_COLLECTIONS_PATH: "../../../../"
     ATL_STARTUP_RESTART: "false"
   options:
     skip-tags: runtime_pkg

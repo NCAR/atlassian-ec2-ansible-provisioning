@@ -1,22 +1,5 @@
 ---
 
-- name: Install AWS support packages
-  ansible.builtin.yum:
-    name:
-      - amazon-efs-utils
-      - amazon-ssm-agent
-      - awscli
-      - git
-      - ec2-utils
-  vars:
-    ansible_python_interpreter: /usr/bin/python2
-
-- name: Install CloudWatch Agent
-  ansible.builtin.yum:
-    name:
-      - "{{ aws_cloudwatch_agent_rpm }}"
-  when: atl_aws_enable_cloudwatch is defined and atl_aws_enable_cloudwatch | bool
-  notify:
-    - Enable CloudWatch Agent
-  vars:
-    ansible_python_interpreter: /usr/bin/python2
+- name: Amazon Linux 2 no longer supported
+  fail:
+    msg: "Amazon Linux 2 is no longer supported; see README.md for supported operating systems/environments."

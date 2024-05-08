@@ -2,15 +2,13 @@
 driver:
   name: docker
 platforms:
-  - name: amazon_linux2
-    image: amazonlinux:2
   - name: amazon_linux2023
     image: amazonlinux:2023
   - name: ubuntu_lts
-    image: ubuntu:bionic
+    image: ubuntu:jammy
 provisioner:
   name: ansible
   env:
-    ANSIBLE_COLLECTIONS_PATH: "../../"
+    ANSIBLE_COLLECTIONS_PATH: "../../../../"
 verifier:
   name: testinfra
