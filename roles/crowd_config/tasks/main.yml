@@ -101,7 +101,7 @@
 
 - name: Limit permissions on files and directories in the installation and tomcat directories, recursively, excluding working directories
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ item.path }}"
     owner: "root"
     group: "root"
     mode: "u=rwX,g=rX,o=rX"
