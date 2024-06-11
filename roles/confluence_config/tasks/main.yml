@@ -98,7 +98,7 @@
     group: "root"
     mode: "u=rwX,g=rX,o=rX"
     recurse: true
-    loop: "{{ atl_product_installation_versioned_file_list.files }}"
+  loop: "{{ atl_product_installation_versioned_file_list.files }}"
   changed_when: false  # For Molecule idempotence check
 
 - name: Grant access to the product working directories
