@@ -66,17 +66,42 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
 
-- name: Limit permissions on the installation directory
+- name: Limit permissions on the installer temp and version cache directories, recursively
   ansible.builtin.file:
-    path: "{{ atl_product_installation_versioned }}"
+    path: "{{ item }}"
     owner: "root"
     group: "root"
     mode: "u=rwX,g=rX,o=rX"
     recurse: true
   with_items:
     - "{{ atl_installer_temp }}"
-    - "{{ atl_product_installation_versioned }}"
-    - "{{ atl_product_version_cache_dir }}"
+    - "{{ atl_product_version_cache }}"
+  changed_when: false  # For Molecule idempotence check
+
+- name: Limit permissions on the installation directory, non-recursively
+  ansible.builtin.file:
+    path: "{{ atl_product_installation_versioned }}"
+    owner: "root"
+    group: "root"
+    mode: "u=rwX,g=rX,o=rX"
+  changed_when: false  # For Molecule idempotence check
+
+- name: Find top-level files/directories in installation directory, excluding working directories
+  ansible.builtin.find:
+    paths: "{{ atl_product_installation_versioned }}"
+    depth: 1
+    file_type: any
+    excludes: logs,temp,work
+  register: atl_product_installation_versioned_file_list
+
+- name: Limit permissions on files and directories in the installation directory, recursively, excluding working directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "root"
+    group: "root"
+    mode: "u=rwX,g=rX,o=rX"
+    recurse: true
+    loop: "{{ atl_product_installation_versioned_file_list.files }}"
   changed_when: false  # For Molecule idempotence check
 
 - name: Grant access to the product working directories
