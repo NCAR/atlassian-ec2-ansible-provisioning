@@ -66,16 +66,13 @@
     - "{{ atl_product_shared_plugins }}"
   changed_when: false  # For Molecule idempotence check
 
-- name: Limit permissions on the installer temp and version cache directories, recursively
+- name: Limit permissions on the installer temp directory, recursively
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ atl_installer_temp }}"
     owner: "root"
     group: "root"
     mode: "u=rwX,g=rX,o=rX"
     recurse: true
-  with_items:
-    - "{{ atl_installer_temp }}"
-    - "{{ atl_product_version_cache }}"
   changed_when: false  # For Molecule idempotence check
 
 - name: Limit permissions on the installation directory, non-recursively
