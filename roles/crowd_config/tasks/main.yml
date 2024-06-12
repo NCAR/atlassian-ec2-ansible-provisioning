@@ -105,7 +105,7 @@
     owner: "root"
     group: "root"
     mode: "u=rwX,g=rX,o=rX"
-    recurse: true
+    recurse: "{{ item.isdir }}"
   loop: "{{ atl_product_installation_versioned_file_list.files + atl_product_installation_versioned_tomcat_file_list.files }}"
   changed_when: false  # For Molecule idempotence check
 
