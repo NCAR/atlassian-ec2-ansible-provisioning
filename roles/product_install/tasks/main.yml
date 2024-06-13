@@ -136,6 +136,9 @@
   ansible.builtin.template:
     src: version.j2
     dest: "{{ atl_product_version_cache }}"
+    owner: "root"
+    group: "root"
+    mode: "u=rwX,g=rX,o=rX"
     force: true
 
 # For the first run a temp binary should be downloaded but moved to

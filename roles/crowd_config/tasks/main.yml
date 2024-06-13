@@ -66,17 +66,47 @@
     - "{{ atl_product_shared_plugins }}"
   changed_when: false  # For Molecule idempotence check
 
-- name: Limit permissions on the installation directory
+- name: Limit permissions on the installer temp directory, recursively
   ansible.builtin.file:
-    path: "{{ atl_product_installation_versioned }}"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
+    path: "{{ atl_installer_temp }}"
+    owner: "root"
+    group: "root"
     mode: "u=rwX,g=rX,o=rX"
     recurse: true
-  with_items:
-    - "{{ atl_installer_temp }}"
-    - "{{ atl_product_installation_versioned }}"
-    - "{{ atl_product_version_cache_dir }}"
+  changed_when: false  # For Molecule idempotence check
+
+- name: Limit permissions on the installation directory, non-recursively
+  ansible.builtin.file:
+    path: "{{ atl_product_installation_versioned }}"
+    owner: "root"
+    group: "root"
+    mode: "u=rwX,g=rX,o=rX"
+  changed_when: false  # For Molecule idempotence check
+
+- name: Find top-level files/directories in installation directory, excluding tomcat
+  ansible.builtin.find:
+    paths: "{{ atl_product_installation_versioned }}"
+    depth: 1
+    file_type: any
+    excludes: apache-tomcat
+  register: atl_product_installation_versioned_file_list
+
+- name: Find top-level files/directories in tomcat directory, excluding working directories
+  ansible.builtin.find:
+    paths: "{{ atl_product_installation_versioned }}/apache-tomcat"
+    depth: 1
+    file_type: any
+    excludes: logs,temp,work
+  register: atl_product_installation_versioned_tomcat_file_list
+
+- name: Limit permissions on files and directories in the installation and tomcat directories, recursively, excluding working directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "root"
+    group: "root"
+    mode: "u=rwX,g=rX,o=rX"
+    recurse: "{{ item.isdir }}"
+  loop: "{{ atl_product_installation_versioned_file_list.files + atl_product_installation_versioned_tomcat_file_list.files }}"
   changed_when: false  # For Molecule idempotence check
 
 - name: Grant access to the product working directories
