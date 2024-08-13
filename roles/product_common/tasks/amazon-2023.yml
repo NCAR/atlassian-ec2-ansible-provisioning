@@ -66,26 +66,26 @@
         - jdk_downloading_lock.changed
 
     # all nodes can wait here in race condition until the completed lock is present
-    - name: Wait for jdk_download_completed lock to exist
+    - name: try waiting for jdk_download_completed lock to exist
       ansible.builtin.wait_for:
         path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_download_completed"
         state: present
-      delay: 30
-      failed_when: false
+        timeout: 10
+      ignore_errors: true
       register: jdk_download_completed
       retries: 5
 
-    - name: Find a file called temurin* in atl_product_home_shared_download_dir
-      ansible.builtin.find:
-        paths: "{{ atl_product_home_shared_download_dir }}"
-        patterns: "temurin-{{ java_major_version }}-*.rpm"
-        file_type: file
-        recurse: no
-        size: 1
-      register: temurin_rpm_file
-
     # as long as we have a valid rpm filepath do the copy/install block
     - block:
+      - name: Find a file called temurin* in atl_product_home_shared_download_dir
+        ansible.builtin.find:
+          paths: "{{ atl_product_home_shared_download_dir }}"
+          patterns: "temurin-{{ java_major_version }}-*.rpm"
+          file_type: file
+          recurse: no
+          size: 1
+        register: temurin_rpm_file
+
       - name: set fact of the basename of the temurin file
         ansible.builtin.set_fact:
           temurin_src_path: "{{ item.path }}"
@@ -103,14 +103,14 @@
           state: present
         register: dnf_installed
       when:
-        - jdk_download_completed.state == "directory"
-        - temurin_rpm_file.files
+        - jdk_download_completed.state is defined
+        - temurin_rpm_file.files is defined
         - temurin_rpm_file.files | length > 0
-      always:
-        - name: Always ensure Eclipse Temurin JDK is present (get from internet if cache install fails or is unavailable)
-          ansible.builtin.yum:
-            name: "temurin-{{ java_major_version }}-jdk"
-            state: present
+
+    - name: Ensure Eclipse Temurin JDK is present (get from internet if cache install fails or is unavailable)
+      ansible.builtin.yum:
+        name: "temurin-{{ java_major_version }}-jdk"
+        state: present
 
     - name: Ensure common JDK symlink exists
       community.general.alternatives:
