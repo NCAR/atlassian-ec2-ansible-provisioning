@@ -39,11 +39,11 @@
     # handle the jdk download on only 1 node
     - block:
 
-      - name: Download Eclipse Temurin JDK with yum
-        ansible.builtin.yum:
+      - name: Download Eclipse Temurin JDK with dnf
+        ansible.builtin.dnf:
           name: "temurin-{{ java_major_version }}-jdk"
-          state: latest
-          download_dir: "{{atl_product_home_shared_download_dir}}"
+          state: present
+          download_dir: atl_product_home_shared_download_dir
           download_only: yes
         register: jdk_downloaded
         retries: 5
@@ -89,7 +89,7 @@
       - name: set fact of the basename of the temurin file
         ansible.builtin.set_fact:
           temurin_src_path: "{{ item.path }}"
-          temurin_file_name: "{{ item.path |basename }}"
+          temurin_file_name: "{{ item.path | basename }}"
         loop: "{{ temurin_rpm_file.files | flatten }}"
 
       - name: Copy temurin_rpm_file to /tmp because dnf module removes the cached rpm
@@ -106,6 +106,11 @@
         - jdk_download_completed.state == "directory"
         - temurin_rpm_file.files
         - temurin_rpm_file.files | length > 0
+      always:
+        - name: Always ensure Eclipse Temurin JDK is present (get from internet if cache install fails or is unavailable)
+          ansible.builtin.yum:
+            name: "temurin-{{ java_major_version }}-jdk"
+            state: present
 
     - name: Ensure common JDK symlink exists
       community.general.alternatives:
