@@ -13,3 +13,5 @@ debian_architecture_translations:
   aarch64: arm64
 
 debian_architecture: "{{ debian_architecture_translations[ansible_architecture] | default(ansible_architecture) }}"
+# path to store jdk download
+atl_product_home_shared_download_dir: "{{ atl_shared_mountpoint }}/downloads"
