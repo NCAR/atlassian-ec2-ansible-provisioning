@@ -43,7 +43,7 @@
         ansible.builtin.dnf:
           name: "temurin-{{ java_major_version }}-jdk"
           state: present
-          download_dir: atl_product_home_shared_download_dir
+          download_dir: "{{ atl_product_home_shared_download_dir }}"
           download_only: yes
         register: jdk_downloaded
         retries: 5
