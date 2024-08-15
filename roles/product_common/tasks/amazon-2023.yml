@@ -27,14 +27,14 @@
         path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_download_completed"
       register: jdk_download_completed_lock
 
-    - name: take out jdk_downloading lock directory
+    - name: create jdk_downloading lock directory
       ansible.builtin.file:
         path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_downloading"
         state: directory
       register: jdk_downloading_lock
       when:
-      - jdk_download_completed_lock
-      - not jdk_download_completed_lock.stat.exists
+        - jdk_download_completed_lock
+        - not jdk_download_completed_lock.stat.exists
 
     # handle the jdk download on only 1 node
     - block:
@@ -56,11 +56,12 @@
           state: directory
         when: jdk_downloaded.changed
 
-      - name: Remove jdk_downloading lock directory if we took out succeeded lock
+      - name: Remove jdk_downloading lock directory if we took out completed lock
         ansible.builtin.file:
           path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_downloading"
           state: absent
         when: jdk_downloaded.changed
+
       when:
         - jdk_downloading_lock
         - jdk_downloading_lock.changed
@@ -108,7 +109,7 @@
         - temurin_rpm_file.files | length > 0
 
     - name: Ensure Eclipse Temurin JDK is present (get from internet if cache install fails or is unavailable)
-      ansible.builtin.yum:
+      ansible.builtin.dnf:
         name: "temurin-{{ java_major_version }}-jdk"
         state: present
 
