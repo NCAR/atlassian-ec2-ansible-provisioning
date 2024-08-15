@@ -56,11 +56,10 @@
           state: directory
         when: jdk_downloaded.changed
 
-      - name: Remove jdk_downloading lock directory if we took out completed lock
+      - name: Remove jdk_downloading lock directory on success or fail
         ansible.builtin.file:
           path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_downloading"
           state: absent
-        when: jdk_downloaded.changed
 
       when:
         - jdk_downloading_lock
