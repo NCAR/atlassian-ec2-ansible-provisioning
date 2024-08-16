@@ -39,15 +39,16 @@
     # handle the jdk download on only 1 node
     - block:
 
-      - name: Download Eclipse Temurin JDK with dnf
+      - name: Try 5 times to download Eclipse Temurin JDK with dnf
         ansible.builtin.dnf:
           name: "temurin-{{ java_major_version }}-jdk"
           state: present
           download_dir: "{{ atl_product_home_shared_download_dir }}"
-          download_only: yes
+          download_only: true
+          update_cache: true
         register: jdk_downloaded
         retries: 5
-        delay: 30
+        delay: 10
         until: jdk_downloaded is succeeded
 
       - name: Create jdk_download_completed lock directory if download was successful
@@ -61,18 +62,19 @@
           path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_downloading"
           state: absent
 
+      # this when applies to the whole block - only do this block on the one node that created the downloading lock
       when:
         - jdk_downloading_lock
         - jdk_downloading_lock.changed
 
-    # all nodes can wait here in race condition until the completed lock is present
-    - name: try waiting for jdk_download_completed lock to exist
+    # all nodes can wait here in race condition briefly for dl to complete and the downloaded_lock to exist
+    - name: wait and test 5 times for jdk_download_completed lock to exist
       ansible.builtin.wait_for:
         path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_download_completed"
         state: present
         timeout: 10
       ignore_errors: true
-      register: jdk_download_completed
+      register: jdk_download_completed_lock
       retries: 5
 
     # as long as we have a valid rpm filepath do the copy/install block
@@ -86,31 +88,24 @@
           size: 1
         register: temurin_rpm_file
 
-      - name: set fact of the basename of the temurin file
+      - name: set facts for the path and the basename of the temurin file
         ansible.builtin.set_fact:
           temurin_src_path: "{{ item.path }}"
           temurin_file_name: "{{ item.path | basename }}"
         loop: "{{ temurin_rpm_file.files | flatten }}"
 
-      - name: Copy temurin_rpm_file to /tmp because dnf module removes the cached rpm
-        ansible.builtin.copy:
-          src: "{{ temurin_src_path }}"
-          dest: "/tmp/{{ temurin_file_name }}"
-
-      - name: Install JDK from /tmp copy of the rpm file
-        ansible.builtin.dnf:
-          name: "/tmp/{{ temurin_file_name }}"
-          state: present
+      - name: Install JDK from cache copy of the rpm file - keepcache
+        ansible.builtin.command:
+          cmd: "dnf -y install {{ temurin_file_name }} --setopt=installonly_limit=3 --setopt=keepcache=1"
         register: dnf_installed
+
       when:
-        - jdk_download_completed.state is defined
-        - temurin_rpm_file.files is defined
-        - temurin_rpm_file.files | length > 0
+        - jdk_download_completed_lock.state is defined
+        - jdk_download_completed_lock.state == "directory"
 
     - name: Ensure Eclipse Temurin JDK is present (get from internet if cache install fails or is unavailable)
-      ansible.builtin.dnf:
-        name: "temurin-{{ java_major_version }}-jdk"
-        state: present
+      ansible.builtin.command:
+        cmd: "dnf -y install  temurin-{{ java_major_version }}-jdk --setopt=installonly_limit=3 --setopt=keepcache=1"
 
     - name: Ensure common JDK symlink exists
       community.general.alternatives:
