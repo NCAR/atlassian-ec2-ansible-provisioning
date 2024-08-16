@@ -90,13 +90,13 @@
 
       - name: set facts for the path and the basename of the temurin file
         ansible.builtin.set_fact:
-          temurin_src_path: "{{ item.path }}"
+          temurin_file_path: "{{ item.path }}"
           temurin_file_name: "{{ item.path | basename }}"
         loop: "{{ temurin_rpm_file.files | flatten }}"
 
       - name: Install JDK from cache copy of the rpm file - keepcache
         ansible.builtin.command:
-          cmd: "dnf -y install {{ temurin_file_name }} --setopt=installonly_limit=3 --setopt=keepcache=1"
+          cmd: "dnf -y install {{ temurin_file_path }} --setopt=installonly_limit=3 --setopt=keepcache=1"
         register: dnf_installed
 
       when:
