@@ -37,7 +37,7 @@
         - not jdk_download_completed_lock.stat.exists
 
     # handle the jdk download on only 1 node
-    - name: Doenload Eclipse Temurin JDK if necessary on a node whilst locking the downloading action
+    - name: Download Eclipse Temurin JDK if necessary on a node whilst locking the downloading action
       block:
 
         - name: Try 5 times to download Eclipse Temurin JDK with dnf
