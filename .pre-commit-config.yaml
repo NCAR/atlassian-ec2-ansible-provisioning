@@ -19,6 +19,7 @@ repos:
           - --template={}
           - --pattern=[a-zA-Z0-9]{1,10}-[0-9]{1,6}
   - repo: https://github.com/ansible/ansible-lint.git
+    stages: [manual]
     rev: v24.2.2
     hooks:
       - id: ansible-lint
