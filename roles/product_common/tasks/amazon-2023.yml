@@ -47,6 +47,7 @@
             download_dir: "{{ atl_product_home_shared_download_dir }}"
             download_only: true
             update_cache: true
+          ignore_errors: true
           register: jdk_downloaded
           retries: 5
           delay: 10
