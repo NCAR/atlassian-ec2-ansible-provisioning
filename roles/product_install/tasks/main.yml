@@ -186,13 +186,13 @@
       failed_when: false
       ignore_errors: yes
       no_log: true
-      when: 
+      when:
         - ansible_ec2_placement_region is defined
         - atl_download_secret_name is defined
       tags:
         - runtime_pkg
 
-    # Fetch binary and copy to temp 
+    # Fetch binary and copy to temp
     # optionally use basic_auth creds from secrets_manager
     - name: Fetch binary
       ansible.builtin.get_url:

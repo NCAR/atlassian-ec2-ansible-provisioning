@@ -30,7 +30,7 @@
     body_format: json
     return_content: yes
   register: output
-  until:  output.status == 200 
+  until:  output.status == 200
   retries: 6
   delay: 15
   failed_when: output is defined and output.json is defined and output.json.state != 'INITIALISING'
@@ -50,7 +50,7 @@
   delay: 10
 
 - name: create lock file
-  ansible.builtin.file: 
+  ansible.builtin.file:
     path: "{{ atl_product_home_shared }}/data/migration/import/lock.file"
     state: touch
   when: import_status.json.state == 'COMPLETED'
