@@ -31,7 +31,7 @@ helper-script `bin/ansible-with-atl-env` and the corresponding
 ## Customizing your deployment
 
 To customise playbook behaviour, you can fork this repository and edit it as
-needed. However, for one-off tasks you can also override the default and 
+needed. However, for one-off tasks you can also override the default and
 calculated settings with special values. To do this, provide command-line overrides to
 [ansible-playbook](https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html).
 
@@ -77,15 +77,15 @@ to "ansible-core-2.13" and/or manually set the stack's "pinned-ansible-sha" SSM 
 
 ### Other customizable parameters
 
-For more deployment customization options, consult the following files for parameters you can 
+For more deployment customization options, consult the following files for parameters you can
 override:
 
 - [`/roles/product_install/defaults/main.yml`](roles/product_install/defaults/main.yml)
 - [`/group_vars/aws_node_local.yml`](group_vars/aws_node_local.yml)
 
-More customizable parameters are defined in specific roles -- specifically, in the 
+More customizable parameters are defined in specific roles -- specifically, in the
 role's `defaults/main.yml` file. Most of these parameters use the `atl_` prefix. You can
-use the following [Bitbucket code search query](https://confluence.atlassian.com/bitbucket/search-873876782.html) 
+use the following [Bitbucket code search query](https://confluence.atlassian.com/bitbucket/search-873876782.html)
 to find them:
 
     repo:dc-deployments-automation repo:dc-deployments-automation path:*/defaults/main.yml atl
@@ -108,7 +108,7 @@ environment and running tests.
 This suite is intended to consist of many small, composable roles that can
 be combined together into playbooks. Wherever possible, roles should be product-agnostic
 (e.g. downloads) and platform-agnostic. Functions that are product-specific or
-platform-specific are split off into separate roles. 
+platform-specific are split off into separate roles.
 
 Roles should be reasonably self-contained, with sensible defaults configured in
 `/roles/<role>/defaults/main.yml`. Like all playbook parameters, you can override
@@ -127,7 +127,7 @@ should be run first.
   more information.
 * Inventory files are under `inv/`. For AWS `cfn-init` the inventory
   `inv/aws_node_local` inventory is probably what you want.
-    * Note that this expects the environment to be setup with infrastructure information. 
+    * Note that this expects the environment to be setup with infrastructure information.
       Refer to the [Usage](#markdown-header-usage) section for more information.
 * Global group vars loaded automatically from `group_vars/<group>.yml`. In
   particular note `group_vars/aws_node_local.yml` which loads infrastructure

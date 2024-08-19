@@ -8,4 +8,5 @@ skip_list:
   - name[casing]  # so many of our task names aren't capitalized
   - name[missing]  # some tasks have no name
   - risky-file-permissions
+  - var-naming[no-role-prefix]  # many, many warnings
   - yaml  # many, many warnings

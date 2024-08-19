@@ -1,6 +1,7 @@
 ---
 
-- hosts: aws_node_local
+- name: aws_confluence_synchrony_node.yml
+  hosts: aws_node_local
   become: true
 
   vars:
@@ -12,7 +13,7 @@
     atl_use_system_jdk: true
     java_major_version: "11"
     atl_download_format: "tarball"
-    
+
     atl_startup_systemd_params:
       - "EnvironmentFile=/etc/atl"
       - "EnvironmentFile=/etc/atl.synchrony"
