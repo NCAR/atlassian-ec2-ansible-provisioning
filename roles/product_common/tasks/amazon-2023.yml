@@ -95,11 +95,13 @@
           temurin_file_path: "{{ item.path }}"
           temurin_file_name: "{{ item.path | basename }}"
         loop: "{{ temurin_rpm_file.files | flatten }}"
+        when: "{{ temurin_rpm_file.files | length > 0 }}"
 
       - name: Install JDK from cache copy of the rpm file - keepcache
         ansible.builtin.command:
           cmd: "dnf -y install {{ temurin_file_path }} --setopt=installonly_limit=3 --setopt=keepcache=1"
         register: dnf_installed
+        when: "{{ temurin_rpm_file.files | length > 0 }}"
 
       when:
         - jdk_download_completed_lock.state is defined
