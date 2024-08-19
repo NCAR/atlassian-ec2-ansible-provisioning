@@ -7,7 +7,7 @@
     atl_product_user: "jira"
     # Version 8.14.0 is chosen deliberately as it is a version where jira and jira-software returns different buildNumber from MPAC
     # See DCD-1216 for context
-    atl_product_version: "8.14.0" 
+    atl_product_version: "8.14.0"
     atl_install_jsd_as_obr: true
     atl_systemd_service_name: "jira.service"
     atl_jdbc_encoding: 'UNICODE'

@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<Server port="{{ atl_tomcat_mgmt_port }}" 
+<Server port="{{ atl_tomcat_mgmt_port }}"
         shutdown="SHUTDOWN">
 
     <Service name="Catalina">
 
-        <Connector acceptCount="{{ atl_tomcat_acceptcount }}" 
-                   connectionTimeout="{{ atl_tomcat_connectiontimeout }}" 
-                   disableUploadTimeout="true" 
-                   enableLookups="{{ atl_tomcat_enablelookups }}" 
-                   maxHttpHeaderSize="8192" 
-                   maxThreads="{{ atl_tomcat_maxthreads }}" 
-                   minSpareThreads="{{ atl_tomcat_minsparethreads }}" 
-                   port="{{ atl_tomcat_port }}" 
-                   redirectPort="{{ atl_tomcat_redirectport }}" 
-                   useBodyEncodingForURI="true" 
-                   URIEncoding="UTF-8" 
-                   compression="on" 
-                   sendReasonPhrase="true" 
-                   compressableMimeType="text/html,text/xml,application/xml,text/plain,text/css,application/json,application/javascript,application/x-javascript" 
-                   secure="{{ atl_tomcat_secure }}" 
-                   scheme="{{ atl_tomcat_scheme }}" 
-                   proxyName="{{ atl_proxy_name }}" 
-                   proxyPort="{{ atl_proxy_port }}" 
+        <Connector acceptCount="{{ atl_tomcat_acceptcount }}"
+                   connectionTimeout="{{ atl_tomcat_connectiontimeout }}"
+                   disableUploadTimeout="true"
+                   enableLookups="{{ atl_tomcat_enablelookups }}"
+                   maxHttpHeaderSize="8192"
+                   maxThreads="{{ atl_tomcat_maxthreads }}"
+                   minSpareThreads="{{ atl_tomcat_minsparethreads }}"
+                   port="{{ atl_tomcat_port }}"
+                   redirectPort="{{ atl_tomcat_redirectport }}"
+                   useBodyEncodingForURI="true"
+                   URIEncoding="UTF-8"
+                   compression="on"
+                   sendReasonPhrase="true"
+                   compressableMimeType="text/html,text/xml,application/xml,text/plain,text/css,application/json,application/javascript,application/x-javascript"
+                   secure="{{ atl_tomcat_secure }}"
+                   scheme="{{ atl_tomcat_scheme }}"
+                   proxyName="{{ atl_proxy_name }}"
+                   proxyPort="{{ atl_proxy_port }}"
                    protocol="{{ atl_tomcat_protocol }}">
         </Connector>
 
-        <Engine defaultHost="localhost" 
+        <Engine defaultHost="localhost"
                 name="Catalina">
-            <Host appBase="webapps" 
-                  autoDeploy="true" 
-                  name="localhost" 
+            <Host appBase="webapps"
+                  autoDeploy="true"
+                  name="localhost"
                   unpackWARs="true">
-              <Context path="{{ atl_tomcat_contextpath }}" 
-                       docBase="../../crowd-webapp" 
+              <Context path="{{ atl_tomcat_contextpath }}"
+                       docBase="../../crowd-webapp"
                        debug="0"
                        useHttpOnly="true">
                        <Manager pathname="">
@@ -45,20 +45,20 @@
         <!-- To connect to an external web server (typically Apache) -->
         <!-- Define an AJP 1.3 Connector on port 8009 -->
         <!--
-            <Connector port="8009" 
-                       enableLookups="{{ atl_tomcat_enablelookups }}" 
-                       redirectPort="{{ atl_tomcat_redirectport }}" 
+            <Connector port="8009"
+                       enableLookups="{{ atl_tomcat_enablelookups }}"
+                       redirectPort="{{ atl_tomcat_redirectport }}"
                        protocol=""AJP/1.3"" />
         -->
-        <Connector port="{{ atl_tomcat_redirectport }}" 
-                   protocol="{{ atl_tomcat_protocol }}" 
-                   relaxedPathChars="[]|" 
-                   relaxedQueryChars='[]|{}^\`"&lt;&gt;' 
-                   maxHttpHeaderSize="65536" 
-                   URIEncoding="UTF-8" 
-                   connectionTimeout="{{ atl_tomcat_connectiontimeout }}" 
-                   useBodyEncodingForURI="true" 
-                   compression="on" 
+        <Connector port="{{ atl_tomcat_redirectport }}"
+                   protocol="{{ atl_tomcat_protocol }}"
+                   relaxedPathChars="[]|"
+                   relaxedQueryChars='[]|{}^\`"&lt;&gt;'
+                   maxHttpHeaderSize="65536"
+                   URIEncoding="UTF-8"
+                   connectionTimeout="{{ atl_tomcat_connectiontimeout }}"
+                   useBodyEncodingForURI="true"
+                   compression="on"
                    compressableMimeType="text/html,text/xml,text/plain,text/css,application/json,application/javascript,application/x-javascript">
         </Connector>
     </Service>

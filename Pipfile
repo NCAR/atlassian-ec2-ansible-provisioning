@@ -19,6 +19,7 @@ ansible-compat = "==4.1.11"
 docker = "==7.0.0"
 pytest = "*"
 pytest-testinfra = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3"

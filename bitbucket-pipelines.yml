@@ -11,12 +11,22 @@ options:
 definitions:
   caches:
     ansible-collections: ansible_collections
+    pre-commit: ~/.cache/pre-commit
   services:
     docker:
       memory: 4096
 
 pipelines:
   default:
+    - step:
+        name: Pre-commit
+        image: python:3.9
+        caches:
+          - pre-commit
+        script:
+          - apt update && apt install -y pipenv
+          - pipenv sync --dev
+          - pipenv run pre-commit run --all-files
     - step:
         name: Pre Parallelization stage
         script:
