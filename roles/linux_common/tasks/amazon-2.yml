@@ -1,0 +1,5 @@
+---
+
+- name: Amazon Linux 2 no longer supported
+  fail:
+    msg: "Amazon Linux 2 is no longer supported; see README.md for supported operating systems/environments."

@@ -1,6 +1,0 @@
----
-
-- name: Install Amazon-Linux-specific NFS packages
-  yum:
-    name:
-      - nfs-utils

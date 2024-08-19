@@ -10,13 +10,23 @@
     <property name="confluence.database.choice">postgresql</property>
     <property name="confluence.database.connection.type">database-type-standard</property>
     <property name="hibernate.dialect">com.atlassian.confluence.impl.hibernate.dialect.PostgreSQLDialect</property>
+    <property name="struts.multipart.saveDir">${localHome}/temp</property>
     <property name="webwork.multipart.saveDir">${localHome}/temp</property>
     <property name="attachments.dir">${confluenceHome}/attachments</property>
 
     <property name="hibernate.connection.driver_class">{{ atl_db_driver }}</property>
     <property name="hibernate.connection.url">{{ atl_jdbc_url }}</property>
     <property name="hibernate.connection.username">{{ atl_jdbc_user }}</property>
+
+    {% if atl_product_version.split(".")[:2] | join(".") is version('8.6', '>=') and atl_secretsmanager_aws_region is defined and atl_secretsmanager_aws_region != "" and atl_secretsmanager_aws_secret_id is defined and atl_secretsmanager_aws_secret_id != "" -%}
+    <property name="jdbc.password.decrypter.classname">com.atlassian.secrets.store.aws.AwsSecretsManagerStore</property>
+    <property name="hibernate.connection.password">{"region": "{{ atl_secretsmanager_aws_region }}", "secretId": "{{ atl_secretsmanager_aws_secret_id }}"}</property>
+    {% else -%}
     <property name="hibernate.connection.password">{{ atl_jdbc_password | replace("&", "&amp;") }}</property>
+    {% endif -%}
+
+    {# Confluence versions 7.13 and newer #}
+    {%- if (atl_product_version.split(".")[0] | int() == 7 and atl_product_version.split(".")[1] | int() <= 13) or atl_product_version.split(".")[0] | int() < 7 -%}
     <property name="hibernate.c3p0.min_size">{{ atl_db_poolminsize }}</property>
     <property name="hibernate.c3p0.max_size">{{ atl_db_poolmaxsize }}</property>
     <property name="hibernate.c3p0.timeout">{{ atl_db_timeout }}</property>
@@ -25,6 +35,13 @@
     <property name="hibernate.c3p0.validate">{{ atl_db_validate }}</property>
     <property name="hibernate.c3p0.acquire_increment">{{ atl_db_acquireincrement }}</property>
     <property name="hibernate.c3p0.preferredTestQuery">{{ atl_db_preferredtestquery }}</property>
+    {%- else -%}
+    <property name="hibernate.hikari.idleTimeout">{{ atl_db_timeout }}</property>
+    <property name="hibernate.hikari.maximumPoolSize">{{ atl_db_poolmaxsize }}</property>
+    <property name="hibernate.hikari.minimumIdle">{{ atl_db_poolminsize }}</property>
+    <property name="hibernate.hikari.registerMbeans">true</property>
+    <property name="hibernate.connection.provider_class">{{ atl_db_provider_class | default('com.atlassian.confluence.impl.hibernate.DelegatingHikariConnectionProvider') }}</property>
+    {% endif %}
 
     <property name="shared-home">{{ atl_product_home_shared }}</property>
     <property name="confluence.cluster">true</property>
@@ -37,9 +54,24 @@
     <property name="confluence.cluster.join.type">aws</property>
     <property name="confluence.cluster.name">{{ atl_aws_stack_name }}</property>
     <property name="confluence.cluster.ttl">1</property>
-    {% if atl_tomcat_contextpath is defined and atl_tomcat_contextpath != '' %}
-        <property name="confluence.webapp.context.path">/{{ atl_tomcat_contextpath }}</property>
+    {%- if atl_tomcat_contextpath is defined and atl_tomcat_contextpath != '' -%}
+        <property name="confluence.webapp.context.path">{{ atl_tomcat_contextpath }}</property>
     {% endif %}
+    {# config specific to opensearch #}
+    {%- if atl_opensearch_endpoint is defined and atl_opensearch_endpoint != '' %}
+    {# if password provided set password and user but NOT region #}
+    {% if atl_opensearch_password is defined and atl_opensearch_password != '' %}
+
+    <property name="opensearch.password">{{ atl_opensearch_password }}</property>
+    <property name="opensearch.username">{{ atl_opensearch_user }}</property>
+    {%- else %}
+
+    <property name="opensearch.aws.region">{{ atl_hazelcast_network_aws_iam_region }}</property>
+    {% endif %}
+
+    <property name="opensearch.http.url">https://{{ atl_opensearch_endpoint }}</property>
+    <property name="search.platform">opensearch</property>
+    {%- endif %}
 
   </properties>
 </confluence-configuration>

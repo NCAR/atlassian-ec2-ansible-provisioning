@@ -1,0 +1,88 @@
+---
+
+- name: Create Bitbucket dirs if necessary
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ atl_product_user_uid }}"
+    group: "{{ atl_product_user_uid }}"
+    mode: 0750
+    state: directory
+    recurse: no
+  with_items:
+    - "{{ atl_home_base }}/{{ atl_product_edition }}"
+    - "{{ atl_home_base }}/{{ atl_product_user }}"
+    - "{{ mesh_install_dir }}"
+
+
+# optionally grab basic_auth creds from secrets_manager secret called 'download_atlassian'
+- name: set basic_auth facts if the secret exists
+  ansible.builtin.set_fact:
+    download_atlassian_password: "{{ lookup('amazon.aws.aws_secret', atl_download_secret_name + '.password', region=ansible_ec2_placement_region, bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
+    download_atlassian_username: "{{ lookup('amazon.aws.aws_secret', atl_download_secret_name + '.username', region=ansible_ec2_placement_region, bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
+  failed_when: false
+  ignore_errors: yes
+  no_log: true
+  when:
+    - ansible_ec2_placement_region is defined
+    - atl_download_secret_name is defined
+  tags:
+    - runtime_pkg
+
+# Fetch binary and copy to temp
+# optionally use basic_auth creds from secrets_manager
+- name: Fetch binary
+  ansible.builtin.get_url:
+    url: "{{ atl_product_download_url }}"
+    dest: "{{ mesh_install_dir }}"
+    url_password: "{{ download_atlassian_password | default(omit) }}"
+    url_username: "{{ download_atlassian_username | default(omit) }}"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: 0644
+    force: false
+  register: maven_download
+
+- name: extract the downloaded artifact
+  ansible.builtin.unarchive:
+    src: "{{ maven_download.dest }}"
+    dest: "/opt/atlassian/mesh/"
+    creates: "/opt/atlassian/mesh/atlassian-bitbucket-mesh-{{ atl_product_version }}"
+    mode: 0755
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+  register: mesh_extract
+  when:
+    - maven_download.changed | bool
+
+# the owner/group on the unarchive above isn't thorough
+- name: adjust permissions on the extracted directory
+  ansible.builtin.file:
+    state: directory
+    path: "/opt/atlassian/mesh/atlassian-bitbucket-mesh-{{ atl_product_version }}"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    recurse: yes
+
+- name: symlink to the current version
+  ansible.builtin.file:
+    src: "/opt/atlassian/mesh/atlassian-bitbucket-mesh-{{ atl_product_version }}"
+    dest: "/opt/atlassian/mesh/current"
+    state: link
+  when:
+    - mesh_extract.changed | bool
+
+- name: touch the jmx password file
+  ansible.builtin.file:
+    path: "{{ atl_home_base }}/{{ atl_product_edition }}/jmx.access"
+    state: touch
+    owner: "{{ atl_product_user_uid }}"
+    group: "{{ atl_product_user_uid }}"
+    mode: 0600
+
+# - name: template out mesh.properties
+#   ansible.builtin.template:
+#     src: mesh.properties.j2
+#     dest: "{{ atl_home_base }}/{{ atl_product_edition }}/mesh.properties"
+#     owner: "{{ atl_product_user }}"
+#     group: "{{ atl_product_user }}"
+#     mode: 0600

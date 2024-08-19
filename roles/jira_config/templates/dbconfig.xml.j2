@@ -8,7 +8,12 @@
   <jdbc-datasource>
     <url>{{ atl_jdbc_url }}</url>
     <username>{{ atl_jdbc_user }}</username>
+    {% if atl_product_version.split(".")[:2] | join(".") is version('9.11', '>=') and atl_secretsmanager_aws_region is defined and atl_secretsmanager_aws_region != "" and atl_secretsmanager_aws_secret_id is defined and atl_secretsmanager_aws_secret_id != "" -%}
+    <atlassian-password-cipher-provider>com.atlassian.secrets.store.aws.AwsSecretsManagerStore</atlassian-password-cipher-provider>
+    <password>{"region": "{{ atl_secretsmanager_aws_region }}", "secretId": "{{ atl_secretsmanager_aws_secret_id }}"}</password>
+    {% else -%}
     <password>{{ atl_jdbc_password | replace("&", "&amp;") }}</password>
+    {% endif -%}
     <driver-class>{{ atl_db_driver }}</driver-class>
     {% if 'postgres' in atl_db_type %}
       <connection-properties>tcpKeepAlive={{ atl_db_keepalive }};socketTimeout={{ atl_db_sockettimeout }}</connection-properties>

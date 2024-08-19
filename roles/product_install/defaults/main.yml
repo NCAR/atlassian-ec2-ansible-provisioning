@@ -3,6 +3,9 @@
 # Empty values to simplify logic (no undefineds)
 atl_latest_version: ''
 atl_cached_version: ''
+# if basic_auth is required for download of atlassian installable artifact, provide the name of an AWS Secrets Manager secret
+#  with values for both password and username
+atl_download_secret_name: ''
 
 atl_product_latest_version_url: "https://marketplace.atlassian.com/rest/2/products/key/{{ atl_product_family }}/versions"
 atl_product_version_cache_dir: "{{ atl_product_home_shared }}"
@@ -16,7 +19,8 @@ atl_download_suffix: "{{ atl_download_format_suffix_map[atl_download_format] }}"
 
 atl_release_base_url: "https://product-downloads.atlassian.com/software"
 atl_product_base_url: "{{ atl_release_base_url }}/{{ atl_product_family }}/downloads"
-atl_product_download_url: "{{ atl_product_base_url }}/atlassian-{{ atl_download_edition | default(atl_product_edition) }}-{{ atl_product_version }}{{ atl_download_suffix }}"
+atl_product_download_default_url: "{{ atl_product_base_url }}/atlassian-{{ atl_download_edition | default(atl_product_edition) }}-{{ atl_product_version }}{{ atl_download_suffix }}"
+atl_product_download_url: "{{ lookup('env', 'ATL_PRODUCT_DOWNLOAD_URL') or atl_product_download_default_url }}"
 
 atl_product_download_filename: "{{ atl_download_edition | default(atl_product_edition) }}.{{ atl_product_version }}{{ atl_download_suffix }}"
 atl_product_temp_download: "{{ atl_installer_temp }}/{{ atl_product_download_filename }}"
@@ -41,3 +45,4 @@ atl_source_obr_from_marketplace: true
 atl_servicedesk_download_file: "{{ atl_installer_temp }}/jira-servicedesk.{{ atl_product_version }}.obr"
 
 force_version_update: false
+skip_shared_home_symlink: false

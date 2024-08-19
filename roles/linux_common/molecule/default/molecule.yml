@@ -1,19 +1,21 @@
 ---
-dependency:
-  name: galaxy
 driver:
   name: docker
 platforms:
-  - name: amazon_linux2
-    image: amazonlinux:2
+  - name: amazon_linux2023
+    image: amazonlinux:2023
     groups:
       - aws_node_local
+    platform: linux/amd64
   - name: ubuntu_lts
-    image: ubuntu:bionic
+    image: ubuntu:jammy
     groups:
       - aws_node_local
+    platform: linux/amd64
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_COLLECTIONS_PATH: "../../../../"
   inventory:
     links:
       group_vars: ../../../../group_vars/

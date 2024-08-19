@@ -19,6 +19,10 @@ atl_hazelcast_network_aws_iam_region: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_A
 atl_hazelcast_network_aws_iam_role: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_IAM_ROLE') }}"
 atl_hazelcast_network_aws_tag_value: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_TAG_VALUE') }}"
 
+atl_opensearch_endpoint: "{{ lookup('env', 'ATL_OPENSEARCH_ENDPOINT') }}"
+atl_opensearch_password: "{{ lookup('env', 'ATL_OPENSEARCH_PASSWORD') }}"
+atl_opensearch_user: "{{ lookup('env', 'ATL_OPENSEARCH_USER') }}"
+
 atl_catalina_opts: ""
 atl_catalina_opts_extra: >-
   -Datlassian.event.thread_pool_configuration.queue_size=4096
@@ -33,7 +37,7 @@ atl_catalina_opts_extra: >-
   -Dsynchrony.proxy.enabled=false
   -Dconfluence.cluster.node.name={{ atl_local_ipv4 }}
   -Dconfluence.cluster.hazelcast.max.no.heartbeat.seconds=60
-  {% if atl_synchrony_service_url|string|length %}-Dsynchrony.service.url={{ atl_synchrony_service_url }}{% endif %}
+  {% if atl_synchrony_service_url | string | length %}-Dsynchrony.service.url={{ atl_synchrony_service_url }}{% endif %}
 
 atl_tomcat_port: "8080"
 atl_tomcat_mgmt_port: "8005"

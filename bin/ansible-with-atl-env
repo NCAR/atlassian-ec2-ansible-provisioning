@@ -20,6 +20,7 @@ set +a
 pipenv run \
     ansible-playbook -v \
         $ATL_DEPLOYMENT_REPOSITORY_CUSTOM_PARAMS \
+        -e "ansible_python_interpreter=$(pipenv --venv)/bin/python" \
         -e "${PLAYBOOK_INVOCATION_EXTRA_PARAMS}" \
         -i $INV \
         $PLAYBOOK \
