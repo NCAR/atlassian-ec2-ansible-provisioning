@@ -4,8 +4,12 @@ driver:
 platforms:
   - name: amazon_linux2023
     image: amazonlinux:2023
+    groups:
+      - aws_node_local
   - name: ubuntu_lts
     image: ubuntu:jammy
+    groups:
+      - aws_node_local
 provisioner:
   name: ansible
   env:

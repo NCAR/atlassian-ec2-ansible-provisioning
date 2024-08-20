@@ -21,10 +21,101 @@
       tags:
         - molecule-idempotence-notest
 
-    - name: Install Eclipse Temurin JDK
-      ansible.builtin.yum:
-        name: "temurin-{{ java_major_version }}-jdk"
+    # test if jdk_download_completed lock direcory exists
+    - name: Check if jdk_download_completed lock directory exists
+      ansible.builtin.stat:
+        path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_download_completed"
+      register: jdk_download_completed_lock
+
+    - name: create jdk_downloading lock directory
+      ansible.builtin.file:
+        path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_downloading"
+        state: directory
+      register: jdk_downloading_lock
+      when:
+        - jdk_download_completed_lock
+        - not jdk_download_completed_lock.stat.exists
+
+    # handle the jdk download on only 1 node
+    - name: Download Eclipse Temurin JDK if necessary on a node whilst locking the downloading action
+      block:
+
+        - name: Try 5 times to download Eclipse Temurin JDK with dnf
+          ansible.builtin.dnf:
+            name: "temurin-{{ java_major_version }}-jdk"
+            state: present
+            download_dir: "{{ atl_product_home_shared_download_dir }}"
+            download_only: true
+            update_cache: true
+          ignore_errors: true
+          register: jdk_downloaded
+          retries: 5
+          delay: 10
+          until: jdk_downloaded is succeeded
+
+        - name: Create jdk_download_completed lock directory if download was successful
+          ansible.builtin.file:
+            path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_download_completed"
+            state: directory
+          when: jdk_downloaded.changed
+
+        - name: Remove jdk_downloading lock directory on success or fail
+          ansible.builtin.file:
+            path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_downloading"
+            state: absent
+
+      # this when applies to the whole block - only do this block on the one node that created the downloading lock
+      when:
+        - jdk_downloading_lock
+        - jdk_downloading_lock.changed
+
+    # all nodes can wait here in race condition briefly for dl to complete and the downloaded_lock to exist
+    - name: wait and test 5 times for jdk_download_completed lock to exist
+      ansible.builtin.wait_for:
+        path: "{{ atl_product_home_shared_download_dir }}/temurin-{{ java_major_version }}-jdk_download_completed"
         state: present
+        timeout: 10
+      ignore_errors: true
+      register: jdk_download_completed_lock
+      retries: 5
+
+    # as long as we have a valid rpm filepath do the copy/install block
+    - block:
+      - name: Find a file called temurin* in atl_product_home_shared_download_dir
+        ansible.builtin.find:
+          paths: "{{ atl_product_home_shared_download_dir }}"
+          patterns: "temurin-{{ java_major_version }}-*.rpm"
+          file_type: file
+          recurse: no
+          size: 1
+        register: temurin_rpm_file
+
+      - name: set facts for the path and the basename of the temurin file
+        ansible.builtin.set_fact:
+          temurin_file_path: "{{ item.path }}"
+          temurin_file_name: "{{ item.path | basename }}"
+        loop: "{{ temurin_rpm_file.files | flatten }}"
+        when:
+          - temurin_rpm_file is defined
+          - temurin_rpm_file.files is defined
+          - temurin_rpm_file.files | length > 0
+
+      - name: Install JDK from cache copy of the rpm file - keepcache
+        ansible.builtin.command:
+          cmd: "dnf -y install {{ temurin_file_path }} --setopt=installonly_limit=3 --setopt=keepcache=1"
+        register: dnf_installed
+        when:
+          - temurin_file_path is defined
+
+      when:
+        - jdk_download_completed_lock.state is defined
+        - jdk_download_completed_lock.state == "directory"
+
+    - name: Ensure Eclipse Temurin JDK is present (get from internet if cache install fails or is unavailable)
+      ansible.builtin.command:
+        cmd: "dnf -y install  temurin-{{ java_major_version }}-jdk --setopt=installonly_limit=3 --setopt=keepcache=1"
+      tags:
+        - molecule-idempotence-notest
 
     - name: Ensure common JDK symlink exists
       community.general.alternatives:
