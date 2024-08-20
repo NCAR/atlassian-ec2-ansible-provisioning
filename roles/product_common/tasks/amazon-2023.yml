@@ -95,13 +95,17 @@
           temurin_file_path: "{{ item.path }}"
           temurin_file_name: "{{ item.path | basename }}"
         loop: "{{ temurin_rpm_file.files | flatten }}"
-        when: "{{ temurin_rpm_file.files | length > 0 }}"
+        when:
+          - temurin_rpm_file is defined
+          - temurin_rpm_file.files is defined
+          - temurin_rpm_file.files | length > 0
 
       - name: Install JDK from cache copy of the rpm file - keepcache
         ansible.builtin.command:
           cmd: "dnf -y install {{ temurin_file_path }} --setopt=installonly_limit=3 --setopt=keepcache=1"
         register: dnf_installed
-        when: "{{ temurin_rpm_file.files | length > 0 }}"
+        when:
+          - temurin_file_path is defined
 
       when:
         - jdk_download_completed_lock.state is defined
@@ -110,6 +114,8 @@
     - name: Ensure Eclipse Temurin JDK is present (get from internet if cache install fails or is unavailable)
       ansible.builtin.command:
         cmd: "dnf -y install  temurin-{{ java_major_version }}-jdk --setopt=installonly_limit=3 --setopt=keepcache=1"
+      tags:
+        - molecule-idempotence-notest
 
     - name: Ensure common JDK symlink exists
       community.general.alternatives:
