@@ -1,4 +1,6 @@
 ---
+# set the user_agent for lookup(url) requests
+ansible_lookup_url_agent: "ansible-httpget_{{ ansible_play_name }}"
 
 # Empty values to simplify logic (no undefineds)
 atl_latest_version: ''
