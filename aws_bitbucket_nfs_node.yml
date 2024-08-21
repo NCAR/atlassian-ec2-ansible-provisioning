@@ -2,6 +2,11 @@
 - name: aws_bitbucket_nfs_node.yml
   hosts: aws_node_local
   become: true
+  module_defaults:
+    ansible.builtin.uri:
+      http_agent: "ansible-httpget_{{ ansible_play_name }}"
+    ansible.builtin.get_url:
+      http_agent: "ansible-httpget_{{ ansible_play_name }}"
 
   vars:
     # See group_vars/aws_node_local.yml, which pull vars from the environment.

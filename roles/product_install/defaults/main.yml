@@ -1,5 +1,4 @@
 ---
-
 # Empty values to simplify logic (no undefineds)
 atl_latest_version: ''
 atl_cached_version: ''
@@ -46,3 +45,5 @@ atl_servicedesk_download_file: "{{ atl_installer_temp }}/jira-servicedesk.{{ atl
 
 force_version_update: false
 skip_shared_home_symlink: false
+
+ansible_lookup_url_agent: "ansible-httpget_dc-deployments-automation"
