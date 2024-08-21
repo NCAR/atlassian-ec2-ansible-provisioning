@@ -202,6 +202,7 @@
         url_username: "{{ download_atlassian_username | default(omit) }}"
         mode: 0755
         force: false
+        http_agent: "ansible-httpget_{{ ansible_play_name }}"
       register: atl_product_completed
 
     # If product installer was fetched make the lock directory
