@@ -24,7 +24,7 @@
     url: "{{ atl_marketplace_base }}/healthcheck"
     status_code: 200
     return_content: no
-    http_agent: "ansible-httpget_{{ ansible_play_name }}"
+    http_agent: "ansible-httpget_dc-deployments-automation_{{ ansible_play_name }}"
   register: marketplace_healthcheck
   until: marketplace_healthcheck.status == 200
   retries: 5
