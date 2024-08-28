@@ -1,5 +1,5 @@
 ---
-
+# Temurin JDK installation
 - name: Add Adoptium repo and install Eclipse Temurin JDK if necessary on Amazon Linux 2023
   block:
 
@@ -124,9 +124,31 @@
         path: "/usr/lib/jvm/temurin-{{ java_major_version }}-jdk"
         priority: 99
 
-  when: atl_use_system_jdk | bool
+  when:
+    - atl_use_system_jdk | bool
+    - atl_use_system_jdk_flavor == "temurin"
   tags:
     - runtime_pkg
+
+# Corretto JDK installation
+- name: Install Corretto JDK if necessary on Amazon Linux 2023
+  block:
+    - name: Install Corretto JDK Headless
+      ansible.builtin.dnf:
+        name: "java-{{ java_major_version }}-amazon-corretto-headless"
+        state: present
+      tags:
+        - runtime_pkg
+
+    - name: Ensure common JDK symlink exists
+      community.general.alternatives:
+        link: "/usr/lib/jvm/java"
+        name: "java_sdk"
+        path: "/usr/lib/jvm/java-{{ java_major_version }}-amazon-corretto"
+        priority: 99
+  when:
+    - atl_use_system_jdk | bool
+    - atl_use_system_jdk_flavor == "corretto"
 
 - name: Install other base packages on Amazon Linux 2023
   ansible.builtin.dnf:
