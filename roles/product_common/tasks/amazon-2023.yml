@@ -137,8 +137,6 @@
       ansible.builtin.dnf:
         name: "java-{{ java_major_version }}-amazon-corretto-headless"
         state: present
-      tags:
-        - runtime_pkg
 
     - name: Ensure common JDK symlink exists
       community.general.alternatives:
@@ -149,6 +147,8 @@
   when:
     - atl_use_system_jdk | bool
     - atl_use_system_jdk_flavor == "corretto"
+  tags:
+    - runtime_pkg
 
 - name: Install other base packages on Amazon Linux 2023
   ansible.builtin.dnf:
