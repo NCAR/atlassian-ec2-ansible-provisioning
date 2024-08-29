@@ -83,7 +83,7 @@
     mode: "u=rwX,g=rX,o=rX"
   changed_when: false  # For Molecule idempotence check
 
-- name: Find top-level files/directories in installation directory, excluding tomcat
+- name: Find top-level files/directories in installation directory, excluding tomcat and logs
   ansible.builtin.find:
     paths: "{{ atl_product_installation_versioned }}"
     depth: 1
