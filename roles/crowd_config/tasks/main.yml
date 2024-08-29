@@ -88,7 +88,7 @@
     paths: "{{ atl_product_installation_versioned }}"
     depth: 1
     file_type: any
-    excludes: apache-tomcat
+    excludes: apache-tomcat,logs
   register: atl_product_installation_versioned_file_list
 
 - name: Find top-level files/directories in tomcat directory, excluding working directories
