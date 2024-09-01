@@ -126,7 +126,7 @@
 
   when:
     - atl_use_system_jdk | bool
-    - atl_use_system_jdk_flavor == "temurin"
+    - atl_system_jdk_vendor == "temurin"
   tags:
     - runtime_pkg
 
@@ -146,7 +146,7 @@
         priority: 99
   when:
     - atl_use_system_jdk | bool
-    - atl_use_system_jdk_flavor == "corretto"
+    - atl_system_jdk_vendor == "corretto"
   tags:
     - runtime_pkg
 
