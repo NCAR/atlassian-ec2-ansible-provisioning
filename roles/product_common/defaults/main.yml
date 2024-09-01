@@ -5,7 +5,7 @@ postgres_version: "9.6"
 # Disable these when using the product installer, otherwise we end up
 # fighting with it.
 atl_use_system_jdk: false
-atl_system_jdk_vendor: "temurin"  # amazon linux 2023 also supports "corretto"
+atl_system_jdk_vendor: "temurin"
 
 # Ubuntu and Ansible use different architecture nomenclature; provide
 # an easy method for translating between them
