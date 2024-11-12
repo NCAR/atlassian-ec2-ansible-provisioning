@@ -119,11 +119,27 @@
     - ansible.builtin.debug:
         var: atl_obr_download
 
+    # optionally grab basic_auth creds from secrets_manager secret called 'download_atlassian'
+    - name: set basic_auth facts if the secret exists
+      ansible.builtin.set_fact:
+        download_atlassian_password: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.password', region=ansible_ec2_placement_region, bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
+        download_atlassian_username: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.username', region=ansible_ec2_placement_region, bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
+      failed_when: false
+      ignore_errors: yes
+      no_log: true
+      when:
+        - ansible_ec2_placement_region is defined
+        - atl_download_secret_name is defined
+      tags:
+        - runtime_pkg
+
     # Fetch obr and copy to temp
     - name: Fetch obr
       ansible.builtin.get_url:
         url: "{{ atl_obr_download_url }}"
         dest: "{{ atl_obr_download }}"
+        url_password: "{{ download_atlassian_password | default(omit) }}"
+        url_username: "{{ download_atlassian_username | default(omit) }}"
         mode: 0755
         force: true
         timeout: 600
