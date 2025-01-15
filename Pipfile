@@ -9,6 +9,8 @@ boto3 = "==1.34.92"
 botocore = "==1.34.92"
 lxml = "==5.2.1"
 psycopg2-binary = "==2.9.9"
+pymysql = "~=0.9.3"
+taskcat = "==0.8.50"
 
 [dev-packages]
 molecule = "==24.2.1"
@@ -19,6 +21,5 @@ docker = "==7.0.0"
 pytest = "*"
 pytest-testinfra = "*"
 pre-commit = "*"
-
-[requires]
-python_version = "3"
+six = "*"
+Jinja2 = "*"

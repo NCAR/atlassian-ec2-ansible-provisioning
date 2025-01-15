@@ -4,7 +4,9 @@
   <name>defaultDS</name>
   <delegator-name>default</delegator-name>
   <database-type>{{ atl_db_type }}</database-type>
+  {% if atl_db_general_type == 'postgres' %}}
   <schema-name>public</schema-name>
+  {% endif %}}
   <jdbc-datasource>
     <url>{{ atl_jdbc_url }}</url>
     <username>{{ atl_jdbc_user }}</username>

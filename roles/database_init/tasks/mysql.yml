@@ -1,0 +1,57 @@
+---
+
+- name: Make sure mariadb is present
+  become: true
+  yum:
+    name: mariadb
+    state: present
+
+- name: Make sure pymysql is present
+  become: true
+  pip:
+    name: pymysql
+    state: present
+
+- name: Download and unzip MySQL driver
+  unarchive:
+    src: "{{ mysql_jdbc_connector_url }}"
+    dest: /tmp
+    remote_src: yes
+
+- name: Copy the MySQL driver
+  copy:
+    src: "/tmp/{{ mysql_jdbc_connector }}/{{ mysql_jdbc_connector }}.jar"
+    dest: "{{ atl_product_installation_versioned }}/lib"
+
+- name: Create application DB user
+  mysql_user:
+    login_host: "{{ atl_db_host }}"
+    login_user: "{{ atl_db_root_user }}"
+    login_password: "{{ atl_db_root_password }}"
+    login_port: "{{ atl_db_port }}"
+    name: "{{ atl_jdbc_user }}"
+    password: "{{ atl_jdbc_password }}"
+
+- block:
+
+# RDS does not allow changing the collation on an existing DB, it only allows collation change on creation of db. If the db already exists, we need the “create new application database” task to be skipped, idempotence can not be relied upon as we cant be certain the collation of the existing db
+    - name: Create new application database
+      mysql_db:
+        login_host: "{{ atl_db_host }}"
+        login_user: "{{ atl_db_root_user }}"
+        login_password: "{{ atl_db_root_password }}"
+        login_port: "{{ atl_db_port }}"
+        name: "{{ atl_jdbc_db_name }}"
+        encoding: utf8mb4 # TODO "{{ atl_jdbc_encoding }}"
+        collation: "utf8mb4_bin" # TODO "{{ atl_jdbc_collation }}"
+      register: db_created 
+
+    - name: Assert ownership of public schema
+      command: >
+        mysql --user={{ atl_db_root_user }} --password={{ atl_db_root_password }} {{ atl_jdbc_db_name }}
+        --host={{ atl_db_host }} --port={{ atl_db_port }} --batch --skip-column-names
+        --execute="GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,INDEX,REFERENCES on {{ atl_jdbc_db_name }}.* TO '{{ atl_jdbc_user }}'@'{{ atl_db_host }}' IDENTIFIED BY '{{ atl_jdbc_password }}'; flush privileges;"
+      no_log: true
+
+  tags:
+    - new_only

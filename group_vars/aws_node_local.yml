@@ -105,7 +105,13 @@ atl_db_testonborrow: "{{ lookup('env', 'ATL_DB_TESTONBORROW') or 'false' }}"
 atl_db_engine_to_db_type_map:
   aurora_postgres: "postgresaurora96"
   rds_postgres: "postgres72"
+  rds_mysql: "mysql57"
 atl_db_type: "{{ atl_db_engine_to_db_type_map[atl_db_engine] | default('postgres72') }}"
+atl_db_general_type_map:
+  aurora_postgres: "postgres"
+  rds_postgres: "postgres"
+  rds_mysql: "mysql"
+atl_db_general_type: "{{ atl_db_general_type_map[atl_db_engine] }}"
 
 atl_download_secret_name: "{{ lookup('env', 'ATL_DOWNLOAD_SECRET_NAME') or '' }}"
 
@@ -118,7 +124,8 @@ atl_jdbc_ctype: "{{ lookup('env', 'ATL_JDBC_CTYPE') or 'en_US.UTF-8' }}"
 atl_jdbc_template: "{{ lookup('env', 'ATL_JDBC_TEMPLATE') or 'template1' }}"
 atl_jdbc_query_params_for_engine:
   aurora_postgres: "?targetServerType=master"
-atl_jdbc_url: "jdbc:postgresql://{{ atl_db_host }}:{{ atl_db_port }}/{{ atl_jdbc_db_name }}{{ atl_jdbc_query_params_for_engine[atl_db_engine] | default('') }}"
+  rds_mysql: "?useUnicode=true&amp;characterEncoding=UTF8&amp;sessionVariables=default_storage_engine=InnoDB"
+atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port }}/{{ atl_jdbc_db_name }}{{ atl_jdbc_query_params_for_engine[atl_db_engine]| default('') }}"
 
 atl_secretsmanager_aws_region: "{{ lookup('env', 'ATL_SECRETSMANAGER_AWS_REGION') }}"
 atl_secretsmanager_aws_secret_id: "{{ lookup('env', 'ATL_SECRETSMANAGER_AWS_SECRET_ID') }}"

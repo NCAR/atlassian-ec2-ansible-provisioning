@@ -1,0 +1,10 @@
+---
+
+atl_db_port: '5432'
+atl_db_root_user: 'root'
+atl_jdbc_encoding: 'utf8mb4'
+atl_jdbc_collation: 'utf8mb4_bin'
+atl_jdbc_ctype: 'utf8mb4_bin'
+
+mysql_jdbc_connector: 'mysql-connector-java-8.0.21'
+mysql_jdbc_connector_url: "https://dev.mysql.com/get/Downloads/Connector-J/{{ mysql_jdbc_connector }}.tar.gz"
