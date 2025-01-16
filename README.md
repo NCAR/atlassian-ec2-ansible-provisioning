@@ -1,5 +1,7 @@
 # Atlassian Data Center Installation Automation
 
+Fork of https://bitbucket.org/atlassian/dc-deployments-automation.git
+
 This repository is a suite of Ansible roles, playbooks and support scripts to
 automate the installation and maintenance of Atlassian Data Center products in
 cloud environments.
