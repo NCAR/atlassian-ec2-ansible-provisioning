@@ -21,22 +21,33 @@ else
     apt-get update && \
     apt-get install -y \
             python3-dev \
+	    python-is-python3 \
             python3-pip \
-            pipenv
-fi
-export PATH=/usr/local/bin:$PATH
-export PIP_DEFAULT_TIMEOUT=60
-
-echo "Installing ansible and dependencies..."
-PIPENV_NOSPIN=1 PIPENV_HIDE_EMOJIS=1 pipenv --python $PIPENV_PYTHON sync 2>&1 | iconv -c -f utf-8 -t ascii
-
-if [[ $1 == "--dev" ]]; then
-    pipenv sync --dev
+	    ansible-core
 fi
 
-echo "Installing collections from galaxy..."
-galaxy_retry_count=0
-until [[ $galaxy_retry_count -gt 2 ]]; do
-  pipenv run ansible-galaxy collection install --upgrade --verbose --requirements-file requirements.yml && break
-  galaxy_retry_count=$((galaxy_retry_count + 1))
-done
+
+# export PATH=/usr/local/bin:$PATH
+# export PIP_DEFAULT_TIMEOUT=60
+
+# echo "Installing ansible and dependencies..."
+# pip install pipenv
+# export PATH="/usr/local/bin:${PATH}"
+# PIPENV_NOSPIN=1 PIPENV_HIDE_EMOJIS=1 pipenv --python $PIPENV_PYTHON sync 2>&1 | iconv -c -f utf-8 -t ascii
+
+# if [[ $1 == "--dev" ]]; then
+#     pipenv sync --dev
+# fi
+
+# # Above not working, why???
+# pipenv install ansible
+
+# # https://github.com/ansible-collections/community.digitalocean/issues/132
+# pipenv run pip install -Iv 'resolvelib<0.6.0'
+
+# echo "Installing collections from galaxy..."
+# galaxy_retry_count=0
+# until [[ $galaxy_retry_count -gt 2 ]]; do
+#   /usr/local/bin/pipenv run ansible-galaxy collection install --upgrade --verbose --requirements-file requirements.yml && break
+#   galaxy_retry_count=$((galaxy_retry_count + 1))
+# done

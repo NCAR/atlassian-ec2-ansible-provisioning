@@ -9,7 +9,7 @@
 #
 #    https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html
 
-java_major_version: "8"
+java_major_version: "17"
 postgres_version: "9.6"
 git_version: "2.14.4"
 atl_shared_mountpoint: "/media/atl"
@@ -84,7 +84,7 @@ atl_aws_enable_cloudwatch_logs: "{{ lookup('env', 'ATL_AWS_ENABLE_CLOUDWATCH_LOG
 
 atl_db_engine: "{{ lookup('env', 'ATL_DB_ENGINE') }}"
 atl_db_host: "{{ lookup('env', 'ATL_DB_HOST') }}"
-atl_db_port: "{{ lookup('env', 'ATL_DB_PORT') or '5432' }}"
+#atl_db_port: "{{ lookup('env', 'ATL_DB_PORT') or '5432' }}"
 atl_db_root_db_name: "{{ lookup('env', 'ATL_DB_ROOT_DB_NAME') or 'postgres' }}"
 atl_db_root_user: "{{ lookup('env', 'ATL_DB_ROOT_USER') or 'postgres' }}"
 atl_db_root_password: "{{ lookup('env', 'ATL_DB_ROOT_PASSWORD') }}"
@@ -105,8 +105,8 @@ atl_db_testonborrow: "{{ lookup('env', 'ATL_DB_TESTONBORROW') or 'false' }}"
 atl_db_engine_to_db_type_map:
   aurora_postgres: "postgresaurora96"
   rds_postgres: "postgres72"
-  rds_mysql: "mysql57"
-atl_db_type: "{{ atl_db_engine_to_db_type_map[atl_db_engine] | default('postgres72') }}"
+  rds_mysql: "mysql8"
+atl_db_type: "{{ atl_db_engine_to_db_type_map[atl_db_engine] | default('mysql8') }}"
 atl_db_general_type_map:
   aurora_postgres: "postgres"
   rds_postgres: "postgres"
@@ -117,7 +117,8 @@ atl_download_secret_name: "{{ lookup('env', 'ATL_DOWNLOAD_SECRET_NAME') or '' }}
 
 atl_jdbc_db_name: "{{ lookup('env', 'ATL_JDBC_DB_NAME') }}"
 atl_jdbc_user: "{{ lookup('env', 'ATL_JDBC_USER') }}"
-atl_jdbc_password: "{{ lookup('env', 'ATL_JDBC_PASSWORD') }}"
+# atl_jdbc_password: "{{ lookup('env', 'ATL_JDBC_PASSWORD') }}"
+atl_jdbc_password: "{{ lookup('amazon.aws.aws_secret', lookup('vars', 'atl_secretsmanager_aws_secret_id'), on_denied='warn')}}"
 atl_jdbc_encoding: "{{ lookup('env', 'ATL_JDBC_ENCODING') or 'UTF-8' }}"
 atl_jdbc_collation: "{{ lookup('env', 'ATL_JDBC_COLLATION') or 'en_US.UTF-8' }}"
 atl_jdbc_ctype: "{{ lookup('env', 'ATL_JDBC_CTYPE') or 'en_US.UTF-8' }}"
