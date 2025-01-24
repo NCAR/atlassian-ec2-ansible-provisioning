@@ -12,15 +12,22 @@
 #     name: pymysql
 #     state: present
 
-- name: Download and unzip MySQL driver
-  unarchive:
-    src: "{{ mysql_jdbc_connector_url }}"
+
+- name: Download MySQL driver
+  ansible.builtin.get_url:
+    headers:
+      user-agent: curl/7.81.0 # Mysql doesn't like ansible for some reason
+    url: "{{ atl_mysql_jdbc_connector_url }}"
     dest: /tmp
-    remote_src: yes
+
+- name: Unzip Mysql driver
+  unarchive:
+    src: "/tmp/{{ atl_mysql_jdbc_connector_url | basename }}"
+    dest: "/tmp"
 
 - name: Copy the MySQL driver
   copy:
-    src: "/tmp/{{ mysql_jdbc_connector }}/{{ mysql_jdbc_connector }}.jar"
+    src: "/tmp/{{ atl_mysql_jdbc_connector }}/{{ atl_mysql_jdbc_connector }}.jar"
     dest: "{{ atl_product_installation_versioned }}/lib"
 
 # - name: Create application DB user

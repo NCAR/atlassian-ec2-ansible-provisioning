@@ -128,6 +128,9 @@ atl_jdbc_query_params_for_engine:
   rds_mysql: "?useUnicode=true&amp;characterEncoding=UTF8&amp;sessionVariables=default_storage_engine=InnoDB"
 atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port }}/{{ atl_jdbc_db_name }}{{ atl_jdbc_query_params_for_engine[atl_db_engine]| default('') }}"
 
+atl_mysql_jdbc_connector: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR') }}"
+atl_mysql_jdbc_connector_url: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR_URL') }}"
+
 atl_secretsmanager_aws_region: "{{ lookup('env', 'ATL_SECRETSMANAGER_AWS_REGION') }}"
 atl_secretsmanager_aws_secret_id: "{{ lookup('env', 'ATL_SECRETSMANAGER_AWS_SECRET_ID') }}"
 

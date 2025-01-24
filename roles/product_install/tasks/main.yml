@@ -67,48 +67,48 @@
 # requirements to work as expected ie - (7.2.0 to upgrade over 7.2.0-rc1) and
 # (7.2.0-beta1 to upgrade over 7.2.0-m01) in "version is not latest"
 
-- name: "Case: Version is latest"
-  block:
+# - name: "Case: Version is latest"
+#   block:
 
-    - name: "Case: Cached version exists, has precedence over 'latest'"
-      ansible.builtin.set_fact:
-        atl_download_version: "{{ atl_cached_version }}"
-      when: cached.stat.exists
+#     - name: "Case: Cached version exists, has precedence over 'latest'"
+#       ansible.builtin.set_fact:
+#         atl_download_version: "{{ atl_cached_version }}"
+#       when: cached.stat.exists
 
-    - name: "Case: No cached version, use latest"
-      ansible.builtin.set_fact:
-        atl_download_version: "{{ atl_latest_version }}"
-      when: not cached.stat.exists
+#     - name: "Case: No cached version, use latest"
+#       ansible.builtin.set_fact:
+#         atl_download_version: "{{ atl_latest_version }}"
+#       when: not cached.stat.exists
 
-  when: version_is_latest | bool
+#   when: version_is_latest | bool
 
-- name: "Case: Version is not latest"
-  block:
-    - name: "create atlassian z versioning for comparison"
-      ansible.builtin.set_fact:
-        atl_z_product_version: "{{ atl_product_version ~ '-z' }}"
-        atl_z_cached_version: "{{ atl_cached_version ~ '-z' }}"
+# - name: "Case: Version is not latest"
+#   block:
+#     - name: "create atlassian z versioning for comparison"
+#       ansible.builtin.set_fact:
+#         atl_z_product_version: "{{ atl_product_version ~ '-z' }}"
+#         atl_z_cached_version: "{{ atl_cached_version ~ '-z' }}"
 
-    - name: "create atlassian ordered versioning for comparison"
-      ansible.builtin.set_fact:
-        atl_product_normalised_version: "{{ atl_z_product_version | replace('-m', '-am') }}"
-        atl_cached_normalised_version: "{{ atl_z_cached_version | replace('-m', '-am') }}"
+#     - name: "create atlassian ordered versioning for comparison"
+#       ansible.builtin.set_fact:
+#         atl_product_normalised_version: "{{ atl_z_product_version | replace('-m', '-am') }}"
+#         atl_cached_normalised_version: "{{ atl_z_cached_version | replace('-m', '-am') }}"
 
-    - name: "Case: No cached version, or supplied is higher; use supplied"
-      ansible.builtin.set_fact:
-        atl_download_version: "{{ atl_product_version }}"
-      when: force_version_update | bool or
-            not cached.stat.exists or
-            atl_product_normalised_version is version(atl_cached_normalised_version, '>')
+#     - name: "Case: No cached version, or supplied is higher; use supplied"
+#       ansible.builtin.set_fact:
+#         atl_download_version: "{{ atl_product_version }}"
+#       when: force_version_update | bool or
+#             not cached.stat.exists or
+#             atl_product_normalised_version is version(atl_cached_normalised_version, '>')
 
-    - name: "Case: Cached version is higher or forced, ignore supplied"
-      ansible.builtin.set_fact:
-        atl_download_version: "{{ atl_cached_version }}"
-      when: cached.stat.exists and
-            atl_product_normalised_version is version(atl_cached_normalised_version, '<=') and
-            not force_version_update | bool
+#     - name: "Case: Cached version is higher or forced, ignore supplied"
+#       ansible.builtin.set_fact:
+#         atl_download_version: "{{ atl_cached_version }}"
+#       when: cached.stat.exists and
+#             atl_product_normalised_version is version(atl_cached_normalised_version, '<=') and
+#             not force_version_update | bool
 
-  when: not version_is_latest | bool
+#   when: not version_is_latest | bool
 
 
 - name: "Fallthrough guard: Use cached or supplied version if nothing set"
