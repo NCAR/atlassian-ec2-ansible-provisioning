@@ -117,9 +117,14 @@ atl_download_secret_name: "{{ lookup('env', 'ATL_DOWNLOAD_SECRET_NAME') or '' }}
 
 atl_jdbc_dialect: "{{ lookup('env', 'ATL_JDBC_DIALECT') }}"
 atl_jdbc_db_name: "{{ lookup('env', 'ATL_JDBC_DB_NAME') }}"
-atl_jdbc_user: "{{ lookup('env', 'ATL_JDBC_USER') }}"
+# atl_jdbc_user: "{{ lookup('env', 'ATL_JDBC_USER') }}"
 # atl_jdbc_password: "{{ lookup('env', 'ATL_JDBC_PASSWORD') }}"
-atl_jdbc_password: "{{ lookup('amazon.aws.aws_secret', lookup('vars', 'atl_secretsmanager_aws_secret_id'), on_denied='warn')}}"
+#atl_jdbc_password: "{{ lookup('amazon.aws.aws_secret', lookup('vars', 'atl_secretsmanager_aws_secret_id'), on_denied='warn')}}"
+#atl_jdbc_password: >-
+atl_jdbc_credential: "{{ lookup('env', 'ATL_JDBC_PASSWORD') }} | from_json"
+atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
+atl_jdbc_password: "{{ atl_jdbc_credential | json_query('password') }}"
+
 atl_jdbc_encoding: "{{ lookup('env', 'ATL_JDBC_ENCODING') or 'UTF-8' }}"
 atl_jdbc_collation: "{{ lookup('env', 'ATL_JDBC_COLLATION') or 'en_US.UTF-8' }}"
 atl_jdbc_ctype: "{{ lookup('env', 'ATL_JDBC_CTYPE') or 'en_US.UTF-8' }}"
