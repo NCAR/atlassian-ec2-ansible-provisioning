@@ -141,24 +141,24 @@
     group: "{{ atl_product_user }}"
   changed_when: false  # For Molecule idempotence check
 
-- name: Assert baseurl to same as atl_proxy_name
-  community.postgresql.postgresql_query:
-    login_host: "{{ atl_db_host }}"
-    login_user: "{{ atl_jdbc_user }}"
-    login_password: "{{ atl_jdbc_password }}"
-    db: "{{ atl_jdbc_db_name }}"
-    query: >
-      update cwd_property set property_value=%s
-      where property_name = 'base.url'
-    positional_args:
-      - "{{ atl_tomcat_scheme }}://{{ atl_proxy_name }}{{ atl_tomcat_contextpath }}"
-  when:
-    - atl_proxy_name is defined
-    - atl_tomcat_scheme is defined
-    - db_created is undefined or not db_created.changed
-  tags:
-    - skip_on_stack_update
-  ignore_errors: yes  # For Molecule as it has no db test framework included
+# - name: Assert baseurl to same as atl_proxy_name
+#   community.postgresql.postgresql_query:
+#     login_host: "{{ atl_db_host }}"
+#     login_user: "{{ atl_jdbc_user }}"
+#     login_password: "{{ atl_jdbc_password }}"
+#     db: "{{ atl_jdbc_db_name }}"
+#     query: >
+#       update cwd_property set property_value=%s
+#       where property_name = 'base.url'
+#     positional_args:
+#       - "{{ atl_tomcat_scheme }}://{{ atl_proxy_name }}{{ atl_tomcat_contextpath }}"
+#   when:
+#     - atl_proxy_name is defined
+#     - atl_tomcat_scheme is defined
+#     - db_created is undefined or not db_created.changed
+#   tags:
+#     - skip_on_stack_update
+#   ignore_errors: yes  # For Molecule as it has no db test framework included
 
 - name: Check that crowd.cfg.xml exists
   ansible.builtin.stat:
