@@ -1,4 +1,4 @@
 ---
 
 - name: Perform database-specific tasks
-  ansible.builtin.include_tasks: "{{ atl_db_engine }}.yml"
+  ansible.builtin.include_tasks: "{{ atl_db_general_type }}.yml"
