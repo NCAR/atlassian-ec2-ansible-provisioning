@@ -121,7 +121,9 @@ atl_jdbc_db_name: "{{ lookup('env', 'ATL_JDBC_DB_NAME') }}"
 # atl_jdbc_password: "{{ lookup('env', 'ATL_JDBC_PASSWORD') }}"
 #atl_jdbc_password: "{{ lookup('amazon.aws.aws_secret', lookup('vars', 'atl_secretsmanager_aws_secret_id'), on_denied='warn')}}"
 #atl_jdbc_password: >-
-atl_jdbc_credential: "{{ lookup('env', 'ATL_SECRETSMANAGER_AWS_SECRET_ID') }} | from_json"
+#atl_jdbc_credential: "{{ lookup('env', 'ATL_SECRETSMANAGER_AWS_SECRET_ID') }} | from_json"
+#atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', lookup('vars', 'atl_secretsmanager_aws_secret_id'), on_denied='warn')}} | from_json"
+atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', lookup('vars', 'atl_secretsmanager_aws_secret_id'), on_denied='warn')}}"
 atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
 atl_jdbc_password: "{{ atl_jdbc_credential | json_query('password') }}"
 

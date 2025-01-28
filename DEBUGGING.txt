@@ -1,0 +1,3 @@
+# To see resolved variables:
+
+ansible localhost -m debug -a "var=hostvars" -i inv/aws_node_local
