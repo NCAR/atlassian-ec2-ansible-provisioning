@@ -5,15 +5,8 @@ atl_jvm_heap: "512m"
 atl_catalina_opts: ""
 atl_catalina_opts_extra: >-
   -XX:+UseG1GC
-  -XX:+PrintAdaptiveSizePolicy
   -Xloggc:{{ atl_product_installation_versioned }}/apache-tomcat/logs/`date +%F_%H-%M-%S`-gc.log
   -XX:+PrintGCDetails
-  -XX:+PrintGCDateStamps
-  -XX:+PrintGCCause
-  -XX:+UseGCLogFileRotation
-  -XX:NumberOfGCLogFiles=10
-  -XX:GCLogFileSize=5M
-  -XX:+PrintTenuringDistribution
   -Dfile.encoding=UTF-8
 
 atl_tomcat_acceptcount: "10"
