@@ -5,7 +5,6 @@ atl_jvm_heap: "2048m"
 atl_catalina_opts: ""
 atl_catalina_opts_extra: >-
   -XX:+UseG1GC
-  -XX:+PrintAdaptiveSizePolicy
   -XX:+UseGCLogFileRotation
   -XX:+PrintTenuringDistribution
   -Dfile.encoding=UTF-8
