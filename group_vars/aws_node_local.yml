@@ -82,6 +82,8 @@ atl_aws_iam_role_arn: "{{ lookup('env', 'ATL_AWS_IAM_ROLE_ARN') }}"
 atl_aws_enable_cloudwatch: "{{ lookup('env', 'ATL_AWS_ENABLE_CLOUDWATCH') | bool or false }}"
 atl_aws_enable_cloudwatch_logs: "{{ lookup('env', 'ATL_AWS_ENABLE_CLOUDWATCH_LOGS') | bool or false }}"
 
+atl_enable_cluster: "{{ lookup('env', 'ATL_ENABLE_CLUSTER') | bool or false }}"
+
 atl_db_engine: "{{ lookup('env', 'ATL_DB_ENGINE') }}"
 atl_db_host: "{{ lookup('env', 'ATL_DB_HOST') }}"
 atl_db_port: "{{ lookup('env', 'ATL_DB_PORT') }}"
@@ -114,7 +116,6 @@ atl_download_secret_name: "{{ lookup('env', 'ATL_DOWNLOAD_SECRET_NAME') or '' }}
 
 atl_jdbc_dialect: "{{ lookup('env', 'ATL_JDBC_DIALECT') }}"
 atl_jdbc_db_name: "{{ lookup('env', 'ATL_JDBC_DB_NAME') }}"
-#atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', lookup('vars', 'atl_db_credential_secret_arn'), on_denied='warn')}}"
 atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', lookup('env', 'ATL_DB_CREDENTIAL_SECRET_ARN'), on_denied='warn')}}"
 atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
 atl_jdbc_password: "{{ atl_jdbc_credential | json_query('password') }}"

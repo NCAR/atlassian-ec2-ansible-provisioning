@@ -44,7 +44,9 @@
     {% endif %}
 
     <property name="shared-home">{{ atl_product_home_shared }}</property>
-    <property name="confluence.cluster">true</property>
+
+    <property name="confluence.cluster">{{ atl_enable_cluster }}</property>
+    {%- if atl_enable_cluster -%}
     <property name="confluence.cluster.home">{{ atl_product_home_shared }}</property>
     <property name="confluence.cluster.aws.iam.role">{{ atl_hazelcast_network_aws_iam_role }}</property>
     <property name="confluence.cluster.aws.region">{{ atl_hazelcast_network_aws_iam_region }}</property>
@@ -54,6 +56,8 @@
     <property name="confluence.cluster.join.type">aws</property>
     <property name="confluence.cluster.name">{{ atl_aws_stack_name }}</property>
     <property name="confluence.cluster.ttl">1</property>
+    {% endif %}
+    
     {%- if atl_tomcat_contextpath is defined and atl_tomcat_contextpath != '' -%}
         <property name="confluence.webapp.context.path">{{ atl_tomcat_contextpath }}</property>
     {% endif %}
