@@ -13,15 +13,15 @@ atl_db_validate: "{{ lookup('env', 'ATL_DB_VALIDATE') or 'false' }}"
 atl_db_acquireincrement: "{{ lookup('env', 'ATL_DB_ACQUIREINCREMENT') or '1' }}"
 atl_db_preferredtestquery: "{{ lookup('env', 'ATL_DB_PREFERREDTESTQUERY') or 'select version();' }}"
 
-atl_hazelcast_network_aws_tag_key: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_TAG_KEY') or 'Cluster' }}"
-atl_hazelcast_network_aws_host_header: "ec2.amazonaws.com"
-atl_hazelcast_network_aws_iam_region: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_IAM_REGION') }}"
-atl_hazelcast_network_aws_iam_role: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_IAM_ROLE') }}"
-atl_hazelcast_network_aws_tag_value: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_TAG_VALUE') }}"
+# atl_hazelcast_network_aws_tag_key: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_TAG_KEY') or 'Cluster' }}"
+# atl_hazelcast_network_aws_host_header: "ec2.amazonaws.com"
+# atl_hazelcast_network_aws_iam_region: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_IAM_REGION') }}"
+# atl_hazelcast_network_aws_iam_role: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_IAM_ROLE') }}"
+# atl_hazelcast_network_aws_tag_value: "{{ lookup('env', 'ATL_HAZELCAST_NETWORK_AWS_TAG_VALUE') }}"
 
-atl_opensearch_endpoint: "{{ lookup('env', 'ATL_OPENSEARCH_ENDPOINT') }}"
-atl_opensearch_password: "{{ lookup('env', 'ATL_OPENSEARCH_PASSWORD') }}"
-atl_opensearch_user: "{{ lookup('env', 'ATL_OPENSEARCH_USER') }}"
+# atl_opensearch_endpoint: "{{ lookup('env', 'ATL_OPENSEARCH_ENDPOINT') }}"
+# atl_opensearch_password: "{{ lookup('env', 'ATL_OPENSEARCH_PASSWORD') }}"
+# atl_opensearch_user: "{{ lookup('env', 'ATL_OPENSEARCH_USER') }}"
 
 atl_catalina_opts: ""
 atl_catalina_opts_extra: >-
@@ -31,9 +31,6 @@ atl_catalina_opts_extra: >-
   -Dfile.encoding=UTF-8
   -Djava.net.preferIPv4Stack=true
   -Dshare.group.email.mapping=atlassian-all:atlassian-all@atlassian.com,atlassian-staff:atlassian-staff@atlassian.com
-  -XX:+PrintAdaptiveSizePolicy
-  -XX:+PrintGCDetails
-  -XX:+PrintTenuringDistribution
   -Dsynchrony.proxy.enabled=false
   -Dconfluence.cluster.node.name={{ atl_local_ipv4 }}
   -Dconfluence.cluster.hazelcast.max.no.heartbeat.seconds=60
