@@ -75,7 +75,7 @@ atl_product_version: "{{ lookup('env', 'ATL_PRODUCT_VERSION') }}"
 
 atl_efs_id: "{{ lookup('env', 'ATL_EFS_ID') }}"
 atl_aws_stack_name: "{{ lookup('env', 'ATL_AWS_STACK_NAME') }}"
-atl_aws_region: "{{ lookup('env', 'ATL_AWS_REGION') }}"
+atl_aws_region: "{{ lookup('env', 'AWS_REGION') }}"
 atl_aws_iam_role: "{{ lookup('env', 'ATL_AWS_IAM_ROLE') }}"
 atl_aws_iam_role_arn: "{{ lookup('env', 'ATL_AWS_IAM_ROLE_ARN') }}"
 
@@ -85,9 +85,6 @@ atl_aws_enable_cloudwatch_logs: "{{ lookup('env', 'ATL_AWS_ENABLE_CLOUDWATCH_LOG
 atl_db_engine: "{{ lookup('env', 'ATL_DB_ENGINE') }}"
 atl_db_host: "{{ lookup('env', 'ATL_DB_HOST') }}"
 atl_db_port: "{{ lookup('env', 'ATL_DB_PORT') }}"
-#atl_db_root_db_name: "{{ lookup('env', 'ATL_DB_ROOT_DB_NAME') or 'postgres' }}"
-#atl_db_root_user: "{{ lookup('env', 'ATL_DB_ROOT_USER') or 'postgres' }}"
-#atl_db_root_password: "{{ lookup('env', 'ATL_DB_ROOT_PASSWORD') }}"
 atl_db_driver: "{{ lookup('env', 'ATL_DB_DRIVER') }}"
 
 atl_db_poolminsize: "{{ lookup('env', 'ATL_DB_POOLMINSIZE') or '20' }}"
