@@ -125,6 +125,7 @@
 
 - name: Perform any additional per-edition version setup
   ansible.builtin.include_tasks: "{{ atl_product_edition }}_extra_tasks.yml"
+  when: file_status.stat.exists
 
 - name: Create installation directories
   ansible.builtin.file:
