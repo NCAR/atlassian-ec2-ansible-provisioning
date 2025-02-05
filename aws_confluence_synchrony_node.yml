@@ -28,12 +28,12 @@
     atl_systemd_service_name: "synchrony.service"
 
   roles:
-    - role: linux_common
-    - role: aws_common
-    - role: aws_shared_fs_config
-    - role: product_common
-    - role: product_install
-      tags: [skip_on_stack_update]
-    - role: confluence_common
+#    - role: linux_common
+#    - role: aws_common
+#    - role: aws_shared_fs_config
+#    - role: product_common
+#    - role: product_install
+#      tags: [skip_on_stack_update]
+#    - role: confluence_common
     - role: synchrony_config
     - role: product_startup
