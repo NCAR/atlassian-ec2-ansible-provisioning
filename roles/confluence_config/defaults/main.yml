@@ -33,7 +33,7 @@ atl_catalina_opts_extra: >-
   -Dshare.group.email.mapping=atlassian-all:atlassian-all@atlassian.com,atlassian-staff:atlassian-staff@atlassian.com
   -Dsynchrony.proxy.enabled=false
   -Dconfluence.cluster.node.name={{ atl_local_ipv4 }}
-  -Dconfluence.cluster.hazelcast.max.no.heartbeat.seconds=60
+#  -Dconfluence.cluster.hazelcast.max.no.heartbeat.seconds=60
   {% if atl_synchrony_service_url | string | length %}-Dsynchrony.service.url={{ atl_synchrony_service_url }}{% endif %}
 
 atl_tomcat_port: "8080"
