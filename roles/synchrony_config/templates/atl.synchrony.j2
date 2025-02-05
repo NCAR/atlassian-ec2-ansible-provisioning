@@ -13,15 +13,16 @@ SYNCHRONY_DATABASE_USERNAME="{{ atl_jdbc_user }}"
 SYNCHRONY_DATABASE_PASSWORD="{{ atl_jdbc_password }}"
 
 ATL_SYNCHRONY_JVM_PROPERTIES="{{ atl_synchrony_stack_space }} {{ atl_synchrony_memory }} \
- -Dsynchrony.cluster.impl=hazelcast-btf \
  -Dsynchrony.database.url={{ atl_jdbc_url }} \
  -Dsynchrony.bind={{ atl_local_ipv4 }} \
- -Dsynchrony.cluster.bind={{ atl_local_ipv4 }} \
- -Dcluster.interfaces={{ atl_local_ipv4 }} \
- -Dsynchrony.cluster.base.port=25500 \
  -Dsynchrony.service.url={{ atl_synchrony_service_url }} \
  -Dsynchrony.context.path=/synchrony \
  -Dsynchrony.port=8091
+
+# -Dcluster.interfaces={{ atl_local_ipv4 }} \
+# -Dsynchrony.cluster.base.port=25500 \
+# -Dsynchrony.cluster.bind={{ atl_local_ipv4 }} \
+# -Dsynchrony.cluster.impl=hazelcast-btf \
 # -Dcluster.name=Synchrony-Cluster \
 # -Dcluster.join.type={{ atl_synchrony_cluster_type }} \
 # -Dcluster.join.aws.tag.key={{ atl_hazelcast_network_aws_tag_key }} \
