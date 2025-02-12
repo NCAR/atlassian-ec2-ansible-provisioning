@@ -59,12 +59,16 @@
     src: confluence-init.properties.j2
     dest: "{{ atl_product_installation_versioned }}/confluence/WEB-INF/classes/confluence-init.properties"
 
-- name: Create Confluence configuration
-  ansible.builtin.template:
-    src: confluence.cfg.xml.j2
-    dest: "{{ atl_product_home }}/confluence.cfg.xml"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
+#
+# confluence.cfg.xml gets created by the setup wizard, which it's
+# impossible to avoid running on first boot
+#
+# - name: Create Confluence configuration
+#   ansible.builtin.template:
+#     src: confluence.cfg.xml.j2
+#     dest: "{{ atl_product_home }}/confluence.cfg.xml"
+#     owner: "{{ atl_product_user }}"
+#     group: "{{ atl_product_user }}"
 
 - name: Limit permissions on the installer temp directory, recursively
   ansible.builtin.file:
