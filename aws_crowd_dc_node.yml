@@ -16,12 +16,12 @@
     atl_use_system_jdk: true
     atl_download_format: "tarball"
 
-    atl_startup_systemd_params:
-      - "Environment=JDBC_DRIVER={{ atl_db_driver }}"
-      - "Environment=JDBC_DIALECT={{ atl_jdbc_dialect }}"
-      - "Environment=JDBC_USER={{ atl_jdbc_user }}"
-      - "Environment=JDBC_PASSWORD={{ atl_jdbc_password }}"
-      - "Environment=JDBC_URL={{ atl_jdbc_url }}"
+    # atl_startup_systemd_params:
+    #   - "Environment=JDBC_DRIVER={{ atl_db_driver }}"
+    #   - "Environment=JDBC_DIALECT={{ atl_jdbc_dialect }}"
+    #   - "Environment=JDBC_USER={{ atl_jdbc_user }}"
+    #   - "Environment=JDBC_PASSWORD={{ atl_jdbc_password }}"
+    #   - "Environment=JDBC_URL={{ atl_jdbc_url }}"
 
   roles:
     - role: linux_common
