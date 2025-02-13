@@ -32,6 +32,7 @@ atl_installation_base: "/opt/atlassian"
 atl_product_installation_base: "{{ atl_installation_base }}/{{ atl_product_edition }}"
 atl_product_installation_versioned: "{{ atl_product_installation_base }}/{{ atl_product_version }}"
 atl_product_installation_current: "{{ atl_product_installation_base }}/current"
+atl_tomcat_lib_dir: "{{ lookup('env', 'ATL_TOMCAT_LIBDIR') or 'lib' }}"
 atl_installer_temp: "{{ atl_installation_base }}/tmp"
 
 # NOTE: If using the non-installer java we expect to have the full JDK
