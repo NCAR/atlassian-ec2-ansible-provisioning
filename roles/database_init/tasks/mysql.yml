@@ -28,7 +28,7 @@
 - name: Copy the MySQL driver
   copy:
     src: "/tmp/{{ atl_mysql_jdbc_connector }}/{{ atl_mysql_jdbc_connector }}.jar"
-    dest: "{{ atl_product_installation_versioned }}/{{ atl_tomcat_lib_dir }}"
+    dest: "{{ atl_product_installation_versioned }}/{{ atl_tomcat_lib_dir }}/{{ atl_mysql_jdbc_connector }}.jar"
 
 # - name: Create application DB user
 #   mysql_user:
