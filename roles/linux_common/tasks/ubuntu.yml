@@ -6,3 +6,4 @@
       - libxml2-utils
       - git
       - fontconfig
+      - pwgen
