@@ -47,8 +47,6 @@ mysqldump --defaults-file=$mycnf \
 	  --set-gtid-purged=OFF \
 	  --single-transaction \
 	  --triggers \
-	  $database > "${backupdir}/db.sql"
-
-gzip "${backupdir}/db.sql"
+	  $database | gzip > "${backupdir}/db.sql.gz"
 
 rm $mycnf
