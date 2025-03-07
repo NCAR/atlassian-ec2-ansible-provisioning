@@ -6,13 +6,10 @@ backupdir=$1
 src_site=$2
 if test -z $backupdir || ! test -d $backupdir; then
    cat << EOF
-Usage: $0 backup_dir [ src_site ]
+Usage: $0 backup_dir
 
 Restore database and home directory for app "$APP";
 backupdir must contain files home.tgz and db.sql.gz
-
-If src_site is given, replace that with the current baseurl
-FQDN in the database dump.
 
 THE APPLICATION SHOULD BE STOPPED BEFORE RESTORE!
 EOF
@@ -34,8 +31,6 @@ if ! test -e "${backupdir}/db.sql.gz"; then
     exit 1
 fi
 
-homedir="/var/atlassian/application-data/${APP}"
-
 #
 # Restore home directory
 #
@@ -43,17 +38,19 @@ excludes=$(mktemp)
 cat <<EXCLUDES >$excludes
 */confluence.cfg.xml
 */synchrony-args.properties
+./logs/*
 ./temp/*
 EXCLUDES
 
+homedir="/var/atlassian/application-data/${APP}"
 tar -C $homedir -X $excludes-zxf "${backupdir}/home.tgz" .
+chown -R {{ atl_product_user }}:{{ atl_product_user }} $homedir
 rm $excludes
 
 #
 # Restore database
-# FIXME TRANSFORMATIONS
 #
-database=$(grep hibernate.connection.url $homedir/confluence.cfg.xml | sed -e 's/.*\/\(.*\)<.*/\1/')
+database=$(perl -ne '$_ =~ m{jdbc:mysql://.*:\d+/(\w+)} && print $1;' $homedir/confluence.cfg.xml)
 dbserver=$(grep hibernate.connection.url $homedir/confluence.cfg.xml | sed -e 's/.*mysql:\/\/\(.*\):.*/\1/')
 dbuser=$(grep hibernate.connection.username $homedir/confluence.cfg.xml | sed -e 's/.*username">\(.*\)<.*/\1/')
 dbpassword=$(grep hibernate.connection.password $homedir/confluence.cfg.xml | sed -e 's/.*password">\(.*\)<.*/\1/')
@@ -66,11 +63,14 @@ user=$dbuser
 password='$dbpassword'
 MYCNF
 
-if test -z $src_site; then
-    gunzip < "${backupdir}/db.sql.gz" | mysql --defaults-file=$mycnf $database
-else
-    # Change the baseurl FQDN in the dump to our current one on restore
-    fqdn=$(mysql --defaults-file=/tmp/mycnf -sre "use confluence; select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)>.*) && print $1;')
-     gunzip < "${backupdir}/db.sql.gz" |  perl -pe "s/\Q$src_site\E/$fqdn/" | mysql --defaults-file=$mycnf $database
-fi
+# Change the baseurl FQDN in the dump to our current one on restore
+src_site_fqdn=$(cat "${homedir}/SITE_FQDN")
+target_site_fqdn=$(mysql --defaults-file=/tmp/mycnf -sre "use confluence; select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)>.*) && print $1;')
+
+gunzip < "${backupdir}/db.sql.gz" \
+    | perl -pe "s/\Q$src_site_fqdn\E/$target_site_fqdn/" \
+    | perl -pe 's/DEFINER=.*?(?=[* ])/DEFINER=CURRENT_USER/;' \
+    | mysql --defaults-file=$mycnf $database
+
+rm "${homedir}/site_fqdn"
 rm $mycnf

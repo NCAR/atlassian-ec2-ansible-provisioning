@@ -4,23 +4,18 @@
 # GRANT SHOW_ROUTINE ON *.* TO 'confluenceuser'@'%';
 
 APP={{ atl_product_edition }}
-BACKUPROOT=/var/atlassian/application-data/backup
-
-backupdir="${BACKUPROOT}/$(date +'%Y-%m-%dT%H:%M:%S%:z')"
-mkdir -p $backupdir
-echo "Backing up to ${backupdir}/"
-
 homedir="/var/atlassian/application-data/${APP}"
 
-#
-# Backup home directory
-#
-tar -C $homedir --exclude='./logs/*' -zcf "${backupdir}/home.tgz" .
+BACKUPROOT=/var/atlassian/application-data/backup
+backupdir=$BACKUPROOT/$(date +'%Y-%m-%dT%H:%M:%S%:z')
+mkdir -p $backupdir
+echo "Backing up to ${backupdir}/"
 
 #
 # Backup database
 #
-database=$(grep hibernate.connection.url $homedir/confluence.cfg.xml | sed -e 's/.*\/\(.*\)<.*/\1/')
+echo "Backing up database"
+database=$(perl -ne '$_ =~ m{jdbc:mysql://.*:\d+/(\w+)} && print $1;' $homedir/confluence.cfg.xml)
 dbserver=$(grep hibernate.connection.url $homedir/confluence.cfg.xml | sed -e 's/.*mysql:\/\/\(.*\):.*/\1/')
 dbuser=$(grep hibernate.connection.username $homedir/confluence.cfg.xml | sed -e 's/.*username">\(.*\)<.*/\1/')
 dbpassword=$(grep hibernate.connection.password $homedir/confluence.cfg.xml | sed -e 's/.*password">\(.*\)<.*/\1/')
@@ -49,4 +44,13 @@ mysqldump --defaults-file=$mycnf \
 	  --triggers \
 	  $database | gzip > "${backupdir}/db.sql.gz"
 
+site_fqdn=$(mysql --defaults-file=$mycnf -sre "use confluence; select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)<.*) && print $1;')
+
 rm $mycnf
+
+#
+# Backup home directory
+#
+echo "Backing up home directory"
+echo $site_fqdn > "${homedir}/SITE_FQDN"  # Used for DB substitutions on restore
+tar -C $homedir -zcf "${backupdir}/home.tgz" .
