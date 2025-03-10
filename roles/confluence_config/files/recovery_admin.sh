@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# Enable/disable confluence recovery_admin user
+
 ACTION=$1
 
+homedir=/var/atlassian/application-data/confluence
 setenv_file=/opt/atlassian/confluence/current/bin/setenv.sh
 
 recovery_admin_search_line='CATALINA_OPTS="${START_CONFLUENCE_JAVA_OPTS} ${CATALINA_OPTS}"'
@@ -35,6 +38,7 @@ case $ACTION in
 	;;
     *)
 	echo "Usage: $0 [enable|disable]"
+	echo "Enable/disable confluence recovery_admin user."
 	exit 1
 	;;
 esac
