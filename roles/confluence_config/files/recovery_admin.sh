@@ -16,23 +16,23 @@ case $ACTION in
 	#
 	# Enable recovery_admin user in setenv.sh
 	#
-	recovery_passwd=$(fgrep '-Datlassian.recovery.password' $setenv_file | sed -e 's/.*password=\(.*\)[[:space:]].*/\1/')
-	if ! test -z $recovery_password; then
-	    echo "recovery_admin user already enabled; password is: ${recovery_password}"
+	recovery_admin_password=$(fgrep 'atlassian.recovery.password' $setenv_file | sed -e 's/.*password=\(.*\)[[:space:]].*/\1/')
+	if ! test -z $recovery_admin_password; then
+	    echo "recovery_admin user already enabled; password is: ${recovery_admin_password}"
 	else
-	    recovery_admin_passwd=$(pwgen -s 32 1)
+	    recovery_admin_password=$(pwgen -s 32 1)
 	    add_line='CATALINA_OPTS="-Datlassian.recovery.password='$recovery_admin_password' ${CATALINA_OPTS}"'
 	    perl -i -spe 's/(\Q$recovery_admin_search_line\E)/$add_line\n$1/;' -- \
 		 -recovery_admin_search_line="$recovery_admin_search_line" \
 		 -add_line="$add_line" $setenv_file
-	    echo "recovery_admin password is: $recovery_admin_passwd"
+	    echo "recovery_admin password is: $recovery_admin_password"
 	fi
 	;;
     'disable')
 	bandanaval='false'
 
 	#
-	# Enable recovery_admin user in setenv.sh
+	# Disable recovery_admin user in setenv.sh
 	#
 	perl -i -lne 'print unless /\Q-Datlassian.recovery.password=\E/;' $setenv_file
 	;;

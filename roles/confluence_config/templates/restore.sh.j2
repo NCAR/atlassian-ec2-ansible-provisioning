@@ -43,7 +43,8 @@ cat <<EXCLUDES >$excludes
 EXCLUDES
 
 homedir="/var/atlassian/application-data/${APP}"
-tar -C $homedir -X $excludes-zxf "${backupdir}/home.tgz" .
+echo "Restoring home directory"
+tar -C $homedir -X $excludes -zxf "${backupdir}/home.tgz" .
 chown -R {{ atl_product_user }}:{{ atl_product_user }} $homedir
 rm $excludes
 
@@ -65,12 +66,13 @@ MYCNF
 
 # Change the baseurl FQDN in the dump to our current one on restore
 src_site_fqdn=$(cat "${homedir}/SITE_FQDN")
-target_site_fqdn=$(mysql --defaults-file=/tmp/mycnf -sre "use confluence; select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)>.*) && print $1;')
+target_site_fqdn=$(mysql --defaults-file=/tmp/mycnf -sre "use confluence; select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)<.*) && print $1;')
 
+echo "Restoring database"
 gunzip < "${backupdir}/db.sql.gz" \
-    | perl -pe "s/\Q$src_site_fqdn\E/$target_site_fqdn/" \
+    | perl -pe "s/\Q$src_site_fqdn\E/$target_site_fqdn/g" \
     | perl -pe 's/DEFINER=.*?(?=[* ])/DEFINER=CURRENT_USER/;' \
     | mysql --defaults-file=$mycnf $database
 
-rm "${homedir}/site_fqdn"
+rm "${homedir}/SITE_FQDN"
 rm $mycnf
