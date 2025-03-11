@@ -69,10 +69,16 @@ src_site_fqdn=$(cat "${homedir}/SITE_FQDN")
 target_site_fqdn=$(mysql --defaults-file=/tmp/mycnf -sre "use confluence; select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)<.*) && print $1;')
 
 echo "Restoring database"
+# gunzip < "${backupdir}/db.sql.gz" \
+#     | perl -pe "s/\Q$src_site_fqdn\E/$target_site_fqdn/g" \
+#     | perl -pe 's/DEFINER=.*?(?=[* ])/DEFINER=CURRENT_USER/;' \
+#     | mysql --defaults-file=$mycnf $database
+
 gunzip < "${backupdir}/db.sql.gz" \
     | perl -pe "s/\Q$src_site_fqdn\E/$target_site_fqdn/g" \
-    | perl -pe 's/DEFINER=.*?(?=[* ])/DEFINER=CURRENT_USER/;' \
-    | mysql --defaults-file=$mycnf $database
+    | perl -pe 's/DEFINER=.*?(?=[* ])/DEFINER=CURRENT_USER/;' >  "${backupdir}/db_transformed.sql"
+
+mysql --defaults-file=$mycnf < "${backupdir}/db_transformed.sql"
 
 rm "${homedir}/SITE_FQDN"
 rm $mycnf
