@@ -66,7 +66,7 @@ MYCNF
 
 # Change the baseurl FQDN in the dump to our current one on restore
 src_site_fqdn=$(cat "${homedir}/SITE_FQDN")
-target_site_fqdn=$(mysql --defaults-file=/tmp/mycnf -sre "use confluence; select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)<.*) && print $1;')
+target_site_fqdn=$(mysql --defaults-file=$mycnf -sre "use confluence; select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)<.*) && print $1;')
 
 echo "Restoring database"
 # gunzip < "${backupdir}/db.sql.gz" \
