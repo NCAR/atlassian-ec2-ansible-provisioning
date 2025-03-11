@@ -43,23 +43,9 @@ case $ACTION in
 	;;
 esac
 
-#
-# Enable auth fallback URL
-#
-database=$(grep hibernate.connection.url $homedir/confluence.cfg.xml | sed -e 's/.*\/\(.*\)<.*/\1/')
-dbserver=$(grep hibernate.connection.url $homedir/confluence.cfg.xml | sed -e 's/.*mysql:\/\/\(.*\):.*/\1/')
-dbuser=$(grep hibernate.connection.username $homedir/confluence.cfg.xml | sed -e 's/.*username">\(.*\)<.*/\1/')
-dbpassword=$(grep hibernate.connection.password $homedir/confluence.cfg.xml | sed -e 's/.*password">\(.*\)<.*/\1/')
+mycnf=$(/usr/local/bin/create_mycnf.sh)
 
-mycnf=$(mktemp)
-cat <<EOF >$mycnf
-[client]
-host=$dbserver
-user=$dbuser
-password='$dbpassword'
-EOF
-
-mysql --defaults-file=$mycnf -e "use ${database}; UPDATE BANDANA SET BANDANAVALUE='<string>${bandanaval}</string>' WHERE BANDANAKEY='com.atlassian.plugins.authentication.sso.config.enable-authentication-fallback';"
+mysql --defaults-file=$mycnf -e "UPDATE BANDANA SET BANDANAVALUE='<string>${bandanaval}</string>' WHERE BANDANAKEY='com.atlassian.plugins.authentication.sso.config.enable-authentication-fallback';"
 
 rm $mycnf
 
