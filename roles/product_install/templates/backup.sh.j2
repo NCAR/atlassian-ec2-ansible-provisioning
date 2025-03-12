@@ -3,10 +3,7 @@
 # GRANT RELOAD, PROCESS ON *.* TO 'confluenceuser'@'%';
 # GRANT SHOW_ROUTINE ON *.* TO 'confluenceuser'@'%';
 
-APP={{ atl_product_edition }}
-homedir="/var/atlassian/application-data/${APP}"
-
-BACKUPROOT=/var/atlassian/application-data/backup
+BACKUPROOT="/var/atlassian/application-data/backup"
 backupdir=$BACKUPROOT/$(date +'%Y-%m-%dT%H:%M:%S%:z')
 mkdir -p $backupdir
 echo "Backing up to ${backupdir}/"
@@ -16,6 +13,7 @@ echo "Backing up to ${backupdir}/"
 #
 echo "Backing up database"
 mycnf=$(/usr/local/bin/create_mycnf.sh)
+sed -ie '/^database/d' $mycnf # Stupid mysqldump
 
 mysqldump --defaults-file=$mycnf \
 	  --add-drop-table \
@@ -31,9 +29,7 @@ mysqldump --defaults-file=$mycnf \
 	  --set-gtid-purged=OFF \
 	  --single-transaction \
 	  --triggers \
-	  $database | gzip > "${backupdir}/db.sql.gz"
-
-site_fqdn=$(mysql --defaults-file=$mycnf -sre "select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)<.*) && print $1;')
+	  {{ atl_jdbc_db_name }} | gzip > "${backupdir}/db.sql.gz"
 
 rm $mycnf
 
@@ -41,5 +37,6 @@ rm $mycnf
 # Backup home directory
 #
 echo "Backing up home directory"
-echo $site_fqdn > "${homedir}/SITE_FQDN"  # Used for DB substitutions on restore
+homedir="/var/atlassian/application-data/{{ atl_product_edition }}"
+echo '{{ atl_proxy_name }}' > "${homedir}/SITE_FQDN"  # Used for DB substitutions on restore
 tar -C $homedir -zcf "${backupdir}/home.tgz" .
