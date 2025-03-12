@@ -30,6 +30,14 @@
     src: "/tmp/{{ atl_mysql_jdbc_connector }}/{{ atl_mysql_jdbc_connector }}.jar"
     dest: "{{ atl_product_installation_versioned }}/{{ atl_tomcat_lib_dir }}/{{ atl_mysql_jdbc_connector }}.jar"
 
+- name: Install create_mycnf script
+  ansible.builtin.copy:
+    src: create_mycnf.sh
+    dest: "/usr/local/bin/create_mycnf.sh"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+    
 # - name: Create application DB user
 #   mysql_user:
 #     login_host: "{{ atl_db_host }}"

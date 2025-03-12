@@ -162,14 +162,6 @@
 - name: Install & configure Ubuntu/Debian-specific language fonts
   ansible.builtin.include_tasks: "{{ ansible_distribution | lower }}_fonts.yml"
   when: ansible_distribution | lower != 'amazon'
-
-- name: Install create_mycnf script
-  ansible.builtin.copy:
-    src: create_mycnf.sh
-    dest: "/usr/local/bin/create_mycnf.sh"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-    mode: '0500'
   
 - name: Install backup script
   ansible.builtin.template:
