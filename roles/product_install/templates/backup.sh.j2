@@ -13,7 +13,6 @@ echo "Backing up to ${backupdir}/"
 #
 echo "Backing up database"
 mycnf=$(/usr/local/bin/create_mycnf.sh)
-sed -ie '/^database/d' $mycnf # Stupid mysqldump
 
 mysqldump --defaults-file=$mycnf \
 	  --add-drop-table \

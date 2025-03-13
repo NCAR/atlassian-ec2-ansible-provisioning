@@ -44,8 +44,6 @@ case $ACTION in
 esac
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)
-
 mysql --defaults-file=$mycnf -e "UPDATE BANDANA SET BANDANAVALUE='<string>${bandanaval}</string>' WHERE BANDANAKEY='com.atlassian.plugins.authentication.sso.config.enable-authentication-fallback';"
-
 rm $mycnf
 

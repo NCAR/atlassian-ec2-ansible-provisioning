@@ -24,6 +24,8 @@ cat <<MYCNF >$mycnf
 host=$ATL_DB_HOST
 user=$dbuser
 password='$dbpassword'
+
+[mysql]
 database=$ATL_JDBC_DB_NAME
 MYCNF
 

@@ -57,7 +57,7 @@ echo "Restoring database"
 gunzip < "${backupdir}/db.sql.gz" \
     | perl -pe "s/\Q$src_site_fqdn\E/$target_site_fqdn/g" \
     | perl -pe 's/DEFINER=.*?(?=[* ])/DEFINER=CURRENT_USER/;' \
-    | mysql --defaults-file=$mycnf $database
+    | mysql --defaults-file=$mycnf
 
 ## Save transformed db dump for debugging
 #

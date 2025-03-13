@@ -179,12 +179,5 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
-- name: Install drop_all_tables script
-  ansible.builtin.copy:
-    src: drop_all_tables.sh
-    dest: "/usr/local/bin/drop_all_tables.sh"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-    mode: '0500'
-    
+
 
