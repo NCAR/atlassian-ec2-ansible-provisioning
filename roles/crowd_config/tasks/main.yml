@@ -132,14 +132,14 @@
     group: "{{ atl_product_user }}"
   changed_when: false  # For Molecule idempotence check
 
-- name: Symlink Crowd shared home directory
-  ansible.builtin.file:
-    src: "{{ atl_product_home_shared }}"
-    dest: "{{ atl_product_home }}/shared"
-    state: link
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-  changed_when: false  # For Molecule idempotence check
+# - name: Symlink Crowd shared home directory
+#   ansible.builtin.file:
+#     src: "{{ atl_product_home_shared }}"
+#     dest: "{{ atl_product_home }}/shared"
+#     state: link
+#     owner: "{{ atl_product_user }}"
+#     group: "{{ atl_product_user }}"
+#   changed_when: false  # For Molecule idempotence check
 
 # - name: Assert baseurl to same as atl_proxy_name
 #   community.postgresql.postgresql_query:
