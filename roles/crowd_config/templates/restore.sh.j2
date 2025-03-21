@@ -48,12 +48,21 @@ rm $excludes
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 
+#
 # Change the baseurl FQDN in the dump to our current one on restore
+#
 src_site_fqdn=$(cat "${homedir}/SITE_FQDN")
+if [ -z $src_site_fqdn ]; then
+    echo "Empty or missing file \"${homedir}/SITE_FQDN\"; don't know source FQDN for processing DB dump"
+    exit 1
+fi
+
 target_site_fqdn=$(mysql --defaults-file=$mycnf -sre "select property_value from cwd_property where property_name = 'base.url';" | perl -ne 'm(\Qhttps://\E(.*)) && print $1;')
 
+# On prem sites use $FQDN/crowd for baseurl; we want to change that to just $FQDN
 echo "Restoring database"
 gunzip < "${backupdir}/db.sql.gz" \
+    | perl -pe "s/$src_site_fqdn\/crowd/$target_site_fqdn/g" \
     | perl -pe "s/\Q$src_site_fqdn\E/$target_site_fqdn/g" \
     | perl -pe 's/DEFINER=.*?(?=[* ])/DEFINER=CURRENT_USER/;' \
     | mysql --defaults-file=$mycnf
