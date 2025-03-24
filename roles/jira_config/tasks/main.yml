@@ -133,6 +133,22 @@
     group: "{{ atl_product_user }}"
   changed_when: false  # For Molecule idempotence check
 
+- name: Install restore script
+  ansible.builtin.template:
+    src: restore.sh.j2
+    dest: "/usr/local/bin/restore.sh"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+    
+- name: Install recovery_admin script
+  ansible.builtin.copy:
+    src: recovery_admin.sh
+    dest: "/usr/local/bin/recovery_admin.sh"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+  
 # - name: Assert baseurl to same as atl_proxy_name
 #   community.postgresql.postgresql_query:
 #     login_host: "{{ atl_db_host }}"

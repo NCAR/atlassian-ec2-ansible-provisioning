@@ -14,6 +14,10 @@ case $ACTION in
 	#
 	# Enable recovery_admin user in setenv.sh
 	#
+	setenv_backup=$(dirname $setenv_file)/$(basename $setenv_file).$(date --iso-8601=seconds)
+	cp $setenv_file $setenv_backup
+	echo "setenv.sh file has been backed up to \"$setenv_backup\""
+	
 	recovery_admin_password=$(fgrep 'atlassian.recovery.password' $setenv_file | sed -e 's/.*password=\(.*\)[[:space:]].*/\1/')
 	if ! test -z $recovery_admin_password; then
 	    echo "Recovery admin user already enabled; password is: ${recovery_admin_password}"
