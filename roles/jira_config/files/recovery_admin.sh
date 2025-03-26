@@ -18,11 +18,16 @@ recovery_admin_search_re='^JVM_SUPPORT_RECOMMENDED_ARGS=.*$'
 
 case $ACTION in
     'enable')
+	# Toggle internal directory on, external off
+	# REF: https://confluence.atlassian.com/jirakb/disabling-a-directory-via-the-jira-database-338366836.html
+	mycnf=$(/usr/local/bin/create_mycnf.sh)
+	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 1 WHERE lower_directory_name LIKE '%internal%';"
+	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 0 WHERE lower_directory_name NOT LIKE '%internal%';"
+	rm $mycnf
+	
 	#
 	# Enable recovery_admin user in setenv.sh
 	#
-	cwd_directory_active=0
-
 	setenv_backup=$(dirname $setenv_file)/$(basename $setenv_file).$(date --iso-8601=seconds)
 	cp $setenv_file $setenv_backup
 	echo "setenv.sh file has been backed up to \"$setenv_backup\""
@@ -40,6 +45,13 @@ case $ACTION in
 	fi
 	;;
     'disable')
+	# Toggle internal directory off, external on
+	# WARNING this is NOT necessarily setting it back to its original state
+	mycnf=$(/usr/local/bin/create_mycnf.sh)
+	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 0 WHERE lower_directory_name LIKE '%internal%';"
+	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 1 WHERE lower_directory_name NOT LIKE '%internal%';"
+	rm $mycnf
+	
 	#
 	# Disable recovery_admin user in setenv.sh
 	#
@@ -56,8 +68,4 @@ case $ACTION in
 	;;
 esac
 
-# REF: https://confluence.atlassian.com/jirakb/disabling-a-directory-via-the-jira-database-338366836.html
-mycnf=$(/usr/local/bin/create_mycnf.sh)
-mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = $cwd_directory_active WHERE id != 1";
-rm $mycnf
 
