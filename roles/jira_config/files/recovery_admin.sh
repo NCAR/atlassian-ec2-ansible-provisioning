@@ -23,6 +23,11 @@ case $ACTION in
 	mycnf=$(/usr/local/bin/create_mycnf.sh)
 	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 1 WHERE lower_directory_name LIKE '%internal%';"
 	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 0 WHERE lower_directory_name NOT LIKE '%internal%';"
+
+	# Toggle enable-authentication-fallback on
+	# REF: https://confluence.atlassian.com/jirakb/bypass-saml-authentication-for-jira-data-center-869009810.html
+	mysql --defaults-file=$mycnf -e "UPDATE propertystring SET propertyvalue = 'true' WHERE ID = (SELECT ID FROM propertyentry WHERE PROPERTY_KEY LIKE 'com.atlassian.plugins.authentication.sso.config.enable-authentication-fallback');"
+	
 	rm $mycnf
 	
 	#
@@ -50,6 +55,11 @@ case $ACTION in
 	mycnf=$(/usr/local/bin/create_mycnf.sh)
 	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 0 WHERE lower_directory_name LIKE '%internal%';"
 	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 1 WHERE lower_directory_name NOT LIKE '%internal%';"
+
+	# Toggle enable-authentication-fallback off
+	# REF: https://confluence.atlassian.com/jirakb/bypass-saml-authentication-for-jira-data-center-869009810.html
+	mysql --defaults-file=$mycnf -e "UPDATE propertystring SET propertyvalue = 'false' WHERE ID = (SELECT ID FROM propertyentry WHERE PROPERTY_KEY LIKE 'com.atlassian.plugins.authentication.sso.config.enable-authentication-fallback');"
+
 	rm $mycnf
 	
 	#
