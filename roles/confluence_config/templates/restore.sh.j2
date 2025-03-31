@@ -65,6 +65,15 @@ if ! test -z $attachments_bucket; then
     tar -C $attachments_tmpdir -zxf "${backupdir}/home.tgz" './attachments/v4/'
     aws s3 sync $attachments_tmpdir "s3://${attachments_bucket}/confluence/attachments/v4" --delete
     rm -rf $attachments_tmpdir
+    # Add line to setenv.sh
+    setenv_file=/opt/atlassian/confluence/current/bin/setenv.sh
+    if ! grep -qF 'confluence.filestore.attachments.s3.bucket.name' $setenv_file; then
+	search_line='CATALINA_OPTS="${START_CONFLUENCE_JAVA_OPTS} ${CATALINA_OPTS}"'
+	add_line='CATALINA_OPTS="-Dconfluence.filestore.attachments.s3.bucket.name='$attachments_bucket' -Dconfluence.filestore.attachments.s3.bucket.region='{{ atl_aws_region }}' ${CATALINA_OPTS}"'
+	perl -i -spe 's/(\Q$search_line\E)/$add_line\n$1/;' -- \
+	     -search_line="$search_line" \
+	     -add_line="$add_line" $setenv_file
+    fi
 
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)
