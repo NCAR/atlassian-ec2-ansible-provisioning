@@ -3,6 +3,10 @@
 APP=confluence
 backupdir=$1
 
+# Where we extract attachments to if we're upload to s3
+# Might need to be large
+ATTACHMENTS_TMPDIR='/var/atlassian/application-data'
+
 if test -z $backupdir || ! test -d $backupdir; then
    cat << EOF
 Usage: $0 backup_dir
@@ -41,11 +45,27 @@ cat <<EXCLUDES >$excludes
 ./temp/*
 EXCLUDES
 
+attachments_bucket='{{ atl_attachments_bucket }}'
+if ! test -z $attachments_bucket; then
+echo './attachments/v4/*' >> $excludes
+fi
+
 homedir="/var/atlassian/application-data/${APP}"
 echo "Restoring home directory"
 tar -C $homedir -X $excludes -zxf "${backupdir}/home.tgz" .
 chown -R {{ atl_product_user }}:{{ atl_product_user }} $homedir
 rm $excludes
+
+#
+# Upload attachments to S3 if we're using that
+#
+if ! test -z $attachments_bucket; then
+    echo "Extracting attachments for upload to s#"
+    attachments_tmpdir=$(mktemp -d -p $ATTACHMENTS_TMPDIR)
+    tar -C $attachments_tmpdir -zxf "${backupdir}/home.tgz" './attachments/v4/'
+    aws s3 sync $attachments_tmpdir "s3://${attachments_bucket}/confluence/attachments/v4" --delete
+    rm -rf $attachments_tmpdir
+
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 
