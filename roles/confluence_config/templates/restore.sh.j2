@@ -60,11 +60,12 @@ rm $excludes
 # Upload attachments to S3 if we're using that
 #
 if ! test -z $attachments_bucket; then
-    echo "Extracting attachments for upload to s#"
+    echo "Extracting attachments for upload to s3"
     attachments_tmpdir=$(mktemp -d -p $ATTACHMENTS_TMPDIR)
     tar -C $attachments_tmpdir -zxf "${backupdir}/home.tgz" './attachments/v4/'
     aws s3 sync $attachments_tmpdir "s3://${attachments_bucket}/confluence/attachments/v4" --delete
     rm -rf $attachments_tmpdir
+fi
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 
