@@ -36,12 +36,14 @@ fi
 
 #
 # Restore home directory
+# FIXME for incremental, we probably also need to exclude ./authentication-plugin-keys
 #
 excludes=$(mktemp)
 cat <<EXCLUDES >$excludes
 */confluence.cfg.xml
 */synchrony-args.properties
-./keys/*
+*/keys/*
+*/secrets-config.yaml
 ./logs/*
 ./temp/*
 EXCLUDES
