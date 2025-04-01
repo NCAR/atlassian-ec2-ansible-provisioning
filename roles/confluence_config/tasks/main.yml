@@ -43,6 +43,11 @@
     - 'Xmx'
     - 'Xms'
 
+- name: Use s3 for attachments when given an attachments bucket
+  ansible.builtin.set_fact:
+    atl_catalina_opts: "{{ atl_catalina_opts }} -Dconfluence.filestore.attachments.s3.bucket.name='{{ atl_attachments_bucket }}' -Dconfluence.filestore.attachments.s3.bucket.region='{{ atl_aws_region }}'"
+  when: atl_attachments_bucket != ''
+    
 - name: Set the Tomcat environment
   ansible.builtin.lineinfile:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
