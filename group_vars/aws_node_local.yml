@@ -171,4 +171,4 @@ atl_rds_multi_az: "{{ lookup('env', 'ATL_RDS_MULTI_AZ') }}"
 atl_rds_subnet_group_name: "{{ lookup('env', 'ATL_RDS_SUBNET_GROUP_NAME') }}"
 atl_rds_security_group: "{{ lookup('env', 'ATL_RDS_SECURITY_GROUP') }}"
 
-atl_attachments_bucket: "{{ lookup('env', 'ATL_ATTACHMENTS_BUCKET') of '' }}"
+atl_attachments_bucket: "{{ lookup('env', 'ATL_ATTACHMENTS_BUCKET') }}"
