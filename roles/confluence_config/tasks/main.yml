@@ -14,20 +14,20 @@
     - "{{ atl_product_shared_plugins }}"
   changed_when: false  # For Molecule idempotence check
 
-# Create symlink to force single (unclustered) Confluence to store
-# shared-data and attachments in the shared drive.
-- name: Symlink local attachments to shared storage
-  ansible.builtin.file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    force: false
-    state: link
-    mode: 0750
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-  loop:
-    - {src: "{{ atl_product_home_shared }}/", dest: "{{ atl_product_home }}/shared-home"}
-    - {src: "{{ atl_product_home_shared }}/attachments/", dest: "{{ atl_product_home }}/attachments"}
+# # Create symlink to force single (unclustered) Confluence to store
+# # shared-data and attachments in the shared drive.
+# - name: Symlink local attachments to shared storage
+#   ansible.builtin.file:
+#     src: "{{ item.src }}"
+#     dest: "{{ item.dest }}"
+#     force: false
+#     state: link
+#     mode: 0750
+#     owner: "{{ atl_product_user }}"
+#     group: "{{ atl_product_user }}"
+#   loop:
+#     - {src: "{{ atl_product_home_shared }}/", dest: "{{ atl_product_home }}/shared-home"}
+#     - {src: "{{ atl_product_home_shared }}/attachments/", dest: "{{ atl_product_home }}/attachments"}
 
 - name: Create Tomcat server config
   ansible.builtin.template:

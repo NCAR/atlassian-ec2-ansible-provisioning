@@ -13,7 +13,7 @@ java_major_version: "17"
 postgres_version: "9.6"
 git_version: "2.14.4"
 #atl_shared_mountpoint: "/media/atl"
-atl_shared_mountpoint: "{{ atl_product_home }}"
+#atl_shared_mountpoint: "{{ atl_product_home }}"
 
 
 # Simplify NFS mapping by using a fixed UID
@@ -22,12 +22,13 @@ atl_product_user_uid: "{{ lookup('env', 'ATL_PRODUCT_USER_UID') or '2001' }}"
 # FIXME: Some of these should be overridden from the environment?
 atl_home_base: "/var/atlassian/application-data"
 atl_product_home: "{{ atl_home_base }}/{{ atl_product_family }}"
-atl_product_shared_home_map:
-  confluence: "confluence/shared-home"
-  jira: "jira/shared"
-  stash: "bitbucket/shared"
-  crowd: "crowd/shared"
-atl_product_home_shared: "{{ atl_shared_mountpoint }}/{{ atl_product_shared_home_map[atl_product_family] }}"
+# atl_product_shared_home_map:
+#   confluence: "confluence/shared-home"
+#   jira: "jira/shared"
+#   stash: "bitbucket/shared"
+#   crowd: "crowd/shared"
+#atl_product_home_shared: "{{ atl_shared_mountpoint }}/{{ atl_product_shared_home_map[atl_product_family] }}"
+atl_product_home_shared:  "{{ atl_product_home }}/shared"
 atl_product_shared_plugins: "{{ atl_product_home_shared }}/plugins/installed-plugins"
 
 atl_installation_base: "/opt/atlassian"
