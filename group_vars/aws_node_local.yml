@@ -13,7 +13,7 @@ java_major_version: "17"
 postgres_version: "9.6"
 git_version: "2.14.4"
 #atl_shared_mountpoint: "/media/atl"
-#atl_shared_mountpoint: "{{ atl_product_home }}"
+atl_shared_mountpoint: "{{ atl_product_home }}"
 
 
 # Simplify NFS mapping by using a fixed UID
