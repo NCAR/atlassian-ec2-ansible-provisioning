@@ -44,6 +44,17 @@
     - 'JVM_MINIMUM_MEMORY'
     - 'JVM_MAXIMUM_MEMORY'
 
+- name: Use s3 for attachments when given an attachments bucket
+  ansible.builtin.template:
+    src:  filestore-config.xml.j2
+    dest: "{{ atl_product_home }}/filestore-config.xml"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0440'
+  when:
+    - atl_attachments_bucket is defined
+
+    
 - name: Set Jira home directory
   ansible.builtin.lineinfile:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"

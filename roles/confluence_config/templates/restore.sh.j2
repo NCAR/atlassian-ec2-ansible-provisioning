@@ -5,7 +5,7 @@ backupdir=$1
 
 # Where we extract attachments to if we're upload to s3
 # Might need to be large
-ATTACHMENTS_TMPDIR='/var/atlassian/application-data'
+S3_TMPDIR='/var/atlassian/application-data'
 
 if test -z $backupdir || ! test -d $backupdir; then
    cat << EOF
@@ -65,10 +65,11 @@ rm $excludes
 #
 if ! test -z $attachments_bucket; then
     echo "Extracting attachments for upload to s3"
-    attachments_tmpdir=$(mktemp -d -p $ATTACHMENTS_TMPDIR)
-    tar -C $attachments_tmpdir -zxf "${backupdir}/home.tgz" './attachments/v4/'
-    aws s3 sync $attachments_tmpdir "s3://${attachments_bucket}/confluence/attachments/v4" --delete
-    rm -rf $attachments_tmpdir
+    tmpdir=$(mktemp -d -p $S3_TMPDIR)
+    tar -C $tmpdir -zxf "${backupdir}/home.tgz" './attachments/v4/'
+    echo "Syncing attachments to S3"
+    aws s3 sync $tmpdir "s3://${attachments_bucket}/confluence/attachments/v4" --delete
+    rm -rf $tmpdir
 fi
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)

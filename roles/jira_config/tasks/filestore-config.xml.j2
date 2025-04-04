@@ -1,0 +1,15 @@
+<?xml version="1.1" ?>
+<filestore-config>
+  <filestores>
+    <s3-filestore id="s3Filestore">
+      <config>
+        <bucket-name>{{ atl_attachments_bucket }}</bucket-name>
+        <region>{{ atl_aws_region }}</region>
+      </config>
+    </s3-filestore>
+  </filestores>
+  <associations>
+    <association target="avatars" file-store="s3Filestore" />
+    <association target="attachments" file-store="s3Filestore" />
+  </associations>
+</filestore-config>

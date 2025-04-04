@@ -3,6 +3,10 @@
 APP=jira
 backupdir=$1
 
+# Where we extract attachments and avatars to if we're upload to s3
+# Might need to be large
+S3_TMPDIR='/var/atlassian/application-data'
+
 if test -z $backupdir || ! test -d $backupdir; then
    cat << EOF
 Usage: $0 backup_dir
@@ -36,14 +40,39 @@ fi
 excludes=$(mktemp)
 cat <<EXCLUDES >$excludes
 */dbconfig.xml
+*/keys/*
+*/filestore-config.yaml
+*/secrets-config.yaml
+*/secured/*
 ./log/*
 EXCLUDES
+
+attachments_bucket='{{ atl_attachments_bucket }}'
+if ! test -z $attachments_bucket; then
+    echo './data/attachments/*' >> $excludes
+    echo './data/avatars/*' >> $excludes
+fi
 
 homedir="/var/atlassian/application-data/${APP}"
 echo "Restoring home directory"
 tar -C $homedir -X $excludes -zxf "${backupdir}/home.tgz" .
 chown -R {{ atl_product_user }}:{{ atl_product_user }} $homedir
 rm $excludes
+
+
+#
+# Upload attachments to S3 if we're using that
+#
+if ! test -z $attachments_bucket; then
+    for t in attachments avatars; do
+	echo "Extracting $t for upload to s3"
+	tmpdir=$(mktemp -d -p $S3_TMPDIR)
+	tar -C $tmpdir -zxf "${backupdir}/home.tgz" "./${t}/"
+	echo "Syncing ${t} to S3"
+	aws s3 sync $tmpdir "s3://${attachments_bucket}/${t}" --delete
+	rm -rf $tmpdir
+    done
+fi
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 
