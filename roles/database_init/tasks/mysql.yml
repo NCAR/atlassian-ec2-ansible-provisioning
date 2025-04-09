@@ -49,13 +49,13 @@
 - name: Download mysqlsh
   ansible.builtin.get_url:
     headers:
-      user-agent: curl/7.81.0 # Mysql doesn't like ansible for some reason
+      user-agent: curl/7.81.0
     url: "{{ atl_mysqlsh_url }}"
     dest: /tmp
     
- - name: Install mysqlsh for backups
-   ansible.builtin.apt:
-     deb: "/tmp/{{ atl_mysqlsh_url | basename }}"
+- name: Install mysqlsh for backups
+  ansible.builtin.apt:
+    deb: "/tmp/{{ atl_mysqlsh_url | basename }}"
 
     
 # - name: Create application DB user
