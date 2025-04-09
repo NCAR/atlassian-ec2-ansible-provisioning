@@ -1,41 +1,29 @@
 #!/bin/bash
 
-# GRANT RELOAD, PROCESS ON *.* TO 'confluenceuser'@'%';
-# GRANT SHOW_ROUTINE ON *.* TO 'confluenceuser'@'%';
-
-BACKUPROOT="/var/atlassian/application-data/backup"
-backupdir=$BACKUPROOT/$(date +'%Y-%m-%dT%H:%M:%S%:z')
-mkdir -p $backupdir
-echo "Backing up to ${backupdir}/"
-
 #
-# Backup database
+# FIXME datestamp backup?
+# home directory + s3 attachments/avatars
 #
-echo "Backing up database"
+
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 
-mysqldump --defaults-file=$mycnf \
-	  --add-drop-table \
-	  --create-options \
-	  --disable-keys \
-	  --events \
-	  --extended-insert \
-	  --max_allowed_packet=512M \
-	  --quick \
-	  --quote-names \
-	  --routines \
-	  --set-charset \
-	  --set-gtid-purged=OFF \
-	  --single-transaction \
-	  --triggers \
-	  {{ atl_jdbc_db_name }} | gzip > "${backupdir}/db.sql.gz"
+/usr/bin/mysqlsh --defaults-file=$mycnf <<EOF
+
+util.dumpSchemas(
+  [ "{{ atl_jdbc_db_name }}" ],
+  "{{ atl_proxy_name }}/backups/{{ atl_jdbc_db_name }}",
+  {
+    s3BucketName: "{{ atl_backup_bucket }}",
+    compatibility: [ "strip_definers" ]
+  }
+)
+
+EOF
 
 rm $mycnf
 
+
+
+#  util.dumpInstance("test",{s3bucketName: "Bucket001", threads: 4, 
+#        compatibility: ["strip_restricted_grants", "strip_definers", "ignore_missing_pks"]})
 #
-# Backup home directory
-#
-echo "Backing up home directory"
-homedir="/var/atlassian/application-data/{{ atl_product_edition }}"
-echo '{{ atl_proxy_name }}' > "${homedir}/SITE_FQDN"  # Used for DB substitutions on restore
-tar -C $homedir -zcf "${backupdir}/home.tgz" .

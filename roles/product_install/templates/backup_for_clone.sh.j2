@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# GRANT RELOAD, PROCESS ON *.* TO 'confluenceuser'@'%';
+# GRANT SHOW_ROUTINE ON *.* TO 'confluenceuser'@'%';
+
+BACKUPROOT="/var/atlassian/application-data/backup"
+backupdir=$BACKUPROOT/$(date +'%Y-%m-%dT%H:%M:%S%:z')
+mkdir -p $backupdir
+echo "Backing up to ${backupdir}/"
+
+#
+# Backup database
+#
+echo "Backing up database"
+mycnf=$(/usr/local/bin/create_mycnf.sh)
+
+mysqldump --defaults-file=$mycnf \
+	  --add-drop-table \
+	  --create-options \
+	  --disable-keys \
+	  --events \
+	  --extended-insert \
+	  --max_allowed_packet=512M \
+	  --quick \
+	  --quote-names \
+	  --routines \
+	  --set-charset \
+	  --set-gtid-purged=OFF \
+	  --single-transaction \
+	  --triggers \
+	  {{ atl_jdbc_db_name }} | gzip > "${backupdir}/db.sql.gz"
+
+rm $mycnf
+
+#
+# Backup home directory
+#
+echo "Backing up home directory"
+homedir="/var/atlassian/application-data/{{ atl_product_edition }}"
+echo '{{ atl_proxy_name }}' > "${homedir}/SITE_FQDN"  # Used for DB substitutions on restore
+tar -C $homedir -zcf "${backupdir}/home.tgz" .

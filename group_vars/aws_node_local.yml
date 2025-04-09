@@ -129,7 +129,6 @@ atl_jdbc_db_name: "{{ lookup('env', 'ATL_JDBC_DB_NAME') }}"
 atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', lookup('env', 'ATL_DB_CREDENTIAL_SECRET_ARN'), on_denied='warn')}}"
 atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
 atl_jdbc_password: "{{ atl_jdbc_credential | json_query('password') }}"
-
 atl_jdbc_encoding: "{{ lookup('env', 'ATL_JDBC_ENCODING') or 'UTF-8' }}"
 atl_jdbc_collation: "{{ lookup('env', 'ATL_JDBC_COLLATION') or 'en_US.UTF-8' }}"
 atl_jdbc_ctype: "{{ lookup('env', 'ATL_JDBC_CTYPE') or 'en_US.UTF-8' }}"
@@ -142,6 +141,7 @@ atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port
 
 atl_mysql_jdbc_connector: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR') }}"
 atl_mysql_jdbc_connector_url: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR_URL') }}"
+atl_mysqlsh_url: "{{ lookup('env', 'ATL_MYSQLSH_URL') }}"
 
 atl_jvm_heap: "{{ lookup('env', 'ATL_JVM_HEAP') or '2048m' }}"
 atl_jvm_opts: "{{ lookup('env', 'ATL_JVM_OPTS') or '' }}"
@@ -179,3 +179,4 @@ atl_rds_subnet_group_name: "{{ lookup('env', 'ATL_RDS_SUBNET_GROUP_NAME') }}"
 atl_rds_security_group: "{{ lookup('env', 'ATL_RDS_SECURITY_GROUP') }}"
 
 atl_attachments_bucket: "{{ lookup('env', 'ATL_ATTACHMENTS_BUCKET') }}"
+atl_backup_bucket:  "{{ lookup('env', 'ATL_BACKUP_BUCKET') }}"

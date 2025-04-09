@@ -46,6 +46,10 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
+- name: Install mysqlsh for backups
+  ansible.builtin.apt:
+    deb: "{{ atl_mysqlsh_url }}"
+
     
 # - name: Create application DB user
 #   mysql_user:
