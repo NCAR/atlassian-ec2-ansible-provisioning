@@ -5,25 +5,53 @@
 # home directory + s3 attachments/avatars
 #
 
+# Whatever API mysqlsh uses needs these even though the AWS CLI works
+# with just the instance role
+# FIXME there are different versions of the whole metadata interface,
+# we should use the newest
+instance_role=$(curl curl http://169.254.169.254/latest/meta-data/iam/security-credentials)
+creds=$(curl "http://169.254.169.254/latest/meta-data/iam/security-credentials/${instance_role}")
+export AWS_SESSION_TOKEN=$(echo $creds | jq ".Token")
+export AWS_ACCESS_KEY_ID=$(echo $creds | jq ".AccessKeyId")
+export AWS_SECRET_ACCESS_KEY=$(echo $creds | jq ".SecretAccessKey")
+
+export BACKUP_PREFIX="{{ atl_proxy_name }}/backups"
+
+#
+# Backup the database to S3 with mysqlsh
+# FIXME check options, compression etc
+#
 mycnf=$(/usr/local/bin/create_mycnf.sh)
-
 /usr/bin/mysqlsh --defaults-file=$mycnf <<EOF
-
 util.dumpSchemas(
   [ "{{ atl_jdbc_db_name }}" ],
-  "{{ atl_proxy_name }}/backups/{{ atl_jdbc_db_name }}",
+  "${BACKUP_PREFIX}/database/{{ atl_jdbc_db_name }}",
   {
     s3BucketName: "{{ atl_backup_bucket }}",
     compatibility: [ "strip_definers" ]
   }
 )
-
 EOF
-
 rm $mycnf
 
-
-
-#  util.dumpInstance("test",{s3bucketName: "Bucket001", threads: 4, 
-#        compatibility: ["strip_restricted_grants", "strip_definers", "ignore_missing_pks"]})
 #
+# Backup home directory
+# We use the /var/atlassian/application-data mountpoint because we
+# might need a lot of space
+#
+export TMPDIR="/var/atlassian/application-data"
+test -d $TMPDIR || mkdir -p $TMPDIR
+tmpdir=$(mktemp)
+homedir="/var/atlassian/application-data/{{ atl_product_edition }}"
+backupfile="${tmpdir}/home.tgz"
+tar -C $homedir -zcf $backupfile .
+aws s3 cp $backupfile "s3://{{ atl_backup_bucket }}/${BACKUP_PREFIX}/"
+rm $backupfile
+
+#
+# Backup attachments/avatars
+# s3 sync?
+#
+
+
+
