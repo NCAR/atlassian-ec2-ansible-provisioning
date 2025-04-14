@@ -1,4 +1,0 @@
----
-
-atl_diy_backup_repo: "https://bitbucket.org/atlassianlabs/atlassian-bitbucket-diy-backup.git"
-atl_diy_backup_dir: "{{ atl_installation_base }}/bitbucket-diy-backup"

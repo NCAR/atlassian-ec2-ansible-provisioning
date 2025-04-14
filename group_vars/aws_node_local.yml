@@ -142,6 +142,7 @@ atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port
 atl_mysql_jdbc_connector: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR') }}"
 atl_mysql_jdbc_connector_url: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR_URL') }}"
 atl_mysqlsh_url: "{{ lookup('env', 'ATL_MYSQLSH_URL') }}"
+atl_s5cmd_url: "{{ lookup('env', 'ATL_S5CMD_URL') }}"
 
 atl_jvm_heap: "{{ lookup('env', 'ATL_JVM_HEAP') or '2048m' }}"
 atl_jvm_opts: "{{ lookup('env', 'ATL_JVM_OPTS') or '' }}"
@@ -178,5 +179,7 @@ atl_rds_multi_az: "{{ lookup('env', 'ATL_RDS_MULTI_AZ') }}"
 atl_rds_subnet_group_name: "{{ lookup('env', 'ATL_RDS_SUBNET_GROUP_NAME') }}"
 atl_rds_security_group: "{{ lookup('env', 'ATL_RDS_SECURITY_GROUP') }}"
 
-atl_attachments_bucket: "{{ lookup('env', 'ATL_ATTACHMENTS_BUCKET') }}"
-atl_backup_bucket:  "{{ lookup('env', 'ATL_BACKUP_BUCKET') }}"
+#atl_attachments_bucket: "{{ lookup('env', 'ATL_ATTACHMENTS_BUCKET') }}"
+#atl_backup_bucket:  "{{ lookup('env', 'ATL_BACKUP_BUCKET') }}"
+atl_clone_bucket: "{{ lookup('env', 'ATL_CLONE_BUCKET') }}"
+atl_clone_bucket_root: "{{ atl_clone_bucket }}/{{ atl_proxy_name }}"

@@ -1,0 +1,6 @@
+*/dbconfig.xml
+*/keys/*
+*/filestore-config.yaml
+*/secrets-config.yaml
+*/secured/*
+./log/*

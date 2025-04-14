@@ -1,0 +1,7 @@
+*/confluence.cfg.xml
+*/synchrony-args.properties
+*/keys/*
+*/secrets-config.yaml
+*/secured/*
+./logs/*
+./temp/*

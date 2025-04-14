@@ -143,14 +143,6 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
   changed_when: false  # For Molecule idempotence check
-
-- name: Install restore script
-  ansible.builtin.template:
-    src: restore.sh.j2
-    dest: "/usr/local/bin/restore.sh"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-    mode: '0500'
     
 - name: Install recovery_admin script
   ansible.builtin.copy:
@@ -160,39 +152,10 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
   
-# - name: Assert baseurl to same as atl_proxy_name
-#   community.postgresql.postgresql_query:
-#     login_host: "{{ atl_db_host }}"
-#     login_user: "{{ atl_jdbc_user }}"
-#     login_password: "{{ atl_jdbc_password }}"
-#     port: "{{ atl_db_port }}"
-#     db: "{{ atl_jdbc_db_name }}"
-#     query: >
-#       update propertystring set propertyvalue=%s
-#       where id=(select id from propertyentry where property_key = 'jira.baseurl')
-#     positional_args:
-#       - "{{ atl_tomcat_scheme }}://{{ atl_proxy_name }}{{ atl_tomcat_contextpath }}"
-#   when:
-#     - atl_proxy_name is defined
-#     - atl_tomcat_scheme is defined
-#     - db_created is undefined or not db_created.changed
-#     - atl_jdbc_engine_map[atl_db_engine] == 'postgres'
-#   tags:
-#     - skip_on_stack_update
-#   ignore_errors: yes  # For Molecule as it has no db test framework included
-  
-
-# - name: Assert baseurl to same as atl_proxy_name (MySQL)
-#   command: >
-#     mysql --user={{ atl_jdbc_user }} --password={{ atl_jdbc_password }} {{ atl_jdbc_db_name }}
-#     --host={{ atl_db_host }} --port={{ atl_db_port }} --batch --skip-column-names
-#     --execute="update propertystring set propertyvalue="{{ atl_tomcat_scheme }}://{{ atl_proxy_name }}{{ atl_tomcat_contextpath }}"
-#       where id=(select id from propertyentry where property_key = 'jira.baseurl')"
-#   when:
-#     - atl_proxy_name is defined
-#     - atl_tomcat_scheme is defined
-#     - db_created is undefined or not db_created.changed
-#     - atl_jdbc_engine_map[atl_db_engine] == 'mysql'
-#   tags:
-#     - skip_on_stack_update
-#   ignore_errors: yes  # For Molecule as it has no db test framework included
+- name: Install clone_fs_excludes (paths to be excluded on clone un-tar)
+  ansible.builtin.copy:
+    src: clone_fs_excludes
+    dest: /var/clone_fs_excludes
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0400'

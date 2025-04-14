@@ -199,14 +199,6 @@
     path: "{{ atl_product_installation_versioned }}/apache-tomcat/conf/Catalina/localhost/crowd.xml"
     state: absent
 
-- name: Install restore script
-  ansible.builtin.template:
-    src: restore.sh.j2
-    dest: "/usr/local/bin/restore.sh"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-    mode: '0500'
-    
 - name: Install recovery_admin script
   ansible.builtin.copy:
     src: recovery_admin.sh
@@ -214,3 +206,11 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
+
+- name: Install clone_fs_excludes (paths to be excluded on clone un-tar)
+  ansible.builtin.copy:
+    src: clone_fs_excludes
+    dest: /var/clone_fs_excludes
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0400'
