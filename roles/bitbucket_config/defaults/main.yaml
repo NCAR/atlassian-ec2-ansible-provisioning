@@ -1,9 +1,0 @@
----
-
-atl_bitbucket_license_key: "{{ lookup('env', 'ATL_BB_LICENSEKEY') }}"
-atl_bitbucket_properties_raw: "{{ lookup('env', 'ATL_BITBUCKET_PROPERTIES') }}"
-atl_bitbucket_properties: "{{ atl_bitbucket_properties_raw.split(' ') | reject('equalto', '') | list }}"
-
-atl_elasticsearch_username: "{{ lookup('env', 'ATL_ELASTICSEARCH_USERNAME') }}"
-atl_elasticsearch_password: "{{ lookup('env', 'ATL_ELASTICSEARCH_PASSWORD') }}"
-elasticsearch_should_auth_with_iam: "{{ (atl_elasticsearch_username == '' or atl_elasticsearch_password == '') and atl_aws_region is defined }}"

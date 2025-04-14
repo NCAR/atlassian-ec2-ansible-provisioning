@@ -1,3 +1,0 @@
----
-
-atl_bitbucket_dataset_url: "{{ lookup('env', 'ATL_DATASET_URL') }}"

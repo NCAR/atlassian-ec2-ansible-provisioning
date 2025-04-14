@@ -1,5 +1,0 @@
----
-
-atl_bitbucket_baseurl: "{{ lookup('env', 'ATL_BB_BASEURL') }}"
-atl_bitbucket_admin_password: "{{ lookup('env', 'ATL_BB_ADMIN_PASSWORD') }}"
-
