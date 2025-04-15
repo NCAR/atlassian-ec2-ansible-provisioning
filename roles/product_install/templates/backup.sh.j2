@@ -31,7 +31,7 @@ util.dumpSchemas(
   }
 )
 EOF
-mysqlsh --defaults-file=$mycnf --file=$mysqlsh_cmd
+mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
 rm $mysqlsh_cmd
 rm $mycnf
 
