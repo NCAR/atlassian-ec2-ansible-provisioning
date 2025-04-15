@@ -50,7 +50,7 @@ create_ebs_snapshot() {
     tags="$tags,{Key=app-version,Value={{ atl_product_version }}}"
     aws ec2 create-snapshot \
 	--description "Backup of $mountpoint for {{ atl_proxy_name }}" \
-	--volume-id $vol_id
+	--volume-id $vol_id \
 	--tag-specifications "ResourceType=snapshot,Tags=[${tags}]"
 }
 
