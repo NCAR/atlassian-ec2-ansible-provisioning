@@ -22,7 +22,8 @@ export AWS_SECRET_ACCESS_KEY=$(echo $creds | jq ".SecretAccessKey")
 export DB_DUMP_DIR="{{ atl_home_base }}/db_backup"
 test -d $DB_DUMP_DIR || mkdir -p $DB_DUMP_DIR
 mycnf=$(/usr/local/bin/create_mycnf.sh)
-/usr/bin/mysqlsh --defaults-file=$mycnf <<EOF
+mysqlsh_cmd=$(mktemp)
+cat << EOF >$mysqlsh_cmd
 util.dumpSchemas(
   [ "{{ atl_jdbc_db_name }}" ],
   "${DB_DUMP_DIR}",
@@ -31,6 +32,8 @@ util.dumpSchemas(
   }
 )
 EOF
+mysqlsh --defaults-file=$mycnf --file=$mysqlsh_cmd
+rm $mysqlsh_cmd
 rm $mycnf
 
 #
