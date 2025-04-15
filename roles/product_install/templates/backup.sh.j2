@@ -20,7 +20,7 @@ export AWS_SECRET_ACCESS_KEY=$(echo $creds | jq ".SecretAccessKey")
 # REF: https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-dump-instance-schema.html
 #
 export DB_DUMP_DIR="{{ atl_home_base }}/db_backup"
-test -d $DB_DUMP_DIR || mkdir -p $DB_DUMPDIR
+test -d $DB_DUMP_DIR || mkdir -p $DB_DUMP_DIR
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 /usr/bin/mysqlsh --defaults-file=$mycnf <<EOF
 util.dumpSchemas(
