@@ -8,12 +8,11 @@
 # with just the instance role
 # FIXME there are different versions of the whole metadata interface,
 # we should use the newest
-instance_role=$(curl curl http://169.254.169.254/latest/meta-data/iam/security-credentials)
-creds=$(curl "http://169.254.169.254/latest/meta-data/iam/security-credentials/${instance_role}")
-export AWS_SESSION_TOKEN=$(echo $creds | jq ".Token")
-export AWS_ACCESS_KEY_ID=$(echo $creds | jq ".AccessKeyId")
-export AWS_SECRET_ACCESS_KEY=$(echo $creds | jq ".SecretAccessKey")
-
+# instance_role=$(curl curl http://169.254.169.254/latest/meta-data/iam/security-credentials)
+# creds=$(curl "http://169.254.169.254/latest/meta-data/iam/security-credentials/${instance_role}")
+# export AWS_SESSION_TOKEN=$(echo $creds | jq ".Token")
+# export AWS_ACCESS_KEY_ID=$(echo $creds | jq ".AccessKeyId")
+# export AWS_SECRET_ACCESS_KEY=$(echo $creds | jq ".SecretAccessKey")
 
 #
 # Backup the database to app home
