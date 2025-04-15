@@ -2,7 +2,6 @@
 
 #
 # FIXME datestamp backup?
-# home directory + s3 attachments/avatars
 #
 
 # Whatever API mysqlsh uses needs these even though the AWS CLI works
@@ -15,19 +14,19 @@ export AWS_SESSION_TOKEN=$(echo $creds | jq ".Token")
 export AWS_ACCESS_KEY_ID=$(echo $creds | jq ".AccessKeyId")
 export AWS_SECRET_ACCESS_KEY=$(echo $creds | jq ".SecretAccessKey")
 
-export BACKUP_PREFIX="{{ atl_proxy_name }}/backups"
 
 #
-# Backup the database to S3 with mysqlsh
-# FIXME check options, compression etc
+# Backup the database to app home
+# REF: https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-dump-instance-schema.html
 #
+export DB_DUMP_DIR="{{ atl_home_base }}/db_backup"
+test -d $DB_DUMP_DIR || mkdir -p $DB_DUMPDIR
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 /usr/bin/mysqlsh --defaults-file=$mycnf <<EOF
 util.dumpSchemas(
   [ "{{ atl_jdbc_db_name }}" ],
-  "${BACKUP_PREFIX}/database/{{ atl_jdbc_db_name }}",
+  "${DB_DUMP_DIR}",
   {
-    s3BucketName: "{{ atl_backup_bucket }}",
     compatibility: [ "strip_definers" ]
   }
 )
@@ -35,23 +34,25 @@ EOF
 rm $mycnf
 
 #
-# Backup home directory
-# We use the /var/atlassian/application-data mountpoint because we
-# might need a lot of space
+# Create EBS snapshot given mountpoint
 #
-export TMPDIR="/var/atlassian/application-data"
-test -d $TMPDIR || mkdir -p $TMPDIR
-tmpdir=$(mktemp)
-homedir="/var/atlassian/application-data/{{ atl_product_edition }}"
-backupfile="${tmpdir}/home.tgz"
-tar -C $homedir -zcf $backupfile .
-aws s3 cp $backupfile "s3://{{ atl_backup_bucket }}/${BACKUP_PREFIX}/"
-rm $backupfile
-
+# WARNING AWS RECOMMENDS PAUSING WRITE TO OR UNMOUNTING VOLUMES
+# UNTIL SNAPSHOT ENTERS PENDING STATE
 #
-# Backup attachments/avatars
-# s3 sync?
-#
+create_ebs_snapshot() {
+    mountpoint=$1
+    device=$(df --output=source $mountpoint | grep -v Filesystem)
+    vol_id=$(/sbin/ebsnvme-id $device | sed -ne 's/Volume ID: \(.*\)/\1/p')
 
+    tags=''
+    tags="$tags,{Key=application,Value={{ atl_product_edition }}}"
+    tags="$tags,{Key=site,Value={{ atl_proxy_name }}}"
+    tags="$tags,{Key=app-version,Value={{ atl_product_version }}}"
+    aws ec2 create-snapshot \
+	--description "Backup of $mountpoint for {{ atl_proxy_name }}" \
+	--volume-id $vol_id
+	--tag-specifications "ResourceType=snapshot,Tags=[${tags}]"
+}
 
-
+create_ebs_snapshot /var/atlassian/application-data
+create_ebs_snapshot /opt/atlassian
