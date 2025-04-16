@@ -18,14 +18,14 @@
 # Backup the database to app home
 # REF: https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-dump-instance-schema.html
 #
-export DB_DUMP_DIR="{{ atl_home_base }}/db_backup"
-test -d $DB_DUMP_DIR || mkdir -p $DB_DUMP_DIR
+export db_dump_dir="{{ atl_home_base }}/db_backup/$(date --iso-8601=seconds)"
+test -d $db_dump_dir || mkdir -p $db_dump_dir
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 mysqlsh_cmd=$(mktemp)
 cat << EOF >$mysqlsh_cmd
 util.dumpSchemas(
   [ "{{ atl_jdbc_db_name }}" ],
-  "${DB_DUMP_DIR}",
+  "${db_dump_dir}",
   {
     compatibility: [ "strip_definers" ]
   }
