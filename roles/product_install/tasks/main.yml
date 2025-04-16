@@ -323,15 +323,19 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
+- set_fact:
+    cron_hour: "{{ atl_backup_time | regex_search('^\d+') }}"
+
+- set_fact:
+    cron_minute: "{{ atl_backup_time | regex_search('\d+$') }}"
+
 - name: Cron for backups
   ansible.builtin.cron:
     name: App backups
-    hour: "{{ atl_backup_time | regex_search('^\d+') }}"
-    minute: "{{ atl_backup_time | regex_search('\d+$') }}"
+    hour: {{ cron_hour }}
+    minute: {{ cron_minute }}
     job: /usr/local/bin/backup_wrapper.sh
       
-    
-
 - name: Install backup for clone script
   ansible.builtin.template:
     src: backup_for_clone.sh.j2
