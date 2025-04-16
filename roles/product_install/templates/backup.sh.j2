@@ -46,10 +46,13 @@ create_ebs_snapshot() {
     device=$(df --output=source $mountpoint | grep -v Filesystem)
     vol_id=$(/sbin/ebsnvme-id $device | sed -ne 's/Volume ID: \(.*\)/\1/p')
 
-    tags=''
-    tags="$tags,{Key=application,Value={{ atl_product_edition }}}"
-    tags="$tags,{Key=site,Value={{ atl_proxy_name }}}"
-    tags="$tags,{Key=app-version,Value={{ atl_product_version }}}"
+    tags=$(paste -s -d "," <<EOF
+{Key=application,Value={{ atl_product_edition }}}
+{Key=site,Value={{ atl_proxy_name }}}
+{Key=app-version,Value={{ atl_product_version }}}
+EOF
+	)
+
     aws ec2 create-snapshot \
 	--description "Backup of $mountpoint for {{ atl_proxy_name }}" \
 	--volume-id $vol_id \
