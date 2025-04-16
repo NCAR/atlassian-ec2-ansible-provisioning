@@ -183,3 +183,9 @@ atl_rds_security_group: "{{ lookup('env', 'ATL_RDS_SECURITY_GROUP') }}"
 #atl_backup_bucket:  "{{ lookup('env', 'ATL_BACKUP_BUCKET') }}"
 atl_clone_bucket: "{{ lookup('env', 'ATL_CLONE_BUCKET') }}"
 atl_clone_bucket_root: "{{ atl_clone_bucket }}/{{ atl_proxy_name }}"
+
+atl_db_dump_root: ="{{ atl_home_base }}/db_backup"
+atl_backup_time: "{{ lookup('env', 'ATL_BACKUP_TIME') }}"
+atl_backups_retained: "{{ lookup('env', 'ATL_BACKUPS_RETAINED') }}"
+
+atl_aws_default_tags: "{{ lookup('env', 'ATL_AWS_DEFAULT_TAGS') | from_json }}"

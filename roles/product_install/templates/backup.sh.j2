@@ -18,7 +18,7 @@
 # Backup the database to app home
 # REF: https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-dump-instance-schema.html
 #
-export db_dump_dir="{{ atl_home_base }}/db_backup/$(date --iso-8601=seconds)"
+db_dump_dir="{{ atl_db_dump_root }}/$(date --iso-8601=seconds)"
 test -d $db_dump_dir || mkdir -p $db_dump_dir
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 mysqlsh_cmd=$(mktemp)
@@ -47,8 +47,13 @@ create_ebs_snapshot() {
     vol_id=$(/sbin/ebsnvme-id $device | sed -ne 's/Volume ID: \(.*\)/\1/p')
 
     tags=$(paste -s -d "," <<EOF
+{%- for k,v in atl_aws_default_tags.items() %}
+{Key={{k}},Value={{v}}}
+{% endfor %}
 {Key=application,Value={{ atl_product_edition }}}
 {Key=site,Value={{ atl_proxy_name }}}
+{Key=mountpoint,Value=$mountpoint}
+{Key=device,Value=$device}
 {Key=app-version,Value={{ atl_product_version }}}
 EOF
 	)
