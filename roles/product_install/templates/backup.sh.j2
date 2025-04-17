@@ -47,10 +47,9 @@ create_ebs_snapshot() {
     vol_id=$(/sbin/ebsnvme-id $device | sed -ne 's/Volume ID: \(.*\)/\1/p')
 
     tags=$(paste -s -d "," <<EOF
-{%- for k,v in atl_aws_default_tags.items() %}
+{% for k,v in atl_aws_default_tags.items() %}
 {Key={{k}},Value={{v}}}
 {% endfor %}
-{Key=application,Value={{ atl_product_edition }}}
 {Key=site,Value={{ atl_proxy_name }}}
 {Key=mountpoint,Value=$mountpoint}
 {Key=device,Value=$device}

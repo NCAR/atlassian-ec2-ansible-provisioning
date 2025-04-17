@@ -328,10 +328,11 @@
 
 - name: Cron for backups
   ansible.builtin.cron:
-    name: App backups
+    name: "App backups"
+    cron_file: "/etc/cron.d/app_backups"
     hour: "{{ cron_time[0] }}"
     minute: "{{ cron_time[1] }}"
-    job: /usr/local/bin/backup_wrapper.sh
+    job: "/usr/local/bin/backup_wrapper.sh"
       
 - name: Install backup for clone script
   ansible.builtin.template:
