@@ -328,7 +328,7 @@
 
 - name: Cron for backups
   ansible.builtin.cron:
-    name: "App backups"
+    user: "root"
     cron_file: "/etc/cron.d/app_backups"
     hour: "{{ cron_time[0] }}"
     minute: "{{ cron_time[1] }}"
