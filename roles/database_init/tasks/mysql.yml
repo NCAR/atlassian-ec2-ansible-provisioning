@@ -57,6 +57,9 @@
   ansible.builtin.apt:
     deb: "/tmp/{{ atl_mysqlsh_url | basename }}"
 
+- name: Install PyMySQL client
+  ansible.builtin.pip:
+    name: PyMySQL
     
 - name: Create application DB user
   mysql_user:
