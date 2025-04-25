@@ -3,5 +3,3 @@
 */keys/*
 */secrets-config.yaml
 */secured/*
-./logs/*
-./temp/*

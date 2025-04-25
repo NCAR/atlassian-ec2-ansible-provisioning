@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#
+# Replace baseurl; we have to do this post-process because we have to
+# extract BANDANA settings field which is XML, edit that and then
+# update in database without changing any other XML fields. Not doable
+# with mysqldump where clause, sadly. Simple FQDN substitution doesn't
+# work because on-prem instances use a different URL path.
+#
+mycnf=$(/usr/local/bin/create_mycnf.sh)
+mysql --defaults-file=$mycnf -e "UPDATEXML( (select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings'), '/settings/baseUrl', '<baseUrl>https://{{ atl_proxy_name }}</baseUrl>' )";

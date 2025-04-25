@@ -1,0 +1,94 @@
+---
+filesystem:
+  excluded_files:
+    - '*/confluence.cfg.xml'
+    - '*/synchrony-args.properties'
+    - '*/keys/*'
+    - '*/secrets-config.yaml'
+    - '*/secured/*'
+
+database:
+  retained:
+    tables:
+      - AO_ED669C_IDP_CONFIG
+    queries:
+      BANDANA:
+        - "BANDANAKEY = 'confluence.server.id'"
+      PLUGINDATA:
+        - "PLUGINKEY = 'com.atlassian.plugins.authentication.atlassian-authentication-plugin'"
+      cwd_directory_attribute:
+        - "directory_id = (SELECT id FROM cwd_directory WHERE directory_type = 'CROWD')"
+  
+  substitutions:
+    tables:
+      - 'AO_%'
+      - BANDANA
+      - BODYCONTENT
+      - DENORMALISED_CONTENT
+      - DRAFT
+      - EVENTS
+      - LINKS
+      - OS_PROPERTYENTRY
+      - PAGETEMPLATES
+      - SNAPSHOTS
+  
+    strings:
+      wiki.ucar.edu: stage-wiki.ucar.edu
+      #confluence-tomcat.ucar.edu: stage-confluence-tomcat.ucar.edu
+
+
+
+    
+##### confluence.ucar.edu
+# tables containing "confluence-tomcat.ucar.edu"
+#
+# BODYCONTENT.sql
+# CONTENT_PERM_SET.sql
+# CONTENT_PERM.sql
+# CONTENT.sql
+# SPACEPERMISSIONS.sql
+# SPACES.sql
+#
+# tables containing "wiki.ucar.edu"
+#
+# AO_9412A1_AONOTIFICATION.sql
+# AO_9412A1_AOREGISTRATION.sql
+# AO_9412A1_AOTASK.sql
+# AO_950DC3_TC_EVENTS.sql
+# AO_950DC3_TC_SUBCALS_PROPS.sql
+# AO_BAF3AA_AOINLINE_TASK.sql
+# AO_BBD998_BAS_SESSION.sql
+# AO_C77861_AUDIT_ENTITY.sql
+# AO_CC7F60_SEC_MON_THREAT_EVENT.sql
+# BANDANA.sql
+# BODYCONTENT.sql
+# CONTENTPROPERTIES.sql
+# CONTENT.sql
+# DENORMALISED_CONTENT.sql
+# DRAFT.sql
+# EVENTS.sql
+# LINKS.sql
+# OS_PROPERTYENTRY.sql
+# PAGETEMPLATES.sql
+# SNAPSHOTS.sql
+
+### kb.ucar.edu
+# tables containing "kbwiki-tomcat.ucar.edu"
+#
+# CONTENT_PERM_SET.sql
+# CONTENT_PERM.sql
+# CONTENT.sql
+# SPACEPERMISSIONS.sql
+# SPACES.sql
+#
+# tables containing "kb.ucar.edu"
+#
+# AO_9412A1_AOREGISTRATION.sql
+# AO_C77861_AUDIT_ENTITY.sql
+# AO_CC7F60_SEC_MON_THREAT_EVENT.sql
+# BANDANA.sql
+# BODYCONTENT.sql
+# EVENTS.sql
+# LINKS.sql
+# SNAPSHOTS.sql
+

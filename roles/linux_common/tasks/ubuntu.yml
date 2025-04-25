@@ -3,7 +3,8 @@
 - name: Install common Ubuntu support packages
   ansible.builtin.apt:
     name:
-      - libxml2-utils
-      - git
       - fontconfig
+      - git
+      - libxml2-utils
       - pwgen
+      - yq

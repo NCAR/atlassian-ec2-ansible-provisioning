@@ -126,7 +126,7 @@ atl_download_secret_name: "{{ lookup('env', 'ATL_DOWNLOAD_SECRET_NAME') or '' }}
 
 atl_jdbc_dialect: "{{ lookup('env', 'ATL_JDBC_DIALECT') }}"
 atl_jdbc_db_name: "{{ lookup('env', 'ATL_JDBC_DB_NAME') }}"
-atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', lookup('env', 'ATL_DB_CREDENTIAL_SECRET_ARN'), on_denied='warn')}}"
+atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', lookup('env', 'ATL_DBUSER_CREDENTIAL_SECRET_ARN'), on_denied='error')}}"
 atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
 atl_jdbc_password: "{{ atl_jdbc_credential | json_query('password') }}"
 atl_jdbc_encoding: "{{ lookup('env', 'ATL_JDBC_ENCODING') or 'UTF-8' }}"
@@ -179,6 +179,12 @@ atl_rds_multi_az: "{{ lookup('env', 'ATL_RDS_MULTI_AZ') }}"
 atl_rds_subnet_group_name: "{{ lookup('env', 'ATL_RDS_SUBNET_GROUP_NAME') }}"
 atl_rds_security_group: "{{ lookup('env', 'ATL_RDS_SECURITY_GROUP') }}"
 
+# Database master user
+atl_rds_master_credential: "{{ lookup('amazon.aws.aws_secret', lookup('env', 'ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN'), on_denied='error')}}"
+atl_rds_master_user: "{{ atl_rds_master_credential | json_query('user') }}"
+atl_rds_master_password: "{{ atl_rds_master_credential | json_query('password') }}"
+
+
 #atl_attachments_bucket: "{{ lookup('env', 'ATL_ATTACHMENTS_BUCKET') }}"
 #atl_backup_bucket:  "{{ lookup('env', 'ATL_BACKUP_BUCKET') }}"
 atl_clone_bucket: "{{ lookup('env', 'ATL_CLONE_BUCKET') }}"
@@ -189,3 +195,5 @@ atl_backup_time: "{{ lookup('env', 'ATL_BACKUP_TIME') }}"
 atl_backups_retained: "{{ lookup('env', 'ATL_BACKUPS_RETAINED') }}"
 
 atl_aws_default_tags: "{{ lookup('env', 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
+
+atl_db_app_config: "{{ lookup('env', 'ATL_DB_APP_CONFIG') | from_json }}"
