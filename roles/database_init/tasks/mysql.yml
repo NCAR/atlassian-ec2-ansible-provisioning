@@ -81,6 +81,8 @@
         encoding: "{{ atl_db_app_config | json_query('database.character_set') }}"
         collation: "{{ atl_db_app_config | json_query('database.collation') }}"
       register: db_created 
+      tags:
+        - new_only
 
     # - name: Assert ownership of public schema
     #   command: >
@@ -89,5 +91,3 @@
     #     --execute="GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,INDEX,REFERENCES on {{ atl_jdbc_db_name }}.* TO '{{ atl_jdbc_user }}'@'{{ atl_db_host }}' IDENTIFIED BY '{{ atl_jdbc_password }}'; flush privileges;"
     #   no_log: true
 
- tags:
-   - new_only
