@@ -181,7 +181,7 @@ atl_rds_security_group: "{{ lookup('env', 'ATL_RDS_SECURITY_GROUP') }}"
 
 # Database master user
 atl_rds_master_credential: "{{ lookup('amazon.aws.aws_secret', lookup('env', 'ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN'), on_denied='error')}}"
-atl_rds_master_user: "{{ atl_rds_master_credential | json_query('user') }}"
+atl_rds_master_user: "{{ atl_rds_master_credential | json_query('username') }}"
 atl_rds_master_password: "{{ atl_rds_master_credential | json_query('password') }}"
 
 
