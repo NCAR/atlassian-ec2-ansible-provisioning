@@ -15,8 +15,9 @@ done
 . $set_vars
 rm $set_vars
 
-dbuser=$(aws secretsmanager get-secret-value --secret-id "$ATL_DBUSER_CREDENTIAL_SECRET_ARN" --output text | awk '{print $4}' | jq -r .user)
-dbpassword=$(aws secretsmanager get-secret-value --secret-id "$ATL_DBUSER_CREDENTIAL_SECRET_ARN" --output text | awk '{print $4}' | jq -r .password)
+secret_string=$(aws secretsmanager get-secret-value --secret-id "$ATL_DBUSER_CREDENTIAL_SECRET_ARN" --output json | jq -r '.SecretString')
+dbuser=$(echo $secret_string | jq -r '.user')
+dbpassword=$(echo $secret_string | jq -r '.password')
 
 mycnf=$(mktemp)
 cat <<MYCNF >$mycnf

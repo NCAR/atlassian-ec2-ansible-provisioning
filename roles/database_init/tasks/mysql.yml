@@ -72,21 +72,6 @@
     host: "%"
     password: "{{ atl_jdbc_password }}"
     priv: "{{ atl_db_app_config | json_query('user.priv') }}"
-
-# - name: Create new application database
-#   mysql_db:
-#     config_file: ""
-#     login_host: "{{ atl_db_host }}"
-#     login_user: "{{ atl_rds_master_user }}"
-#     login_password: "{{ atl_rds_master_password }}"
-#     login_port: "{{ atl_db_port }}"
-#     name: "{{ atl_jdbc_db_name }}"
-#     encoding: "{{ atl_db_app_config | json_query('database.character_set') }}"
-#     collation: "{{ atl_db_app_config | json_query('database.collation') }}"
-#     register: db_created 
-#     tags:
-#       - new_only
-
     
 - block:
 
