@@ -15,7 +15,7 @@ APP="{{ atl_product_family }}"
 
 s3_backup_url=$1
 
-if test -z "s3_backup_url"; then
+if test -z "$s3_backup_url"; then
        cat << EOF
 Usage: $0 s3_backup_url
 
@@ -57,11 +57,11 @@ echo "Restoring home directory from clone backup"
 excluded_files_from=$(mktemp)
 yq -r '.filesystem.excluded_files[]' /var/clone_config.yaml > $excluded_files_from
 exclude_backup=$(mktemp --suffix=.tgz)
-tar -C {{ atl_product_home }} --files-from=$excluded_files_from -cz $exclude_backup
+tar -C {{ atl_product_home }} --files-from=$excluded_files_from -czf $exclude_backup
 rm $excluded_files_from
 
 # sync directory
-s5cmd sync --delete "${s3_backup_url}/application/" "{{ atl_product_home }}/"
+s5cmd sync --delete "${s3_backup_url}/application/*" "{{ atl_product_home }}/"
 
 # untar excluded over sync'd directory
 tar -C {{ atl_product_home }} -zxf $exclude_backup
