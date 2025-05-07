@@ -10,11 +10,20 @@
 #    https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html
 
 java_major_version: "17"
-postgres_version: "9.6"
+#postgres_version: "9.6"
 git_version: "2.14.4"
+
+#
+# Common to all apps; can be overridden in app pulumi config
+#
+atl_jdbc_dialect: "{{ lookup('env', 'ATL_JDBC_DIALECT') or 'org.hibernate.dialect.MySQLDialect' }}"
+atl_mysql_jdbc_connector: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR') or 'mysql-connector-j-8.0.33' }}"
+atl_mysql_jdbc_connector_url: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR_URL') or 'https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz' }}"
+atl_mysqlsh_url: "{{ lookup('env', 'ATL_MYSQLSH_URL') or 'https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.4-1ubuntu22.04_amd64.deb' }}"
+atl_s5cmd_url: "{{ lookup('env', 'ATL_S5CMD_URL') or 'https://github.com/peak/s5cmd/releases/download/v2.3.0/s5cmd_2.3.0_linux_amd64.deb' }}"
+
 #atl_shared_mountpoint: "/media/atl"
 atl_shared_mountpoint: "{{ atl_product_home }}"
-
 
 # Simplify NFS mapping by using a fixed UID
 atl_product_user_uid: "{{ lookup('env', 'ATL_PRODUCT_USER_UID') or '2001' }}"
@@ -124,7 +133,6 @@ atl_db_general_type: "{{ atl_db_general_type_map[atl_db_engine] }}"
 
 atl_download_secret_name: "{{ lookup('env', 'ATL_DOWNLOAD_SECRET_NAME') or '' }}"
 
-atl_jdbc_dialect: "{{ lookup('env', 'ATL_JDBC_DIALECT') }}"
 atl_jdbc_db_name: "{{ lookup('env', 'ATL_JDBC_DB_NAME') }}"
 atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', lookup('env', 'ATL_DBUSER_CREDENTIAL_SECRET_ARN'), on_denied='error')}}"
 atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
@@ -138,11 +146,6 @@ atl_jdbc_query_params_for_engine:
   rds_mysql: 
     crowd: "?useUnicode=true&amp;characterEncoding=UTF8&amp;sessionVariables=default_storage_engine=InnoDB&amp;rewriteBatchedStatements=true"
 atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port }}/{{ atl_jdbc_db_name }}{{ atl_jdbc_query_params_for_engine[atl_db_engine][atl_product_family]| default('') }}"
-
-atl_mysql_jdbc_connector: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR') }}"
-atl_mysql_jdbc_connector_url: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR_URL') }}"
-atl_mysqlsh_url: "{{ lookup('env', 'ATL_MYSQLSH_URL') }}"
-atl_s5cmd_url: "{{ lookup('env', 'ATL_S5CMD_URL') }}"
 
 atl_jvm_heap: "{{ lookup('env', 'ATL_JVM_HEAP') or '2048m' }}"
 atl_jvm_opts: "{{ lookup('env', 'ATL_JVM_OPTS') or '' }}"
@@ -198,4 +201,6 @@ atl_aws_default_tags: "{{ lookup('env', 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
 
 atl_db_app_config: "{{ lookup('env', 'ATL_DB_APP_CONFIG') | from_json }}"
 
+# FIXME we could default this to "https://ATL_PROXY_NAME" here instead
+# of injecting it via templating in user-data?
 atl_base_url: "{{ lookup('env', 'ATL_BASE_URL') }}"
