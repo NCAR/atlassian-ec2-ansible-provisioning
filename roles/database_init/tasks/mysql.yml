@@ -60,6 +60,13 @@
 - name: Install PyMySQL client
   ansible.builtin.pip:
     name: PyMySQL
+
+- name: Wait for database port to be available
+  ansible.builtin.wait_for:
+    host: "{{ atl_db_host }}"
+    port: "{{ atl_db_port }}"
+    sleep: 5
+    timeout: 600
     
 - name: Create application DB user
   mysql_user:
@@ -73,22 +80,24 @@
     password: "{{ atl_jdbc_password }}"
     priv: "{{ atl_db_app_config | json_query('user.priv') }}"
     
-- block:
-
-# RDS does not allow changing the collation on an existing DB, it only allows collation change on creation of db. If the db already exists, we need the “create new application database” task to be skipped, idempotence can not be relied upon as we cant be certain the collation of the existing db
-    - name: Create new application database
-      mysql_db:
-        config_file: ""
-        login_host: "{{ atl_db_host }}"
-        login_user: "{{ atl_rds_master_user }}"
-        login_password: "{{ atl_rds_master_password }}"
-        login_port: "{{ atl_db_port }}"
-        name: "{{ atl_jdbc_db_name }}"
-        encoding: "{{ atl_db_app_config | json_query('database.character_set') }}"
-        collation: "{{ atl_db_app_config | json_query('database.collation') }}"
-      register: db_created 
-      tags:
-        - new_only
+# RDS does not allow changing the collation on an existing DB, it only
+# allows collation change on creation of db. If the db already exists,
+# we need the “create new application database” task to be skipped,
+# idempotence can not be relied upon as we cant be certain the
+# collation of the existing db
+- name: Create new application database
+  mysql_db:
+    config_file: ""
+    login_host: "{{ atl_db_host }}"
+    login_user: "{{ atl_rds_master_user }}"
+    login_password: "{{ atl_rds_master_password }}"
+    login_port: "{{ atl_db_port }}"
+    name: "{{ atl_jdbc_db_name }}"
+    encoding: "{{ atl_db_app_config | json_query('database.character_set') }}"
+    collation: "{{ atl_db_app_config | json_query('database.collation') }}"
+    register: db_created 
+    tags:
+      - new_only
 
     # - name: Assert ownership of public schema
     #   command: >

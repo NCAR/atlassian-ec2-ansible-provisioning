@@ -4,10 +4,10 @@
 # FIXME ASSUME S3 URL LOOKS LIKE THIS:
 #
 # base_dir
-#       - app_home
-#       - db_backup
+#       - home
+#       - database
 #
-# It's faster to sync an uncompressed app_home directory
+# It's faster to sync an uncompressed home directory
 # database directory should be as created by mysqlsh
 #
 
@@ -21,8 +21,8 @@ Usage: $0 s3_backup_url
 
 Restore database and home directory for app "$APP";
 s3_backup_url must contain directories
-- app_home      App home directory 
-- db_backup     Backup as created by mysqlsh
+- home      App home directory 
+- backup    Backup as created by mysqlsh
 
 THE APPLICATION SHOULD BE STOPPED BEFORE RESTORE!
 EOF
@@ -34,22 +34,23 @@ if systemctl is-active --quiet $APP; then
     exit 1
 fi
 
-if ! s5cmd ls "${s3_backup_url}/app_home" > /dev/null 2>&1; then
-    echo "s3_backup_url doesn't have app_home directory"
+if ! s5cmd ls "${s3_backup_url}/home" > /dev/null 2>&1; then
+    echo "s3_backup_url doesn't have home directory"
     exit 1
 fi
 
-if ! s5cmd ls "${s3_backup_url}/db_backup" > /dev/null 2>&1; then
-    echo "s3_backup_url doesn't have db_backup"
+if ! s5cmd ls "${s3_backup_url}/database" > /dev/null 2>&1; then
+    echo "s3_backup_url doesn't have database"
     exit 1
 fi
 
 # /var/tmp is bigger
 export TMPDIR=/var/tmp
 
-#
+
+##############################################
 # Restore home directory
-#
+##############################################
 echo "Restoring home directory from clone backup"
 
 # tar up local excluded files
@@ -60,23 +61,25 @@ tar -C {{ atl_product_home }} --files-from=$excluded_files_from -cz $exclude_bac
 rm $excluded_files_from
 
 # sync directory
-s5cmd sync --delete "${s3_backup_url}/app_home/" "{{ atl_product_home }}/"
+s5cmd sync --delete "${s3_backup_url}/application/" "{{ atl_product_home }}/"
 
 # untar excluded over sync'd directory
 tar -C {{ atl_product_home }} -zxf $exclude_backup
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 rm $exclude_backup
 
-#
-# Save stuff we need from the database
-# We do this by creating dumps for these by passing queries to
-# mysqldump
-#
+##############################################
+# Restore database
+##############################################
+echo "Restoring database from clone backup"
+
+# Save stuff we need from the database.  We do this by creating dumps
+# for these by passing queries to mysqldump
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 mysql_to_restore=$(mktemp -d)
 
 # Whole tables
-full_tables=$(yq -r '.database.retained.tables[]' clone_config.yaml | tr "\n" " ")
+full_tables=$(yq -r '.database.retained.tables[]' /var/clone_config.yaml | tr "\n" " ")
 mysqldump --defaults-file=$mycnf \
 	  --add-drop-table \
 	  --create-options \
@@ -84,9 +87,9 @@ mysqldump --defaults-file=$mycnf \
 	  --set-gtid-purged=OFF \
 	  {{ atl_jdbc_db_name }} $full_tables > "${mysql_to_restore}/tables.sql" # Possible name collision?
 # Queries
-queried_tables=$(yq -r '.database.retained.queries | keys[]' clone_config.yaml)
+queried_tables=$(yq -r '.database.retained.queries | keys[]' /var/clone_config.yaml)
 for table in $queried_tables; do
-    for query in $(yq -r ".database.retained.queries.${table}[]" clone_config.yaml); do
+    for query in $(yq -r ".database.retained.queries.${table}[]" /var/clone_config.yaml); do
 	mysqldump --defaults-file=$mycnf \
 		  --disable-keys \
                   --no-create-info \
@@ -100,15 +103,11 @@ for table in $queried_tables; do
     done
 done
 
-#
-# Restore database
-#
-echo "Restoring database from clone backup"
-
 # Parse s3_backup_url
 bucketname=$(echo $s3_backup_url | cut -d '/' -f3)
-prefix="$(echo $s3_backup_url | cut -d '/' -f4-)/db_backup"
+prefix="$(echo $s3_backup_url | cut -d '/' -f4-)/database"
 
+# Restore clone database over existing database
 mysqlsh_cmd=$(mktemp)
 cat << EOF >$mysqlsh_cmd
 util.loadDump(
@@ -122,64 +121,61 @@ EOF
 mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
 rm $mysqlsh_cmd
 
-#
-# Make database edits (simple literal string substitutions) by dumping
-# tables, doing edits on the dump. If tables spec has '%', we get all
-# matching tables
-#
+# Generate list of tables for literal string substitutions
 edit_tables=$(mktemp)
-for raw_table in $(yq -r ".database.substitutions.tables[]" clone_config.yaml); do
+for raw_table in $(yq -r ".database.substitutions.tables[]" /var/clone_config.yaml); do
     if echo $raw_table | grep -Fq '%'; then
-	mysql --batch -e "show tables like '$table';" >> $edit_tables
+	mysql --defaults-file=$mycnf --batch -e "show tables like '${table}';" >> $edit_tables
     else
 	echo $raw_table >> $edit_tables
 done
+
+src_baseurl=$(/usr/local/bin/get_baseurl.sh)
+src_site=$(echo $src_baseurl | awk -F/ '{print $3}')
+dest_baseurl="{{ ATL_BASE_URL }}"
+dest_site=$(echo $dest_baseurl | awk -F/ '{print $3}')
+
+# Dump table, replace strings, restore table
+tablesql=$(mktemp)
 for table in $(cat $edit_tables); do
-# 
+    mysqldump --defaults-file=$mycnf \
+	      --disable-keys \
+              --no-create-info \
+              --no-tablespaces \
+              --replace \
+              --set-gtid-purged=OFF \
+              --single-transaction \
+              --skip-triggers \
+	      $table > $tablesql
+
+    # Replace base url, then replace site
+    rpl -F "${src_baseurl@Q}" "${dest_baseurl@Q}" $tablesql
+    rpl -F "${src_site@Q}" "${dest_site@Q}" $tablesql
+    
+    for subst_str in $(yq -r ".database.substitutions.strings[]" /var/clone_config.yaml); do
+	# https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+	subst_val=$(yq -r ".database.substitutions.strings.${subst_str}" /var/clone_config.yaml)
+	rpl -F "${subst_str@Q}" "${subst_val@Q}" $tablesql
+    done
+    
+    mysql --defaults-file=$mycnf $table < $tablesql
+    cat /dev/null > $tablesql
 done
+rm $tablesql
 rm $edit_tables
 
-#
 # Restore edited and retained data
 # Does the order matter here???
-#
 for f in $(ls "$mysql_to_restore/*"); do
     mysql --defaults-file=$mycnf < $f
 done
 
-#
+##############################################
+# Postprocess
 # Run app-specific post-process script if it exists
-#
+##############################################
 test -e /usr/local/bin/clone_postprocess && /usr/local/bin/clone_postprocess
-
 
 rm -rf $mysql_to_restore
 rm $mycnf
 
-#################################################################
-
-# #
-# # Restore home directory
-# #
-# echo "Restoring home directory from clone backup"
-# clone_excludes=$(cat /var/clone_fs_excludes)
-# s5cmd cat "${s3_backup_url}/home.tar.zst" | tar -C {{ atl_product_home }} -X $excludes --zstd -f -
-# chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
-
-
-
-# mycnf=$(/usr/local/bin/create_mycnf.sh)
-
-# # Change the baseurl FQDN in the dump to our current one on restore
-# src_site_fqdn=$(cat "${homedir}/SITE_FQDN")
-# target_site_fqdn=$(mysql --defaults-file=$mycnf -sre "select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings';" | perl -ne 'm(\Q<baseUrl>https://\E(.*)<.*) && print $1;')
-
-# echo "Restoring database from clone backup"
-# s5cmd cat "${s3_backup_url}/db.sql.zst" \
-#     | zstd --decompress --stdout \
-#     | perl -pe "s/\Q$src_site_fqdn\E/$target_site_fqdn/g" \
-#     | perl -pe 's/DEFINER=.*?(?=[* ])/DEFINER=CURRENT_USER/;' \
-#     | mysql --defaults-file=$mycnf
-
-# rm "${homedir}/SITE_FQDN"
-# rm $mycnf

@@ -7,3 +7,4 @@
       - git
       - libxml2-utils
       - pwgen
+      - rpl

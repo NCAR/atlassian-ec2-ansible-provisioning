@@ -207,10 +207,10 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
-- name: Install clone_fs_excludes (paths to be excluded on clone un-tar)
+- name: Install clone_config.yaml (used by restore_for_clone.sh)
   ansible.builtin.copy:
-    src: clone_fs_excludes
-    dest: /var/clone_fs_excludes
+    src: clone_config.yaml
+    dest: /var/clone_config.yaml
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0400'

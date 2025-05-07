@@ -1,0 +1,28 @@
+---
+filesystem:
+  excluded_files:
+    - '*/crowd.cfg.xml'
+    - './logs/*'
+    - './log/*'
+
+database:
+  retained:
+    tables: []
+#      - AO_ED669C_IDP_CONFIG
+    queries: []
+      # BANDANA:
+      #   - "BANDANAKEY = 'confluence.server.id'"
+      # PLUGINDATA:
+      #   - "PLUGINKEY = 'com.atlassian.plugins.authentication.atlassian-authentication-plugin'"
+      # cwd_directory_attribute:
+      #   - "directory_id = (SELECT id FROM cwd_directory WHERE directory_type = 'CROWD')"
+  
+  substitutions:
+    # This must contain at least the table where the base url is set
+    tables:
+      - cwd_property
+
+    # Base url and site FQDN are automatically substituted for all in tables above 
+    strings: {}
+ #     wiki.ucar.edu: stage-wiki.ucar.edu
+      #confluence-tomcat.ucar.edu: stage-confluence-tomcat.ucar.edu
