@@ -307,33 +307,33 @@
   ansible.builtin.include_tasks: "jira-servicedesk_as_obr.yml"
   when: atl_install_jsd_as_obr | bool
 
-- name: Install app backup script
-  ansible.builtin.template:
-    src: backup.sh.j2
-    dest: "/usr/local/bin/backup.sh"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-    mode: '0500'
+# - name: Install app backup script
+#   ansible.builtin.template:
+#     src: backup.sh.j2
+#     dest: "/usr/local/bin/backup.sh"
+#     owner: "{{ atl_product_user }}"
+#     group: "{{ atl_product_user }}"
+#     mode: '0500'
 
-- name: Install backup wrapper script
-  ansible.builtin.template:
-    src: backup_wrapper.sh.j2
-    dest: "/usr/local/bin/backup_wrapper.sh"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-    mode: '0500'
+# - name: Install backup wrapper script
+#   ansible.builtin.template:
+#     src: backup_wrapper.sh.j2
+#     dest: "/usr/local/bin/backup_wrapper.sh"
+#     owner: "{{ atl_product_user }}"
+#     group: "{{ atl_product_user }}"
+#     mode: '0500'
 
-- set_fact:
-    cron_time: "{{ atl_backup_time | split(':') }}"
+# - set_fact:
+#     cron_time: "{{ atl_backup_time | split(':') }}"
 
-- name: Cron for backups
-  ansible.builtin.cron:
-    name: "App Backups"
-    user: "root"
-    cron_file: "/etc/cron.d/app_backups"
-    hour: "{{ cron_time[0] }}"
-    minute: "{{ cron_time[1] }}"
-    job: "/usr/local/bin/backup_wrapper.sh"
+# - name: Cron for backups
+#   ansible.builtin.cron:
+#     name: "App Backups"
+#     user: "root"
+#     cron_file: "/etc/cron.d/app_backups"
+#     hour: "{{ cron_time[0] }}"
+#     minute: "{{ cron_time[1] }}"
+#     job: "/usr/local/bin/backup_wrapper.sh"
       
 - name: Install backup for clone script
   ansible.builtin.template:
