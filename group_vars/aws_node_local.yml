@@ -197,3 +197,5 @@ atl_backups_retained: "{{ lookup('env', 'ATL_BACKUPS_RETAINED') }}"
 atl_aws_default_tags: "{{ lookup('env', 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
 
 atl_db_app_config: "{{ lookup('env', 'ATL_DB_APP_CONFIG') | from_json }}"
+
+atl_base_url: "{{ lookup('env', 'ATL_BASE_URL') }}"

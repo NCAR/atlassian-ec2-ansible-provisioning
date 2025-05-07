@@ -132,7 +132,7 @@ done
 
 src_baseurl=$(/usr/local/bin/get_baseurl.sh)
 src_site=$(echo $src_baseurl | awk -F/ '{print $3}')
-dest_baseurl="{{ ATL_BASE_URL }}"
+dest_baseurl="{{ atl_base_url }}"
 dest_site=$(echo $dest_baseurl | awk -F/ '{print $3}')
 
 # Dump table, replace strings, restore table
