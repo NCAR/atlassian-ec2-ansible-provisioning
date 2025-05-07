@@ -95,9 +95,9 @@
     name: "{{ atl_jdbc_db_name }}"
     encoding: "{{ atl_db_app_config | json_query('database.character_set') }}"
     collation: "{{ atl_db_app_config | json_query('database.collation') }}"
-    register: db_created 
-    tags:
-      - new_only
+  register: db_created 
+  tags:
+    - new_only
 
     # - name: Assert ownership of public schema
     #   command: >
