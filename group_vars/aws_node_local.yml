@@ -22,6 +22,7 @@ atl_mysql_jdbc_connector: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR') or 'mysq
 atl_mysql_jdbc_connector_url: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR_URL') or 'https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz' }}"
 atl_mysqlsh_url: "{{ lookup('env', 'ATL_MYSQLSH_URL') or 'https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.4-1ubuntu22.04_amd64.deb' }}"
 atl_s5cmd_url: "{{ lookup('env', 'ATL_S5CMD_URL') or 'https://github.com/peak/s5cmd/releases/download/v2.3.0/s5cmd_2.3.0_linux_amd64.deb' }}"
+atl_base_url: "{{ lookup('env', 'ATL_BASE_URL') or 'https://' + atl_proxy_name }}"
 
 #atl_shared_mountpoint: "/media/atl"
 atl_shared_mountpoint: "{{ atl_product_home }}"
