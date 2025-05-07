@@ -16,6 +16,7 @@ git_version: "2.14.4"
 #
 # Common to all apps; can be overridden in app pulumi config
 #
+atl_db_driver: "{{ lookup('env', 'ATL_DB_DRIVER') or 'com.mysql.cj.jdbc.Driver' }}"
 atl_jdbc_dialect: "{{ lookup('env', 'ATL_JDBC_DIALECT') or 'org.hibernate.dialect.MySQLDialect' }}"
 atl_mysql_jdbc_connector: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR') or 'mysql-connector-j-8.0.33' }}"
 atl_mysql_jdbc_connector_url: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR_URL') or 'https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz' }}"
