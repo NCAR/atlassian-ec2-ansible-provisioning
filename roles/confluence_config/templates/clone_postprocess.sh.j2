@@ -1,5 +1,8 @@
 #!/bin/bash
 
+exit 0
+
+# HANDLED IN restore_for_clone.sh
 #
 # Replace baseurl; we have to do this post-process because we have to
 # extract BANDANA settings field which is XML, edit that and then
@@ -7,5 +10,5 @@
 # with mysqldump where clause, sadly. Simple FQDN substitution doesn't
 # work because on-prem instances use a different URL path.
 #
-mycnf=$(/usr/local/bin/create_mycnf.sh)
-mysql --defaults-file=$mycnf -e "UPDATEXML( (select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings'), '/settings/baseUrl', '<baseUrl>https://{{ atl_proxy_name }}</baseUrl>' )";
+# mycnf=$(/usr/local/bin/create_mycnf.sh)
+# mysql --defaults-file=$mycnf -e "UPDATEXML( (select BANDANAVALUE from BANDANA where BANDANACONTEXT = '_GLOBAL' and BANDANAKEY = 'atlassian.confluence.settings'), '/settings/baseUrl', '<baseUrl>https://{{ atl_proxy_name }}</baseUrl>' )";

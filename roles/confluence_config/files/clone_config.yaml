@@ -1,6 +1,6 @@
 ---
 filesystem:
-  excluded_files:
+  retained:
     - '*/confluence.cfg.xml'
     - '*/synchrony-args.properties'
     - '*/keys/*'
@@ -32,10 +32,7 @@ database:
       - PAGETEMPLATES
       - SNAPSHOTS
   
-    strings:
-      wiki.ucar.edu: stage-wiki.ucar.edu
-      #confluence-tomcat.ucar.edu: stage-confluence-tomcat.ucar.edu
-
+    strings: {}
 
 
     

@@ -53,20 +53,23 @@ export TMPDIR=/var/tmp
 ##############################################
 echo "Restoring home directory from clone backup"
 
-# tar up local excluded files
-excluded_files_from=$(mktemp)
-yq -r '.filesystem.excluded_files[]' /var/clone_config.yaml > $excluded_files_from
-exclude_backup=$(mktemp --suffix=.tgz)
-tar -C {{ atl_product_home }} --files-from=$excluded_files_from -czf $exclude_backup
-rm $excluded_files_from
+# Tar up local retained files
+# Filenames are for find command
+retained_files=$(mktemp)
+for pattern in $(yq -r '.filesystem.retained[]' /var/clone_config.yaml > $excluded_files_from); do
+    (cd {{ atl_product_home }}; find -L . -type f -wholename "'${pattern'}" >> $retained_files)
+done
+retained_files_tar=$(mktemp)
+tar -C {{ atl_product_home }} --files-from=$retained_files -czf $retained_files_tar
+rm $retained_files
 
 # sync directory
 s5cmd sync --delete "${s3_backup_url}/application/*" "{{ atl_product_home }}/"
 
-# untar excluded over sync'd directory
-tar -C {{ atl_product_home }} -zxf $exclude_backup
+# untar retained over sync'd directory
+tar -C {{ atl_product_home }} -zxf $retained_files_tar
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
-rm $exclude_backup
+rm $retained_files_tar
 
 ##############################################
 # Restore database
@@ -175,6 +178,9 @@ rm $edit_tables
 for f in $(ls "$mysql_to_restore/*"); do
     mysql --defaults-file=$mycnf < $f
 done
+
+# Delete log files since they're not relevant after clone
+find . -wholename '*/logs/*' -delete -o -wholename '*/log/*' -delete
 
 ##############################################
 # Postprocess

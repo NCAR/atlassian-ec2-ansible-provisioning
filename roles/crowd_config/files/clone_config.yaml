@@ -1,9 +1,7 @@
 ---
 filesystem:
-  excluded_files:
+  retained:
     - '*/crowd.cfg.xml'
-    - './logs/*'
-    - './log/*'
 
 database:
   retained:
