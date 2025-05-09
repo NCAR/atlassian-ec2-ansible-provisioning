@@ -355,4 +355,13 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
+
+# Needed by mysqlsh, which can't use the instance role (why???)    
+- name: Install aws_env_credentials_from_instance_role.sh script
+  ansible.builtin.template:
+    src: aws_env_credentials_from_instance_role.sh.j2
+    dest: "/usr/local/bin/aws_env_credentials_from_instance_role.sh"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
   

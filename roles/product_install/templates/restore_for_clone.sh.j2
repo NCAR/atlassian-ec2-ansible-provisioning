@@ -107,6 +107,12 @@ done
 bucketname=$(echo $s3_backup_url | cut -d '/' -f3)
 prefix="$(echo $s3_backup_url | cut -d '/' -f4-)/database"
 
+# Whatever version of the AWS API that mysqlsh is using, it needs
+# credentials in env vars instead of the instance role
+aws_env_vars=$(/usr/local/bin/aws_env_credentials_from_instance_role.sh)
+source $aws_env_vars
+rm $aws_env_vars
+
 # Restore clone database over existing database
 mysqlsh_cmd=$(mktemp)
 cat << EOF >$mysqlsh_cmd
