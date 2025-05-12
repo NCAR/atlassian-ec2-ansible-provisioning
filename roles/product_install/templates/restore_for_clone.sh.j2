@@ -13,9 +13,8 @@
 
 APP="{{ atl_product_family }}"
 
-s3_backup_url=$1
-
-if test -z "$s3_backup_url"; then
+s3_backup_url_raw=$1
+if test -z "$s3_backup_url_raw"; then
        cat << EOF
 Usage: $0 s3_backup_url
 
@@ -28,6 +27,9 @@ THE APPLICATION SHOULD BE STOPPED BEFORE RESTORE!
 EOF
 exit 1
 fi
+
+# Lop off last char if it's /
+s3_backup_url=$(echo $s3_backup_url_raw | sed -e 's/^\(.*\)\/$/\1/')
 
 if systemctl is-active --quiet $APP; then
     echo "Service \"$APP\" is running; must be stopped before restore."
@@ -47,7 +49,6 @@ fi
 # /var/tmp is bigger
 export TMPDIR=/var/tmp
 
-
 ##############################################
 # Restore home directory
 ##############################################
@@ -56,18 +57,18 @@ echo "Restoring home directory from clone backup"
 # Tar up local retained files
 # Filenames are for find command
 retained_files=$(mktemp)
-for pattern in $(yq -r '.filesystem.retained[]' /var/clone_config.yaml > $excluded_files_from); do
-    (cd {{ atl_product_home }}; find -L . -type f -wholename "'${pattern'}" >> $retained_files)
+for pattern in $(yq -r '.filesystem.retained[]' /var/clone_config.yaml); do
+    find -L {{ atl_product_home }} -type f -wholename "'${pattern'}" >> $retained_files
 done
 retained_files_tar=$(mktemp)
-tar -C {{ atl_product_home }} --files-from=$retained_files -czf $retained_files_tar
+tar -C / --files-from=$retained_files -czf $retained_files_tar
 rm $retained_files
 
 # sync directory
 s5cmd sync --delete "${s3_backup_url}/application/*" "{{ atl_product_home }}/"
 
 # untar retained over sync'd directory
-tar -C {{ atl_product_home }} -zxf $retained_files_tar
+tar -C / -zxf $retained_files_tar
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 rm $retained_files_tar
 
