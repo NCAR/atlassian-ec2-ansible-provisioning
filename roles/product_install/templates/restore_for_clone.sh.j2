@@ -65,7 +65,7 @@ tar -C / --files-from=$retained_files -czf $retained_files_tar
 rm $retained_files
 
 # sync directory
-s5cmd sync --delete "${s3_backup_url}/application/*" "{{ atl_product_home }}/"
+s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
 
 # untar retained over sync'd directory
 tar -C / -zxf $retained_files_tar
@@ -138,6 +138,7 @@ for raw_table in $(yq -r ".database.substitutions.tables[]" /var/clone_config.ya
 	mysql --defaults-file=$mycnf --batch -e "show tables like '${table}';" >> $edit_tables
     else
 	echo $raw_table >> $edit_tables
+    fi
 done
 
 src_baseurl=$(/usr/local/bin/get_baseurl.sh)
