@@ -22,7 +22,6 @@ atl_mysql_jdbc_connector: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR') or 'mysq
 atl_mysql_jdbc_connector_url: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR_URL') or 'https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz' }}"
 atl_mysqlsh_url: "{{ lookup('env', 'ATL_MYSQLSH_URL') or 'https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.4-1ubuntu22.04_amd64.deb' }}"
 atl_s5cmd_url: "{{ lookup('env', 'ATL_S5CMD_URL') or 'https://github.com/peak/s5cmd/releases/download/v2.3.0/s5cmd_2.3.0_linux_amd64.deb' }}"
-atl_base_url: "{{ lookup('env', 'ATL_BASE_URL') or 'https://' + atl_proxy_name }}"
 
 #atl_shared_mountpoint: "/media/atl"
 atl_shared_mountpoint: "{{ atl_product_home }}"
@@ -203,6 +202,4 @@ atl_aws_default_tags: "{{ lookup('env', 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
 
 atl_db_app_config: "{{ lookup('env', 'ATL_DB_APP_CONFIG') | from_json }}"
 
-# FIXME we could default this to "https://ATL_PROXY_NAME" here instead
-# of injecting it via templating in user-data?
-atl_base_url: "{{ lookup('env', 'ATL_BASE_URL') }}"
+atl_base_url: "{{ lookup('env', 'ATL_BASE_URL') or https://{{ atl_proxy_name }} }}"

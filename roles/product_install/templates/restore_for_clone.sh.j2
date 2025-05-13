@@ -160,7 +160,7 @@ for table in $(cat $edit_tables); do
               --set-gtid-purged=OFF \
               --single-transaction \
               --skip-triggers \
-	      $table > $tablesql
+	      {{ atl_jdbc_db_name }} $table > $tablesql
 
     # Replace base url, then replace site
     rpl -F "${src_baseurl@Q}" "${dest_baseurl@Q}" $tablesql
@@ -172,7 +172,7 @@ for table in $(cat $edit_tables); do
 	rpl -F "${subst_str@Q}" "${subst_val@Q}" $tablesql
     done
     
-    mysql --defaults-file=$mycnf $table < $tablesql
+    mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} $table < $tablesql
     cat /dev/null > $tablesql
 done
 rm $tablesql
@@ -181,7 +181,7 @@ rm $edit_tables
 # Restore edited and retained data
 # Does the order matter here???
 for f in $(ls "$mysql_to_restore/*"); do
-    mysql --defaults-file=$mycnf < $f
+    mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} < $f
 done
 
 # Delete log files since they're not relevant after clone
