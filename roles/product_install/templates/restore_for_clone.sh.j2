@@ -58,7 +58,7 @@ echo "Restoring home directory from clone backup"
 # Filenames are for find command
 retained_files=$(mktemp)
 for pattern in $(yq -r '.filesystem.retained[]' /var/clone_config.yaml); do
-    find -L {{ atl_product_home }} -type f -wholename "'${pattern'}" >> $retained_files
+    find -L {{ atl_product_home }} -type f -wholename "'${pattern}'" >> $retained_files
 done
 retained_files_tar=$(mktemp)
 tar -C / --files-from=$retained_files -czf $retained_files_tar
@@ -118,13 +118,16 @@ source $aws_env_vars
 rm $aws_env_vars
 
 # Restore clone database over existing database
+/usr/local/bin/drop_all_tables.sh
 mysqlsh_cmd=$(mktemp)
 cat << EOF >$mysqlsh_cmd
 util.loadDump(
   "$prefix",
   {
     schema: "{{ atl_jdbc_db_name }}",
-    s3BucketName: "$bucketname"
+    s3BucketName: "$bucketname",
+    progressFile: "",
+    resetProgress: "true"     
   }
 )
 EOF
