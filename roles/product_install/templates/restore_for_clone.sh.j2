@@ -171,9 +171,11 @@ for table in $(cat $edit_tables); do
 	subst_val=$(yq -r ".database.substitutions.strings.${subst_str}" /var/clone_config.yaml)
 	rpl -F "${subst_str@Q}" "${subst_val@Q}" $tablesql
     done
-    
-    mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} $table < $tablesql
-    cat /dev/null > $tablesql
+
+    if test -s $tablesql; then
+	mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} $table < $tablesql
+	cat /dev/null > $tablesql
+    fi
 done
 rm $tablesql
 rm $edit_tables
@@ -185,7 +187,7 @@ for f in $(ls "$mysql_to_restore/*"); do
 done
 
 # Delete log files since they're not relevant after clone
-find . -wholename '*/logs/*' -delete -o -wholename '*/log/*' -delete
+find "{{ atl_product_home }}" -wholename '*/logs/*' -delete -o -wholename '*/log/*' -delete
 
 ##############################################
 # Postprocess
