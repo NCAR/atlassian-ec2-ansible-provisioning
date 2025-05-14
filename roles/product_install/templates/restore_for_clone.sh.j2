@@ -144,10 +144,10 @@ for raw_table in $(yq -r ".database.substitutions.tables[]" /var/clone_config.ya
     fi
 done
 
-src_baseurl=$(/usr/local/bin/get_baseurl.sh)
-src_site=$(echo $src_baseurl | awk -F/ '{print $3}')
-dest_baseurl={{ atl_base_url }}
-dest_site=$(echo $dest_baseurl | awk -F/ '{print $3}')
+src_baseurl="$(/usr/local/bin/get_baseurl.sh)"
+src_site="$(echo $src_baseurl | awk -F/ '{print $3}')"
+dest_baseurl="{{ atl_base_url }}"
+dest_site="$(echo $dest_baseurl | awk -F/ '{print $3}')"
 
 # Dump table, replace strings, restore table
 tablesql=$(mktemp)
