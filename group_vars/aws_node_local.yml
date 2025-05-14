@@ -205,3 +205,4 @@ atl_db_app_config: "{{ lookup('env', 'ATL_DB_APP_CONFIG') | from_json }}"
 #atl_base_url: "{{ lookup('env', 'ATL_BASE_URL') or 'https://{{ atl_proxy_name }}' }}"
 atl_base_url: "{{ lookup('env', 'ATL_BASE_URL') | default('https://' +  atl_proxy_name, true) }}"
 
+#atl_proxy_name:  "{{ lookup('env', 'ATL_PROXY_NAME') | lower }}"
