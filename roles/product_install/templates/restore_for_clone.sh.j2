@@ -47,7 +47,7 @@ if ! s5cmd ls "${s3_backup_url}/database" > /dev/null 2>&1; then
 fi
 
 # /var/tmp is bigger
-export TMPDIR=/var/tmp
+export TEMPDIR=$(mktemp -p /var/tmp -d)
 
 ##############################################
 # Restore home directory
@@ -56,13 +56,12 @@ echo "Restoring home directory from clone backup"
 
 # Tar up local retained files
 # Filenames are for find command
-retained_files=$(mktemp)
+retained_files="${TEMPDIR}/retained_files_list"
 for pattern in $(yq -r '.filesystem.retained[]' /var/clone_config.yaml); do
     find -L {{ atl_product_home }} -type f -wholename "'${pattern}'" >> $retained_files
 done
-retained_files_tar=$(mktemp)
+retained_files_tar="${TEMPDIR}/retained_files.tgz"
 tar -C / --files-from=$retained_files -czf $retained_files_tar
-rm $retained_files
 
 # sync directory
 s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
@@ -70,7 +69,9 @@ s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
 # untar retained over sync'd directory
 tar -C / -zxf $retained_files_tar
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
-rm $retained_files_tar
+
+# Delete log files since they're not relevant after clone
+find "{{ atl_product_home }}" -wholename '*/logs/*' -delete -o -wholename '*/log/*' -delete
 
 ##############################################
 # Restore database
@@ -80,19 +81,30 @@ echo "Restoring database from clone backup"
 # Save stuff we need from the database.  We do this by creating dumps
 # for these by passing queries to mysqldump
 mycnf=$(/usr/local/bin/create_mycnf.sh)
-mysql_to_restore=$(mktemp -d)
+mysql_to_restore="${TEMPDIR}/mysql_to_restore"
+mkdir $mysql_to_restore
+
+#
+# FIXME break each out into its own file; can have multiple for each table
+# how to assure uniqueness of file? mktemp?
+#
 
 # Whole tables
 full_tables=$(yq -r '.database.retained.tables[]' /var/clone_config.yaml | tr "\n" " ")
-mysqldump --defaults-file=$mycnf \
-	  --add-drop-table \
-	  --create-options \
-	  --disable-keys \
-	  --set-gtid-purged=OFF \
-	  {{ atl_jdbc_db_name }} $full_tables > "${mysql_to_restore}/tables.sql" # Possible name collision?
+foreach table in $full_tables; do
+    mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
+    mysqldump --defaults-file=$mycnf \
+	      --add-drop-table \
+	      --create-options \
+	      --disable-keys \
+	      --set-gtid-purged=OFF \
+	      {{ atl_jdbc_db_name }} $table > $(mktemp -p "${mysql_to_restore}/${table}")
+done
+
 # Queries
 queried_tables=$(yq -r '.database.retained.queries | keys[]' /var/clone_config.yaml)
 for table in $queried_tables; do
+    mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
     for query in $(yq -r ".database.retained.queries.${table}[]" /var/clone_config.yaml); do
 	mysqldump --defaults-file=$mycnf \
 		  --disable-keys \
@@ -103,7 +115,7 @@ for table in $queried_tables; do
                   --single-transaction \
                   --skip-triggers \
 		  --where="'${query}'" \
-		  {{ atl_jdbc_db_name }} $table >> "${mysql_to_restore}/queried_tables.sql"
+		  {{ atl_jdbc_db_name }} $table > $(mktemp -p "${mysql_to_restore}/${table}")
     done
 done
 
@@ -119,7 +131,7 @@ rm $aws_env_vars
 
 # Restore clone database over existing database
 /usr/local/bin/drop_all_tables.sh
-mysqlsh_cmd=$(mktemp)
+mysqlsh_cmd="${TEMPDIR}/mysqlsh_cmd"
 cat << EOF >$mysqlsh_cmd
 util.loadDump(
   "$prefix",
@@ -132,10 +144,9 @@ util.loadDump(
 )
 EOF
 mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
-rm $mysqlsh_cmd
 
 # Generate list of tables for literal string substitutions
-edit_tables=$(mktemp)
+edit_tables="${TEMPDIR}/edit_tables}"
 for raw_table in $(yq -r ".database.substitutions.tables[]" /var/clone_config.yaml); do
     if echo $raw_table | grep -Fq '%'; then
 	mysql --defaults-file=$mycnf --batch -e "show tables like '${table}';" >> $edit_tables
@@ -149,9 +160,10 @@ src_site="$(echo $src_baseurl | awk -F/ '{print $3}')"
 dest_baseurl="{{ atl_base_url }}"
 dest_site="$(echo $dest_baseurl | awk -F/ '{print $3}')"
 
-# Dump table, replace strings, restore table
-tablesql=$(mktemp)
+# Dump table, replace strings
 for table in $(cat $edit_tables); do
+    mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
+    tablesql=$(mktemp -p "${mysql_to_restore}/${table}")
     mysqldump --defaults-file=$mycnf \
 	      --disable-keys \
               --no-create-info \
@@ -171,23 +183,20 @@ for table in $(cat $edit_tables); do
 	subst_val=$(yq -r ".database.substitutions.strings.${subst_str}" /var/clone_config.yaml)
 	rpl -F "${subst_str@Q}" "${subst_val@Q}" $tablesql
     done
-
-    if test -s $tablesql; then
-	mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} $table < $tablesql
-	cat /dev/null > $tablesql
+    
+    if ! test -s $tablesql; then
+	rm $tablesql
     fi
 done
-rm $tablesql
-rm $edit_tables
 
-# Restore edited and retained data
-# Does the order matter here???
-for f in $(ls "$mysql_to_restore/*"); do
-    mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} < $f
+#
+# Restore edited and retained data for database
+#
+# WARNING the order is undetermined, so dumpfile must not step on each
+# other's toes
+for table in $(ls $mysql_to_restore); do
+    mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} $table < $table
 done
-
-# Delete log files since they're not relevant after clone
-find "{{ atl_product_home }}" -wholename '*/logs/*' -delete -o -wholename '*/log/*' -delete
 
 ##############################################
 # Postprocess
@@ -195,6 +204,6 @@ find "{{ atl_product_home }}" -wholename '*/logs/*' -delete -o -wholename '*/log
 ##############################################
 test -e /usr/local/bin/clone_postprocess && /usr/local/bin/clone_postprocess
 
-rm -rf $mysql_to_restore
+rm -rf $TEMPDIR
 rm $mycnf
 
