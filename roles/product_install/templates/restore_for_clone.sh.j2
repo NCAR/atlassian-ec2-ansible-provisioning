@@ -91,7 +91,7 @@ mkdir $mysql_to_restore
 
 # Whole tables
 full_tables=$(yq -r '.database.retained.tables[]' /var/clone_config.yaml | tr "\n" " ")
-foreach table in $full_tables; do
+for table in $full_tables; do
     mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
     mysqldump --defaults-file=$mycnf \
 	      --add-drop-table \
@@ -146,7 +146,7 @@ EOF
 mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
 
 # Generate list of tables for literal string substitutions
-edit_tables="${TEMPDIR}/edit_tables}"
+edit_tables="${TEMPDIR}/edit_tables"
 for raw_table in $(yq -r ".database.substitutions.tables[]" /var/clone_config.yaml); do
     if echo $raw_table | grep -Fq '%'; then
 	mysql --defaults-file=$mycnf --batch -e "show tables like '${table}';" >> $edit_tables
@@ -195,7 +195,9 @@ done
 # WARNING the order is undetermined, so dumpfile must not step on each
 # other's toes
 for table in $(ls $mysql_to_restore); do
-    mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} $table < $table
+    for dump in $(ls "${mysql_to_restore}/${table}"); do
+	mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} $table < $dump
+    done
 done
 
 ##############################################
