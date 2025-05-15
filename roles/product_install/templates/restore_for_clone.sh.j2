@@ -195,8 +195,9 @@ done
 # WARNING the order is undetermined, so dumpfile must not step on each
 # other's toes
 for table in $(ls $mysql_to_restore); do
-    for dump in $(ls "${mysql_to_restore}/${table}"); do
-	mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} $table < $dump
+    for f in $(ls "${mysql_to_restore}/${table}"); do
+        dump="${mysql_to_restore}/${table}/${f}"
+        mysql --defaults-file=$mycnf crowd < $dump
     done
 done
 
