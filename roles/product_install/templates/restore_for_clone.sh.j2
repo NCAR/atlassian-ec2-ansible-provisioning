@@ -198,7 +198,7 @@ done
 for table in $(ls $mysql_to_restore); do
     for f in $(ls "${mysql_to_restore}/${table}"); do
         dump="${mysql_to_restore}/${table}/${f}"
-        mysql --defaults-file=$mycnf crowd < $dump
+        mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} < $dump
     done
 done
 
