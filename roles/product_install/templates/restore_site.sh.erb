@@ -1,0 +1,97 @@
+#!/bin/bash
+
+#
+# FIXME ASSUME S3 URL LOOKS LIKE THIS:
+#
+# base_dir
+#       - home
+#       - database
+#
+# It's faster to sync an uncompressed home directory
+# database directory should be as created by mysqlsh
+#
+
+APP="{{ atl_product_family }}"
+
+s3_backup_url_raw=$1
+if test -z "$s3_backup_url_raw"; then
+       cat << EOF
+Usage: $0 s3_backup_url
+
+Restore database and home directory for app "$APP".
+s3_backup_url must contain directories
+- home      App home directory 3
+- backup    Backup as created by mysqlsh
+
+THE APPLICATION MUST BE STOPPED BEFORE RESTORE!
+EOF
+exit 1
+fi
+
+# Lop off last char if it's /
+s3_backup_url=$(echo $s3_backup_url_raw | sed -e 's/^\(.*\)\/$/\1/')
+
+if systemctl is-active --quiet $APP; then
+    echo "Service \"$APP\" is running; must be stopped before restore."
+    exit 1
+fi
+
+if ! s5cmd ls "${s3_backup_url}/home" > /dev/null 2>&1; then
+    echo "s3_backup_url doesn't have home directory"
+    exit 1
+fi
+
+if ! s5cmd ls "${s3_backup_url}/database" > /dev/null 2>&1; then
+    echo "s3_backup_url doesn't have database"
+    exit 1
+fi
+
+# /var/tmp is bigger
+export TEMPDIR=$(mktemp -p /var/tmp -d)
+
+##############################################
+# Restore home directory
+##############################################
+echo "Restoring home directory from clone backup"
+
+# sync directory
+s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
+
+##############################################
+# Restore database
+##############################################
+echo "Restoring database from clone backup"
+
+# Save stuff we need from the database.  We do this by creating dumps
+# for these by passing queries to mysqldump
+mycnf=$(/usr/local/bin/create_mycnf.sh)
+
+# Parse s3_backup_url
+bucketname=$(echo $s3_backup_url | cut -d '/' -f3)
+prefix="$(echo $s3_backup_url | cut -d '/' -f4-)/database"
+
+# Whatever version of the AWS API that mysqlsh is using, it needs
+# credentials in env vars instead of the instance role
+aws_env_vars=$(/usr/local/bin/aws_env_credentials_from_instance_role.sh)
+source $aws_env_vars
+rm $aws_env_vars
+
+# Restore clone database over existing database
+/usr/local/bin/drop_all_tables.sh
+mysqlsh_cmd="${TEMPDIR}/mysqlsh_cmd"
+cat << EOF >$mysqlsh_cmd
+util.loadDump(
+  "$prefix",
+  {
+    schema: "{{ atl_jdbc_db_name }}",
+    s3BucketName: "$bucketname",
+    progressFile: "",
+    resetProgress: "true"     
+  }
+)
+EOF
+mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
+
+rm -rf $TEMPDIR
+rm $mycnf
+

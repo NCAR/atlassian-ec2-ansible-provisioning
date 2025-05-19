@@ -1,41 +1,48 @@
 #!/bin/bash
 
-# GRANT RELOAD, PROCESS ON *.* TO 'confluenceuser'@'%';
-# GRANT SHOW_ROUTINE ON *.* TO 'confluenceuser'@'%';
+bucket_url="s3://{{ atl_s3_path }}/backups/{{ atl_proxy_name }}/$(date --iso-8601=seconds)/"
+echo ">>> Backing up to $bucket_url"
 
-BACKUPROOT="/var/atlassian/application-data/backup"
-backupdir=$BACKUPROOT/$(date +'%Y-%m-%dT%H:%M:%S%:z')
-mkdir -p $backupdir
-echo "Backing up to ${backupdir}/"
+bucketname=$(echo $bucket_url  | cut -d '/' -f3)
 
 #
-# Backup database
+# DB backup
 #
-echo "Backing up database"
-mycnf=$(/usr/local/bin/create_mycnf.sh)
+bucket_db_path="/$(echo $bucket_url  | cut -d '/' -f4-)/database"
+mysqlsh_cmd=$(mktemp)
+cat << EOF >$mysqlsh_cmd
+util.dumpSchemas(
+  ["{{ atl_jdbc_db_name }}"],
+  "$bucket_db_path",
+  {
+    s3BucketName: "$bucketname"
+  }
+)
+EOF
 
-mysqldump --defaults-file=$mycnf \
-	  --add-drop-table \
-	  --create-options \
-	  --disable-keys \
-	  --events \
-	  --extended-insert \
-	  --max_allowed_packet=512M \
-	  --quick \
-	  --quote-names \
-	  --routines \
-	  --set-charset \
-	  --set-gtid-purged=OFF \
-	  --single-transaction \
-	  --triggers \
-	  {{ atl_jdbc_db_name }} | gzip > "${backupdir}/db.sql.gz"
+mycnf=$(/usr/local/bin/create_mycnf)
 
+echo ">>> Backing up database to ${bucket_url}/database, starting $(date)"
+
+mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
+mysqlsh_status=$?
+rm $mysqlsh_cmd
 rm $mycnf
 
+if [ "$mysqlsh_status" != "0" ]; then
+    echo "Mysqlsh command failed"
+    exit 1
+fi
+
 #
-# Backup home directory
+# FS backup
 #
-echo "Backing up home directory"
-homedir="/var/atlassian/application-data/{{ atl_product_edition }}"
-echo '{{ atl_proxy_name }}' > "${homedir}/SITE_FQDN"  # Used for DB substitutions on restore
-tar -C $homedir -zcf "${backupdir}/home.tgz" .
+bucket_fs_url="${bucket_url}/home/"
+echo ">>> Backing up home filesystem to ${bucket_fs_url}, starting $(date)"
+
+home_fs="{{ atl_product_home }}"
+s5cmd sync --exclude "*.snapshot/*" "${home_fs}/" "${bucket_fs_url}"
+
+echo ">>> Finished at: " $(date)
+echo "Total elapsed time: " $(printf '%dh:%dm:%ds\n' $(($SECONDS/3600)) $(($SECONDS%3600/60)) $((SECONDS%60)))
+

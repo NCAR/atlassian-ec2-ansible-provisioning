@@ -18,12 +18,17 @@ if test -z "$s3_backup_url_raw"; then
        cat << EOF
 Usage: $0 s3_backup_url
 
-Restore database and home directory for app "$APP";
+Clone database and home directory for app "$APP";
 s3_backup_url must contain directories
 - home      App home directory 
 - backup    Backup as created by mysqlsh
 
-THE APPLICATION SHOULD BE STOPPED BEFORE RESTORE!
+WARNING: there is no way for the script to differentiate between a
+simple restore of an existing site and the restore of a clone. If
+handed an s3_url of the existing site, the script will go through the
+whole clone procedure.
+
+THE APPLICATION MUST BE STOPPED BEFORE RESTORE!
 EOF
 exit 1
 fi
@@ -158,8 +163,7 @@ done
 
 src_baseurl="$(/usr/local/bin/get_baseurl.sh)"
 src_site="$(echo $src_baseurl | awk -F/ '{print $3}')"
-dest_baseurl="{{ atl_base_url }}"
-dest_site="$(echo $dest_baseurl | awk -F/ '{print $3}')"
+dest_site="{{ atl_proxy_name }}"
 
 # Dump table, replace strings
 for table in $(cat $edit_tables); do

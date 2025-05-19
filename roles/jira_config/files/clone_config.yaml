@@ -20,14 +20,14 @@ database:
     # Can contain SQL wildcards
     tables:
       - 'AO_%'
-      - changeitem.sql.sql
-      - customfieldvalue.sql.sql
-      - gadgetuserpreference.sql.sql
-      - jiraaction.sql.sql
-      - jiraissue.sql.sql
-      - oauthconsumer.sql.sql
-      - propertystring.sql.sql
-      - propertytext.sql.sql
+      - changeitem
+      - customfieldvalue
+      - gadgetuserpreference
+      - jiraaction
+      - jiraissue
+      - oauthconsumer
+      - propertystring
+      - propertytext
 
     # Base url and site FQDN are automatically substituted for all in tables above 
     strings: {}
