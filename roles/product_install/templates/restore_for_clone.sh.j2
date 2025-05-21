@@ -180,13 +180,13 @@ for table in $(cat $edit_tables); do
 	      {{ atl_jdbc_db_name }} $table > $tablesql
 
     # Replace base url, then replace site
-    perl -i -plne "s/\Q$src_baseurl\E/$dest_baseurl/g" $tablesql
-    perl -i -plne "s/\Q$src_site\E/$dest_site/g" $tablesql
+    perl -s -p -i -e 's/\Q$src\E/$dst/g' -- -src=$src_baseurl -dst=$dest_baseurl $tablesql
+    perl -s -p -i -e 's/\Q$src\E/$dst/g' -- -src=$src_site -dst=$dest_site $tablesql
     
     for subst_str in $(yq -r ".database.substitutions.strings[]" /var/clone_config.yaml); do
 	# https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
 	subst_val=$(yq -r ".database.substitutions.strings.${subst_str}" /var/clone_config.yaml)
-	perl -i -plne "s/\Q$subst_str\E/$subst_val/g" $tablesql
+	perl -s -p -i -e 's/\Q$src\E/$dst/g' -- -src=$subst_str -dst=$subst_val $tablesql
     done
     
     if ! test -s $tablesql; then
