@@ -56,6 +56,7 @@ echo "Restoring home directory from clone backup"
 
 # sync directory
 s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
+chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 
 ##############################################
 # Restore database
