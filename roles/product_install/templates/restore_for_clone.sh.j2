@@ -18,7 +18,7 @@ if test -z "$s3_backup_url_raw"; then
        cat << EOF
 Usage: $0 s3_backup_url
 
-Clone database and home directory for app "$APP";
+Restore cloned database and home directory for app "$APP";
 s3_backup_url must contain directories
 - home      App home directory 
 - backup    Backup as created by mysqlsh
@@ -26,7 +26,7 @@ s3_backup_url must contain directories
 WARNING: there is no way for the script to differentiate between a
 simple restore of an existing site and the restore of a clone. If
 handed an s3_url of the existing site, the script will go through the
-whole clone procedure.
+whole clone procedure. Use restore_site.sh for that instead.
 
 THE APPLICATION MUST BE STOPPED BEFORE RESTORE!
 EOF
@@ -53,6 +53,12 @@ fi
 
 # /var/tmp is bigger
 export TEMPDIR=$(mktemp -p /var/tmp -d)
+
+# Whatever version of the AWS API that mysqlsh is using, it needs
+# credentials in env vars instead of the instance role
+aws_env_vars=$(/usr/local/bin/aws_env_credentials_from_instance_role.sh)
+source $aws_env_vars
+rm $aws_env_vars
 
 ##############################################
 # Restore home directory
@@ -111,7 +117,7 @@ done
 queried_tables=$(yq -r '.database.retained.queries | keys[]' /var/clone_config.yaml)
 for table in $queried_tables; do
     mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
-    for query in $(yq -r ".database.retained.queries.${table}[]" /var/clone_config.yaml); do
+    while IFS="" read -r p || [ -n "$p" ]; do
 	mysqldump --defaults-file=$mycnf \
 		  --disable-keys \
                   --no-create-info \
@@ -122,18 +128,12 @@ for table in $queried_tables; do
                   --skip-triggers \
 		  --where="'${query}'" \
 		  {{ atl_jdbc_db_name }} $table > $(mktemp -p "${mysql_to_restore}/${table}")
-    done
+    done < <(yq -r ".database.retained.queries.${table}[]" /var/clone_config.yaml)
 done
 
 # Parse s3_backup_url
 bucketname=$(echo $s3_backup_url | cut -d '/' -f3)
 prefix="$(echo $s3_backup_url | cut -d '/' -f4-)/database"
-
-# Whatever version of the AWS API that mysqlsh is using, it needs
-# credentials in env vars instead of the instance role
-aws_env_vars=$(/usr/local/bin/aws_env_credentials_from_instance_role.sh)
-source $aws_env_vars
-rm $aws_env_vars
 
 # Restore clone database over existing database
 /usr/local/bin/drop_all_tables.sh
@@ -180,13 +180,13 @@ for table in $(cat $edit_tables); do
 	      {{ atl_jdbc_db_name }} $table > $tablesql
 
     # Replace base url, then replace site
-    rpl -F "${src_baseurl@Q}" "${dest_baseurl@Q}" $tablesql
-    rpl -F "${src_site@Q}" "${dest_site@Q}" $tablesql
+    perl -i -plne "s/\Q$src_baseurl\E/$dest_baseurl/g" $tablesql
+    perl -i -plne "s/\Q$src_site\E/$dest_site/g" $tablesql
     
     for subst_str in $(yq -r ".database.substitutions.strings[]" /var/clone_config.yaml); do
 	# https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
 	subst_val=$(yq -r ".database.substitutions.strings.${subst_str}" /var/clone_config.yaml)
-	rpl -F "${subst_str@Q}" "${subst_val@Q}" $tablesql
+	perl -i -plne "s/\Q$subst_str\E/$subst_val/g" $tablesql
     done
     
     if ! test -s $tablesql; then

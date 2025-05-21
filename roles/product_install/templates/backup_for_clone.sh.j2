@@ -1,14 +1,20 @@
 #!/bin/bash
 
-bucket_url="s3://{{ atl_s3_path }}/backups/{{ atl_proxy_name }}/$(date --iso-8601=seconds)/"
+bucket_url="{{ atl_s3_path }}backups/{{ atl_proxy_name }}/$(date --iso-8601=seconds)"
 echo ">>> Backing up to $bucket_url"
 
 bucketname=$(echo $bucket_url  | cut -d '/' -f3)
 
+# Whatever version of the AWS API that mysqlsh is using, it needs
+# credentials in env vars instead of the instance role
+aws_env_vars=$(/usr/local/bin/aws_env_credentials_from_instance_role.sh)
+source $aws_env_vars
+rm $aws_env_vars
+
 #
 # DB backup
 #
-bucket_db_path="/$(echo $bucket_url  | cut -d '/' -f4-)/database"
+bucket_db_path="$(echo $bucket_url  | cut -d '/' -f4-)/database"
 mysqlsh_cmd=$(mktemp)
 cat << EOF >$mysqlsh_cmd
 util.dumpSchemas(
@@ -20,7 +26,7 @@ util.dumpSchemas(
 )
 EOF
 
-mycnf=$(/usr/local/bin/create_mycnf)
+mycnf=$(/usr/local/bin/create_mycnf.sh)
 
 echo ">>> Backing up database to ${bucket_url}/database, starting $(date)"
 
