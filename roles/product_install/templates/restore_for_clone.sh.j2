@@ -69,7 +69,7 @@ echo "Restoring home directory from clone backup"
 # Filenames are for find command
 retained_files="${TEMPDIR}/retained_files_list"
 for pattern in $(yq -r '.filesystem.retained[]' /var/clone_config.yaml); do
-    find -L {{ atl_product_home }} -type f -wholename "'${pattern}'" >> $retained_files
+    find -L {{ atl_product_home }} -type f -wholename "$pattern" >> $retained_files
 done
 retained_files_tar="${TEMPDIR}/retained_files.tgz"
 tar -C / --files-from=$retained_files -czf $retained_files_tar
@@ -81,9 +81,10 @@ s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
 tar -C / -zxf $retained_files_tar
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 
-# Delete log files since they're not relevant after clone
-find "{{ atl_product_home }}" -wholename '*/logs/*' -delete -o -wholename '*/log/*' -delete
-find "{{ atl_product_home }}" -wholename '*/analytics-logs/*' -delete -o -wholename '*/log/*' -delete
+# Delete jira product log files since they're not relevant after clone
+find "{{ atl_product_installation_base }}" -wholename '*/log/*' -delete \
+     -o -wholename '*/logs/*' -delete \
+     -o -wholename '*/analytics-logs/*' -delete
 
 ##############################################
 # Restore database
