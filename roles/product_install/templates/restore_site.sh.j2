@@ -19,9 +19,9 @@ if test -z "$s3_backup_url_raw"; then
 Usage: $0 s3_backup_url
 
 Restore database and home directory for app "$APP".
-s3_backup_url must contain directories
-- home      App home directory 3
-- backup    Backup as created by mysqlsh
+s3_backup_url must contain files
+- home.tgz      App home tar archive
+- database/   Backup as created by mysqlsh
 
 THE APPLICATION MUST BE STOPPED BEFORE RESTORE!
 EOF
@@ -36,8 +36,8 @@ if systemctl is-active --quiet $APP; then
     exit 1
 fi
 
-if ! s5cmd ls "${s3_backup_url}/home" > /dev/null 2>&1; then
-    echo "s3_backup_url doesn't have home directory"
+if ! s5cmd ls "${s3_backup_url}/home.tgz" > /dev/null 2>&1; then
+    echo "s3_backup_url doesn't have home tar archive"
     exit 1
 fi
 
@@ -53,10 +53,13 @@ export TEMPDIR=$(mktemp -p /var/tmp -d)
 # Restore home directory
 ##############################################
 echo "Restoring home directory from site backup"
+rm -rf "{{ atl_product_home }}/*"
+s5cmd cat "${s3_backup_url}/home.tgz" | tar -C "{{ atl_product_home }}" -xzf -
+chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 
 # sync directory
-s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
-chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
+# s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
+
 
 ##############################################
 # Restore database

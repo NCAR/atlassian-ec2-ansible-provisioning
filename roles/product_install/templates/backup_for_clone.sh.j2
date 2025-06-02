@@ -41,13 +41,14 @@ if [ "$mysqlsh_status" != "0" ]; then
 fi
 
 #
-# FS backup
+# FS backup; use tar to preserve symlinks
 #
-bucket_fs_url="${bucket_url}/home/"
-echo ">>> Backing up home filesystem to ${bucket_fs_url}, starting $(date)"
+echo ">>> Backing up home filesystem, starting $(date)"
+tar --one-file-system -C "{{ atl_product_home }}" -zcf - . | s5cmd pipe "${bucket_url}/home.tgz"
 
-home_fs="{{ atl_product_home }}"
-s5cmd sync --exclude "*.snapshot/*" "${home_fs}/" "${bucket_fs_url}"
+#home_fs="{{ atl_product_home }}"
+#bucket_fs_url="${bucket_url}/home/"
+#s5cmd sync --exclude "*.snapshot/*" "${home_fs}/" "${bucket_fs_url}"
 
 echo ">>> Finished at: " $(date)
 echo "Total elapsed time: " $(printf '%dh:%dm:%ds\n' $(($SECONDS/3600)) $(($SECONDS%3600/60)) $((SECONDS%60)))
