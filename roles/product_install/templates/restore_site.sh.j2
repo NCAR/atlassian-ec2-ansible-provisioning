@@ -52,7 +52,7 @@ export TEMPDIR=$(mktemp -p /var/tmp -d)
 ##############################################
 # Restore home directory
 ##############################################
-echo "Restoring home directory from clone backup"
+echo "Restoring home directory from site backup"
 
 # sync directory
 s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
@@ -61,7 +61,7 @@ chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 ##############################################
 # Restore database
 ##############################################
-echo "Restoring database from clone backup"
+echo "Restoring database from site backup"
 
 # Save stuff we need from the database.  We do this by creating dumps
 # for these by passing queries to mysqldump
@@ -77,7 +77,7 @@ aws_env_vars=$(/usr/local/bin/aws_env_credentials_from_instance_role.sh)
 source $aws_env_vars
 rm $aws_env_vars
 
-# Restore clone database over existing database
+# Restore backup database over existing database
 /usr/local/bin/drop_all_tables.sh
 mysqlsh_cmd="${TEMPDIR}/mysqlsh_cmd"
 cat << EOF >$mysqlsh_cmd
