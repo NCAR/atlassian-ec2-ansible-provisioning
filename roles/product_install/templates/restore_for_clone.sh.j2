@@ -86,9 +86,7 @@ tar -C / -zxf $retained_files_tar
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 
 # Delete all jira log files since they're not relevant after clone
-find "{{ atl_product_installation_base }}" -wholename '*/log/*' -delete \
-     -o -wholename '*/logs/*' -delete \
-     -o -wholename '*/analytics-logs/*' -delete
+rm -rf "{{ atl_product_installation_base }}/logs/*"
 
 find "{{ atl_product_home }}" -wholename '*/log/*' -delete \
      -o -wholename '*/logs/*' -delete
