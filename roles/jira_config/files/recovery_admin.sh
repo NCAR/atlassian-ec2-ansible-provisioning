@@ -48,6 +48,7 @@ case $ACTION in
 		 -add_line="$add_line" $setenv_file
 	    echo "recovery_admin password is: $recovery_admin_password"
 	fi
+	echo "Recovery admin username is shown on login page."
 	;;
     'disable')
 	# Toggle internal directory off, external on
