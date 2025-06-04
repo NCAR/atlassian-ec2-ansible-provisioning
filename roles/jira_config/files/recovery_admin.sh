@@ -54,8 +54,8 @@ case $ACTION in
 	# Toggle internal directory off, external on
 	# WARNING this is NOT necessarily setting it back to its original state
 	mycnf=$(/usr/local/bin/create_mycnf.sh)
-	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 0 WHERE lower_directory_name LIKE '%internal%';"
-	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 1 WHERE lower_directory_name NOT LIKE '%internal%';"
+#	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 0 WHERE lower_directory_name LIKE '%internal%';"
+#	mysql --defaults-file=$mycnf -e "UPDATE cwd_directory SET active = 1 WHERE lower_directory_name NOT LIKE '%internal%';"
 
 	# Toggle enable-authentication-fallback off
 	# REF: https://confluence.atlassian.com/jirakb/bypass-saml-authentication-for-jira-data-center-869009810.html
