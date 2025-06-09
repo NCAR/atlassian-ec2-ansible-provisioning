@@ -12,7 +12,7 @@
 ACTION=$1
 
 homedir=/var/atlassian/application-data/jira
-setenv_file=/opt/atlassian/jira-core/current/bin/setenv.sh
+setenv_file=/opt/atlassian/jira-{{ atl_product_edition }}/current/bin/setenv.sh
 
 recovery_admin_search_re='^JVM_SUPPORT_RECOMMENDED_ARGS=.*$'
 

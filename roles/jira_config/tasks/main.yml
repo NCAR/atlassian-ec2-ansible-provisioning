@@ -144,13 +144,13 @@
   changed_when: false  # For Molecule idempotence check
     
 - name: Install recovery_admin script
-  ansible.builtin.copy:
-    src: recovery_admin.sh
+  ansible.builtin.template:
+    src: recovery_admin.sh.j2
     dest: "/usr/local/bin/recovery_admin.sh"
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
-
+  
 - name: Install clone_config.yaml (used by restore_for_clone.sh)
   ansible.builtin.copy:
     src: clone_config.yaml
