@@ -102,13 +102,16 @@ mycnf=$(/usr/local/bin/create_mycnf.sh)
 mysql_to_restore="${TEMPDIR}/mysql_to_restore"
 mkdir $mysql_to_restore
 
-#
-# FIXME break each out into its own file; can have multiple for each table
-# how to assure uniqueness of file? mktemp?
-#
+# Generate list of full tables to retains 
+full_tables="${TEMPDIR}/full_tables"
+for raw_table in $(yq -r ".database.retained.tables[]" /var/clone_config.yaml); do
+    if echo $raw_table | grep -Fq '%'; then
+	mysql --defaults-file=$mycnf -sN -e "show tables like '${table}';" >> $full_tables
+    else
+	echo $raw_table >> $full_tables
+    fi
+done
 
-# Whole tables
-full_tables=$(yq -r '.database.retained.tables[]' /var/clone_config.yaml | tr "\n" " ")
 for table in $full_tables; do
     mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
     mysqldump --defaults-file=$mycnf \
