@@ -3,7 +3,7 @@
 - name: Create database config
   ansible.builtin.template:
     src: dbconfig.xml.j2
-    dest: "{{ atl_product_home }}/dbconfig.xml"
+    dest: "{{ atl_product_home }}/dbconfig.xml.aws_secretsmanager"
     owner: "{{ atl_product_user }}"
 
 - name: Create cluster config
