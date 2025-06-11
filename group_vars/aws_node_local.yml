@@ -210,7 +210,7 @@ atl_base_url: "{{ lookup('env', 'ATL_BASE_URL') | default('https://' +  atl_prox
 atl_s3_path: "{{ lookup('env', 'ATL_S3_PATH') }}"
 
 # Use secretsmanager directly (jira)
-atl_use_aws_secrets_for_db: "{{ lookup('env', 'ATL_USE_AWS_SECRETS_FOR_DB') | bool | default(false) }}"
+atl_use_aws_secrets_for_db: "{{ lookup('env', 'ATL_USE_AWS_SECRETS_FOR_DB') | bool | default(true) }}"
 atl_secretsmanager_aws_secret_id: "{{ lookup('env', 'ATL_DBUSER_CREDENTIAL_SECRET_ARN') if atl_use_aws_secrets_for_db else '' }}"
 atl_secretsmanager_aws_region: "{{ atl_aws_region if atl_use_aws_secrets_for_db else '' }}"
 

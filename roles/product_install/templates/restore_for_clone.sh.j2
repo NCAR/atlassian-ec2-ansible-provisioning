@@ -51,8 +51,9 @@ if ! s5cmd ls "${s3_backup_url}/database" > /dev/null 2>&1; then
     exit 1
 fi
 
-# /var/tmp is bigger
-export TEMPDIR=$(mktemp -p /var/tmp -d)
+#
+mkdir -p /var/atlassian/application-data/tmp > /dev/null 2>&1
+export TEMPDIR=$(mktemp -p /var/atlassian/application-data/tmp -d)
 
 # Whatever version of the AWS API that mysqlsh is using, it needs
 # credentials in env vars instead of the instance role
@@ -63,7 +64,7 @@ rm $aws_env_vars
 ##############################################
 # Restore home directory
 ##############################################
-echo "Restoring home directory from clone backup"
+echo ">>> Restoring home directory from clone backup"
 
 # Tar up local retained files
 # Filenames are for find command
@@ -78,23 +79,14 @@ tar -C / --files-from=$retained_files -czf $retained_files_tar
 rm -rf "{{ atl_product_home }}/*"
 s5cmd cat "${s3_backup_url}/home.tgz" | tar -C "{{ atl_product_home }}" -xzf -
 
-# sync directory
-#s5cmd sync --delete "${s3_backup_url}/home/*" "{{ atl_product_home }}/"
-
 # untar retained over sync'd directory
 tar -C / -zxf $retained_files_tar
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 
-# Delete all jira log files since they're not relevant after clone
-rm -rf "{{ atl_product_installation_base }}/logs/*"
-
-find "{{ atl_product_home }}" -wholename '*/log/*' -delete \
-     -o -wholename '*/logs/*' -delete
-
 ##############################################
 # Restore database
 ##############################################
-echo "Restoring database from clone backup"
+echo ">>> Restoring database from clone backup"
 
 # Save stuff we need from the database.  We do this by creating dumps
 # for these by passing queries to mysqldump
@@ -106,13 +98,13 @@ mkdir $mysql_to_restore
 full_tables="${TEMPDIR}/full_tables"
 for raw_table in $(yq -r ".database.retained.tables[]" /var/clone_config.yaml); do
     if echo $raw_table | grep -Fq '%'; then
-	mysql --defaults-file=$mycnf -sN -e "show tables like '${table}';" >> $full_tables
+	mysql --defaults-file=$mycnf -sN -e "show tables like '${raw_table}';" >> $full_tables
     else
 	echo $raw_table >> $full_tables
     fi
 done
 
-for table in $full_tables; do
+for table in $(cat $full_tables); do
     mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
     mysqldump --defaults-file=$mycnf \
 	      --add-drop-table \
@@ -164,7 +156,7 @@ mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
 edit_tables="${TEMPDIR}/edit_tables"
 for raw_table in $(yq -r ".database.substitutions.tables[]" /var/clone_config.yaml); do
     if echo $raw_table | grep -Fq '%'; then
-	mysql --defaults-file=$mycnf -sN -e "show tables like '${table}';" >> $edit_tables
+	mysql --defaults-file=$mycnf -sN -e "show tables like '${raw_table}';" >> $edit_tables
     else
 	echo $raw_table >> $edit_tables
     fi
@@ -223,4 +215,3 @@ test -e /usr/local/bin/clone_postprocess && /usr/local/bin/clone_postprocess
 
 rm -rf $TEMPDIR
 rm $mycnf
-
