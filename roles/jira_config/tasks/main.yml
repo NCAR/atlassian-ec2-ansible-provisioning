@@ -1,10 +1,11 @@
 ---
 
-- name: Create database config
-  ansible.builtin.template:
-    src: dbconfig.xml.j2
-    dest: "{{ atl_product_home }}/dbconfig.xml.aws_secretsmanager"
-    owner: "{{ atl_product_user }}"
+# GETS OVERWRITTEN BY INSTALL WIZARD
+# - name: Create database config
+#   ansible.builtin.template:
+#     src: dbconfig.xml.j2
+#     dest: "{{ atl_product_home }}/dbconfig.xml.aws_secretsmanager"
+#     owner: "{{ atl_product_user }}"
 
 - name: Create cluster config
   ansible.builtin.template:
@@ -53,7 +54,6 @@
   when:
     - atl_attachments_bucket is defined
 
-    
 - name: Set Jira home directory
   ansible.builtin.lineinfile:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
@@ -166,3 +166,12 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
+
+- name: Install script to hack AWS secrets manager config into dbconfig.xml
+  ansible.builtin.template:  
+    src: dbconfig_enable_aws_secrets.sh.j2
+    dest: /usr/local/bin/dbconfig_enable_aws_secrets.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+   
