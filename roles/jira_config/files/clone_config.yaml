@@ -11,9 +11,9 @@ database:
   retained:
     tables:
       - 'cwd_%'
-#      - AO_ED669C_IDP_CONFIG
-#      - mailserver
-#    queries:
+      - AO_ED669C_IDP_CONFIG
+      - mailserver
+    queries: {}
 #      cwd_directory_attribute:
 #        - "directory_id = (SELECT id FROM cwd_directory WHERE directory_type = 'CROWD')"
   
