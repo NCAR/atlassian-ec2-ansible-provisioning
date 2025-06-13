@@ -70,23 +70,22 @@ echo ">>> Restoring home directory from clone backup"
 # Filenames are for find command
 retained_files="${TEMPDIR}/retained_files_list"
 for pattern in $(yq -r '.filesystem.retained[]' /var/clone_config.yaml); do
-    find -L {{ atl_product_home }} -type f -wholename "$pattern" >> $retained_files
+    (cd {{ atl_product_home }}; find . -type f -wholename "$pattern" >> $retained_files)
 done
 retained_files_tar="${TEMPDIR}/retained_files.tgz"
-tar -C / --files-from=$retained_files -czf $retained_files_tar
+tar -C {{ atl_product_home }} --files-from=$retained_files -czf $retained_files_tar
 
 # Restore home directory
 rm -rf "{{ atl_product_home }}/*"
 s5cmd cat "${s3_backup_url}/home.tgz" | tar -C "{{ atl_product_home }}" -xzf -
 
 # untar retained over sync'd directory
-tar -C / -zxf $retained_files_tar
+tar -C {{ atl_product_home }} -zxf $retained_files_tar
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 
 ##############################################
 # Restore database
 ##############################################
-echo ">>> Restoring database from clone backup"
 
 # Save stuff we need from the database.  We do this by creating dumps
 # for these by passing queries to mysqldump
@@ -104,19 +103,23 @@ for raw_table in $(yq -r ".database.retained.tables[]" /var/clone_config.yaml); 
     fi
 done
 
-for table in $(cat $full_tables); do
-    mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
-    mysqldump --defaults-file=$mycnf \
-	      --add-drop-table \
-	      --create-options \
-	      --disable-keys \
-	      --set-gtid-purged=OFF \
-	      {{ atl_jdbc_db_name }} $table > $(mktemp -p "${mysql_to_restore}/${table}")
-done
+if test -s $full_tables; then 
+    for table in $(cat $full_tables); do
+	echo ">>> Dumping full table $table"
+	mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
+	mysqldump --defaults-file=$mycnf \
+		  --add-drop-table \
+		  --create-options \
+		  --disable-keys \
+		  --set-gtid-purged=OFF \
+		  {{ atl_jdbc_db_name }} $table > $(mktemp -p "${mysql_to_restore}/${table}")
+    done
+fi
 
 # Queries
 queried_tables=$(yq -r '.database.retained.queries | keys[]' /var/clone_config.yaml)
 for table in $queried_tables; do
+    echo ">>> Dumping query for table $table"    
     mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
     while IFS="" read -r query|| [ -n "$query" ]; do
 	mysqldump --defaults-file=$mycnf \
@@ -137,6 +140,7 @@ bucketname=$(echo $s3_backup_url | cut -d '/' -f3)
 prefix="$(echo $s3_backup_url | cut -d '/' -f4-)/database"
 
 # Restore clone database over existing database
+echo ">>> Restoring database from clone backup"
 /usr/local/bin/drop_all_tables.sh
 mysqlsh_cmd="${TEMPDIR}/mysqlsh_cmd"
 cat << EOF >$mysqlsh_cmd
@@ -168,6 +172,7 @@ dest_site="{{ atl_proxy_name }}"
 
 # Dump table, replace strings
 for table in $(cat $edit_tables); do
+    echo ">>> Replacing strings in table $table"
     mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
     tablesql=$(mktemp -p "${mysql_to_restore}/${table}")
     mysqldump --defaults-file=$mycnf \
@@ -186,7 +191,7 @@ for table in $(cat $edit_tables); do
     
     for subst_str in $(yq -r ".database.substitutions.strings[]" /var/clone_config.yaml); do
 	# https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
-	subst_val=$(yq -r ".database.substitutions.strings.${subst_str}" /var/clone_config.yaml)
+	subst_val=$(yq -r ".database.substitutions.strings.\"${subst_str}\"" /var/clone_config.yaml)
 	perl -s -p -i -e 's/\Q$src\E/$dst/g' -- -src=$subst_str -dst=$subst_val $tablesql
     done
     
@@ -202,6 +207,7 @@ done
 # other's toes
 for table in $(ls $mysql_to_restore); do
     for f in $(ls "${mysql_to_restore}/${table}"); do
+	echo ">>> Restoring retained data for table $table"
         dump="${mysql_to_restore}/${table}/${f}"
         mysql --defaults-file=$mycnf {{ atl_jdbc_db_name }} < $dump
     done
