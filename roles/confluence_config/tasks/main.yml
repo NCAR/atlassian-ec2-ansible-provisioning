@@ -194,3 +194,11 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
   
+- name: Install script to hack AWS secrets manager config into confluence.cfg.xml
+  ansible.builtin.template:  
+    src: confluence_cfg_enable_aws_secrets.sh.j2
+    dest: /usr/local/bin/confluence_cfg_enable_aws_secrets.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+   

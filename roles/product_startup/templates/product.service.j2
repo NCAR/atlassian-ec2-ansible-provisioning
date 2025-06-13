@@ -18,6 +18,8 @@ StandardError=journal+console
 {% if atl_use_aws_secrets_for_db %}
 {% if (atl_product_family == "jira") %}
 ExecStartPre=/usr/local/bin/dbconfig_enable_aws_secrets.sh
+{% elif (atl_product_family == "confluence") %}
+ExecStartPre=/usr/local/bin/confluence_cfg_enable_aws_secrets.sh
 {% endif %}
 {% endif %}
 
