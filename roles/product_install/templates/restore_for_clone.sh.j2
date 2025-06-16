@@ -150,7 +150,8 @@ util.loadDump(
     schema: "{{ atl_jdbc_db_name }}",
     s3BucketName: "$bucketname",
     progressFile: "",
-    resetProgress: "true"     
+    resetProgress: "true",
+    threads: 8
   }
 )
 EOF
