@@ -29,6 +29,8 @@ util.dumpSchemas(
   "$bucket_db_path",
   {
     s3BucketName: "$bucketname"
+    threads: 8,
+    compatibility: ["strip_definers"]
   }
 )
 EOF
