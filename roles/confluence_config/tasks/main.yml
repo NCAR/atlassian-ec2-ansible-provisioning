@@ -193,6 +193,14 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
+
+- name: Install get_baseurl.sh (used by restore_for_clone.sh)
+  ansible.builtin.copy:
+    src: get_baseurl.sh
+    dest: /usr/local/bin/get_baseurl.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
   
 - name: Install script to hack AWS secrets manager config into confluence.cfg.xml
   ansible.builtin.template:  

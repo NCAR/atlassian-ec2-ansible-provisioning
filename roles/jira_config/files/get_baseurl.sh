@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #
 # Get the base url from the database--
 # used on clone restores to get the clone source base url
