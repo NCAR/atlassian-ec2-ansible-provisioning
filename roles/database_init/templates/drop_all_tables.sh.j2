@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Drop all confluence tables
+# Drop all confluence tables and procedures
 
 homedir=/var/atlassian/application-data/confluence
 
@@ -8,10 +8,14 @@ mycnf=$(/usr/local/bin/create_mycnf.sh)
 
 script=$(mktemp)
 echo 'SET FOREIGN_KEY_CHECKS = 0;' > $script
-for t in $(mysql --defaults-file=$mycnf -sre "show tables;"); do
+for t in $(mysql --defaults-file=$mycnf --batch -sre "SHOW TABLES;"); do
         echo "DROP TABLE IF EXISTS \`$t\`;" >> $script
 done
 echo 'SET FOREIGN_KEY_CHECKS = 1;' >> $script
+
+for t in $(mysql --defaults-file=$mycnf --batch -sre "SELECT routine_name FROM information_schema.routines WHERE routine_schema = '{{ ATL_JDBC_DB_NAME }}';"); do
+    echo "DROP PROCEDURE IF EXISTS $t" >> $script
+done
 
 mysql --defaults-file=$mycnf < $script
 rm $script
