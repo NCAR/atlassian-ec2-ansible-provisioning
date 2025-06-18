@@ -11,6 +11,21 @@ database:
   retained:
     tables:
       - AO_ED669C_IDP_CONFIG
+      - CLUSTERSAFETY
+      - journalentry
+      - cwd_app_dir_mapping
+      - cwd_app_dir_operation
+      - cwd_application
+      - cwd_directory
+      - cwd_directory_attribute
+      - cwd_directory_operation
+      - cwd_group
+      - cwd_membership
+      - cwd_synchronisation_status
+      - cwd_synchronisation_token
+      - cwd_user
+      - cwd_user_attribute
+
     queries:
       BANDANA:
         - "BANDANAKEY = 'confluence.server.id'"

@@ -167,6 +167,14 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
+- name: Install set_baseurl.sh (used by restore_for_clone.sh)
+  ansible.builtin.copy:
+    src: set_baseurl.sh
+    dest: /usr/local/bin/set_baseurl.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+    
 - name: Install script to hack AWS secrets manager config into dbconfig.xml
   ansible.builtin.template:  
     src: dbconfig_enable_aws_secrets.sh.j2

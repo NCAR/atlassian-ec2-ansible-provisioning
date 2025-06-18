@@ -1,10 +1,8 @@
 #!/bin/bash
 
+# REF: https://support.atlassian.com/jira/kb/change-the-base-url-of-jira-server-in-the-database/
 #
-# Get the base url from the database--
-# used on clone restores to get the clone source base url
-#
-# This is app-specific
+# Get the base url from the database; this is app-specific
 #
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)
