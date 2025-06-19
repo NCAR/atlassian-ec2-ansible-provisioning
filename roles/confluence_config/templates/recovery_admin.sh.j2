@@ -20,6 +20,7 @@ case $ACTION in
 	recovery_admin_password=$(fgrep 'atlassian.recovery.password' $setenv_file | sed -e 's/.*password=\(.*\)[[:space:]].*/\1/')
 	if ! test -z $recovery_admin_password; then
 	    echo "Recovery_admin user already enabled."
+	    echo "Login URL: https://{{ atl_proxy_name }}/login.action?auth_fallback"
 	    grep -oh 'Recovery admin username:.*' "{{ atl_product_home }}/logs/atlassian-confluence-security.log" | tail -1
 	    echo "Recovery admin password: '${recovery_admin_password}'"
 	else
