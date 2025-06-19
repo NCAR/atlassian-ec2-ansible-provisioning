@@ -4,10 +4,7 @@
 
 ACTION=$1
 
-homedir=/var/atlassian/application-data/confluence
-setenv_file=/opt/atlassian/confluence/current/bin/setenv.sh
-
-recovery_admin_search_line='CATALINA_OPTS="${START_CONFLUENCE_JAVA_OPTS} ${CATALINA_OPTS}"'
+setenv_file="{{ atl_product_installation_current }}/bin/setenv.sh"
 
 case $ACTION in
     'enable')
@@ -22,8 +19,11 @@ case $ACTION in
 	
 	recovery_admin_password=$(fgrep 'atlassian.recovery.password' $setenv_file | sed -e 's/.*password=\(.*\)[[:space:]].*/\1/')
 	if ! test -z $recovery_admin_password; then
-	    echo "recovery_admin user already enabled; password is: ${recovery_admin_password}"
+	    echo "Recovery_admin user already enabled."
+	    grep -oh 'Recovery admin username:.*' "{{ atl_product_home }}/logs/atlassian-confluence-security.log" | tail -1
+	    echo "Recovery admin password: '${recovery_admin_password}'"
 	else
+	    recovery_admin_search_line='CATALINA_OPTS="${START_CONFLUENCE_JAVA_OPTS} ${CATALINA_OPTS}"'
 	    recovery_admin_password=$(pwgen -s 32 1)
 	    add_line='CATALINA_OPTS="-Datlassian.recovery.password='$recovery_admin_password' ${CATALINA_OPTS}"'
 	    perl -i -spe 's/(\Q$recovery_admin_search_line\E)/$add_line\n$1/;' -- \
