@@ -32,7 +32,7 @@ case $ACTION in
 	    echo "recovery_admin password is: $recovery_admin_password"
 	fi
 	echo "When confluence is restarted, find recovery admin user name like this:"
-	echo "grep 'Recovery admin username' /var/atlassian/application-data/confluence/logs/atlassian-confluence-security.log"
+	echo "grep 'Recovery admin username' {{ atl_product_home }}/logs/atlassian-confluence-security.log"
 	echo "Login at this URL: https://{{ atl_proxy_name }}/login.action?auth_fallback"
 	;;
     'disable')
