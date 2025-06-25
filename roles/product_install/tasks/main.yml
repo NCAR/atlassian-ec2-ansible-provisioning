@@ -344,30 +344,6 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
-  
-# #
-# # s3m
-# #
-# # DANGER brittle
-# #
-# - name: Install s3m (s3 streaming client)
-#   ansible.builtin.get_url:
-#     headers:
-#       user-agent: curl/7.81.0 # Mysql doesn't like ansible for some reason
-#     url: "https://github.com/s3m/s3m/releases/download/0.13.1/s3m-0.13.1-x86_64-unknown-linux-musl.tar.gz"
-#     dest: /tmp
-
-# - name: Extract s3m release
-#   ansible.builtin.unarchive:
-#     src: /tmp/s3m-0.13.1-x86_64-unknown-linux-musl.tar.gz
-#     dest: /tmp/s3m
-
-# - name: Copy s3m
-#   src: /tmp/s3m-0.13.1-x86_64-unknown-linux-musl/s3m
-#   dest: /usr/local/bin/s3m
-#     owner: "{{ atl_product_user }}"
-#     group: "{{ atl_product_user }}"
-#     mode: '0500'
     
 #
 # binlog2sql
@@ -380,7 +356,7 @@
     dest: /tmp/binlog2sql
 
 - name: Copy binlog2sql.py
-  ansible.builtin.file:
+  ansible.builtin.copy:
     src: /tmp/binlog2sql/binlog2sql/binlog2sql.py
     dest: /usr/local/bin/binlog2sql.py
     owner: "{{ atl_product_user }}"
@@ -388,7 +364,7 @@
     mode: '0500'
   
 - name: Copy binlog2sql_util.py
-  ansible.builtin.file:
+  ansible.builtin.copy:
     src: /tmp/binlog2sql/binlog2sql/binlog2sql_util.py
     dest: /usr/local/bin/binlog2sql_util.py
     owner: "{{ atl_product_user }}"
