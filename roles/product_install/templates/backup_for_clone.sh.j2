@@ -1,12 +1,12 @@
 #!/bin/bash
 
 tag=$1
-
-bucket_url="{{ atl_s3_path }}backups/$(date --iso-8601=seconds)"
-
-if ! test -z "$tag"; then
-    bucket_url="${bucket_url}-${tag}"
+if test -z "$tag"; then
+    echo "Usage: $0 tag"
+    exit 1
 fi
+
+bucket_url="{{ atl_s3_path }}backups/$(date --iso-8601=seconds)-${tag}"
 
 echo ">>> Backing up to $bucket_url"
 
@@ -28,7 +28,7 @@ util.dumpSchemas(
   ["{{ atl_jdbc_db_name }}"],
   "$bucket_db_path",
   {
-    s3BucketName: "$bucketname"
+    s3BucketName: "$bucketname",
     threads: 8,
     compatibility: ["strip_definers"]
   }
