@@ -15,7 +15,7 @@ fi
 
 # Retrieve the db admin credentials
 secret_string=$(aws secretsmanager get-secret-value \
-		    --secret-id "{{ atl_rds_master_credential_secret_arn }}" \
+		    --secret-id "{{ atl_rds_master_credential }}" \
 		    --output json | jq -r '.SecretString')
 dbuser=$(echo $secret_string | jq -r '.username')
 dbpassword=$(echo $secret_string | jq -r '.password')
