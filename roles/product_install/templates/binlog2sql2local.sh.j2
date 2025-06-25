@@ -14,11 +14,11 @@ USAGE
 fi
 
 # Retrieve the db admin credentials
-secret_string=$(aws secretsmanager get-secret-value \
-		    --secret-id "{{ atl_rds_master_credential }}" \
-		    --output json | jq -r '.SecretString')
-dbuser=$(echo $secret_string | jq -r '.username')
-dbpassword=$(echo $secret_string | jq -r '.password')
+# secret_string=$(aws secretsmanager get-secret-value \
+# 		    --secret-id "{{ atl_rds_master_credential }}" \
+# 		    --output json | jq -r '.SecretString')
+# dbuser=$(echo $secret_string | jq -r '.username')
+# dbpassword=$(echo $secret_string | jq -r '.password')
 
 dumpfile="${dumpdir}/$(date --iso-8601=seconds)_${tag}.zst"
 echo "Writing parsed binlog to ${dumpfile}"
@@ -28,8 +28,8 @@ lastlog=$(mysql -h "{{ atl_db_host }}" --user="${dbuser}" --password="${dbpasswo
 		--batch -sre 'show binary logs;' \
 	      | tail -1 | awk '{print $1}')
 
-binlog2sql.py -u "${dbuser}" --stop-never \
-	      -p "${dbpassword}" \
+binlog2sql.py -u "{{ atl_rds_master_user }}" --stop-never \
+	      -p "{{ atl_rds_master_password }}" \
 	      -h "{{ atl_db_host }}" \
 	      -d "{{ atl_jdbc_db_name }}" \
 	      --start-file $lastlog \
