@@ -1,6 +1,8 @@
 #!/bin/bash
 
 dumpdir="{{ atl_product_home }}/tmp/binlog_parsed"
+test -d $dumpdir || mkdir -p $dumpdir
+
 
 tag=$1
 if test -z $tag; then
