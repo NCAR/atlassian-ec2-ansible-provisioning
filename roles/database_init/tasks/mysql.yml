@@ -106,3 +106,50 @@
     #     --execute="GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,INDEX,REFERENCES on {{ atl_jdbc_db_name }}.* TO '{{ atl_jdbc_user }}'@'{{ atl_db_host }}' IDENTIFIED BY '{{ atl_jdbc_password }}'; flush privileges;"
     #   no_log: true
 
+
+#
+# binlog2sql, converts mysql binlog into (hopefully) runnable SQL.
+# https://github.com/danfengcao/binlog2sql
+#
+# We are using local files because we have to patch this:
+# https://github.com/danfengcao/binlog2sql/issues/33
+#
+- name: Copy binlog2sql.py
+  ansible.builtin.copy:
+    src: binlog2sql.py
+    dest: /usr/local/bin/binlog2sql.py
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+  
+- name: Copy binlog2sql_util.py
+  ansible.builtin.copy:
+    src: binlog2sql_util.py
+    dest: /usr/local/bin/binlog2sql_util.py
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+  
+- name: Install pymysql python module for binlog2sql
+  ansible.builtin.pip:
+    name: PyMySQL==0.9.3
+
+- name: Install wheel python module for binlog2sql
+  ansible.builtin.pip:
+    name: wheel==0.29.0
+
+- name: Install mysql-replication python module for binlog2sql
+  ansible.builtin.pip:
+    name: mysql-replication==0.21
+
+#
+# Install script to save binlog2sql output
+#
+- name: Install binlog2sql2local.sh
+  ansible.builtin.template:
+    src: binlog2sql2local.sh.j2
+    dest: /usr/local/bin/binlog2sql2local.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+  
