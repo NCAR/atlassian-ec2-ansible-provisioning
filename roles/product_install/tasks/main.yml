@@ -376,7 +376,7 @@
 #
 - name: Install binlog2sql (translates mysql binlogs to SQL statements)
   ansible.builtin.git:
-    repo: 'https://github.com/danfengcao/binlog2sql.git '
+    repo: 'https://github.com/danfengcao/binlog2sql.git'
     dest: /tmp/binlog2sql
 
 - name: Copy binlog2sql.py
