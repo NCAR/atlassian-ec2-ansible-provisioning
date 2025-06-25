@@ -1,0 +1,38 @@
+#!/bin/bash
+
+dumpdir="{{ atl_product_home }}/tmp/binlog_parsed"
+
+tag=$1
+if test -z $tag; then
+    cat <<USAGE
+$0 tag
+
+Parse the database binary log into SQL statements and upload to S3
+under $dumpdir/.
+USAGE
+    exit 1
+fi
+
+# Retrieve the db admin credentials
+secret_string=$(aws secretsmanager get-secret-value \
+		    --secret-id "{{ atl_rds_master_credential_secret_arn }}" \
+		    --output json | jq -r '.SecretString')
+dbuser=$(echo $secret_string | jq -r '.username')
+dbpassword=$(echo $secret_string | jq -r '.password')
+
+dumpfile="${dumpdir}/$(date --iso-8601=seconds)_${tag}.zst"
+echo "Writing parsed binlog to ${dumpfile}"
+
+# Potential race; i.e. file could be closed before binlog2sql starts reading it
+lastlog=$(mysql -h "{{ atl_db_host }}" --user="${dbuser}" --password="${dbpassword}" \
+		--batch -sre 'show binary logs;' \
+	      | tail -1 | awk '{print $1}')
+
+binlog2sql.py -u "${dbuser}" --stop-never \
+	      -p "${dbpassword}" \
+	      -h "{{ atl_db_host }}" \
+	      -d "{{ atl_jdbc_db_name }}" \
+	      --start-file $lastlog \
+    | zstd > $dumpfile
+
+

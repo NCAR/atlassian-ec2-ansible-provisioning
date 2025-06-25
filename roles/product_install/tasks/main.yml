@@ -353,3 +353,74 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
   
+# #
+# # s3m
+# #
+# # DANGER brittle
+# #
+# - name: Install s3m (s3 streaming client)
+#   ansible.builtin.get_url:
+#     headers:
+#       user-agent: curl/7.81.0 # Mysql doesn't like ansible for some reason
+#     url: "https://github.com/s3m/s3m/releases/download/0.13.1/s3m-0.13.1-x86_64-unknown-linux-musl.tar.gz"
+#     dest: /tmp
+
+# - name: Extract s3m release
+#   ansible.builtin.unarchive:
+#     src: /tmp/s3m-0.13.1-x86_64-unknown-linux-musl.tar.gz
+#     dest: /tmp/s3m
+
+# - name: Copy s3m
+#   src: /tmp/s3m-0.13.1-x86_64-unknown-linux-musl/s3m
+#   dest: /usr/local/bin/s3m
+#     owner: "{{ atl_product_user }}"
+#     group: "{{ atl_product_user }}"
+#     mode: '0500'
+    
+#
+# binlog2sql
+#
+# DANGER brittle
+#
+- name: Install binlog2sql (translates mysql binlogs to SQL statements)
+  ansible.builtin.git:
+    repo: 'https://github.com/danfengcao/binlog2sql.git '
+    dest: /tmp/binlog2sql
+
+- name: Copy binlog2sql.py
+  src: /tmp/binlog2sql/binlog2sql/binlog2sql.py
+  dest: /usr/local/bin/binlog2sql.py
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+  
+- name: Copy binlog2sql_util.py
+  src: /tmp/binlog2sql/binlog2sql/binlog2sql_util.py
+  dest: /usr/local/bin/binlog2sql_util.py
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+  
+- name: Install pymysql python module for binlog2sql
+  ansible.builtin.pip:
+    name: PyMySQL==0.9.3
+
+- name: Install wheel python module for binlog2sql
+  ansible.builtin.pip:
+    name: wheel==0.29.0
+
+- name: Install mysql-replication python module for binlog2sql
+  ansible.builtin.pip:
+    name: mysql-replication==0.21
+
+#
+# Install script to save binlog2sql output
+#
+- name: Install binlog2sql2local.sh
+  ansible.builtin.template:
+    src: binlog2sql2s3.sh.j2
+    dest: /usr/local/bin/binlog2sql2local.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+    

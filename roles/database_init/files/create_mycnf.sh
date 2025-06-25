@@ -7,11 +7,8 @@
 #
 
 # Extract the relevant env vars from cloud-init.
-# We do this convoluted temp file thing to get around quoting issues.
 set_vars=$(mktemp)
-for var in 'ATL_DBUSER_CREDENTIAL_SECRET_ARN' 'ATL_DB_HOST' 'ATL_JDBC_DB_NAME'; do
-    echo $(grep "export $var" /var/lib/cloud/instance/user-data.txt) >> $set_vars
-done
+grep '^export ATL_' /var/lib/cloud/instance/user-data.txt > $set_vars
 . $set_vars
 rm $set_vars
 
