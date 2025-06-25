@@ -13,7 +13,7 @@ for t in $(mysql --defaults-file=$mycnf --batch -sre "SHOW TABLES;"); do
 done
 echo 'SET FOREIGN_KEY_CHECKS = 1;' >> $script
 
-for t in $(mysql --defaults-file=$mycnf --batch -sre "SELECT routine_name FROM information_schema.routines WHERE routine_schema = '{{ ATL_JDBC_DB_NAME }}';"); do
+for t in $(mysql --defaults-file=$mycnf --batch -sre "SELECT routine_name FROM information_schema.routines WHERE routine_schema = '{{ atl_jdbc_db_name }}';"); do
     echo "DROP PROCEDURE IF EXISTS $t;" >> $script
 done
 
