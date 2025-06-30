@@ -48,6 +48,7 @@ atl_product_home_shared: "{{ atl_shared_mountpoint }}/{{ atl_product_shared_home
 atl_product_shared_plugins: "{{ atl_product_home_shared }}/plugins/installed-plugins"
 
 atl_installation_base: "/opt/atlassian"
+atl_product_edition:  "{{ lookup('env', 'ATL_PRODUCT_EDITION') }}"
 atl_product_installation_base: "{{ atl_installation_base }}/{{ atl_product_edition }}"
 atl_product_installation_versioned: "{{ atl_product_installation_base }}/{{ atl_product_version }}"
 atl_product_installation_current: "{{ atl_product_installation_base }}/current"
