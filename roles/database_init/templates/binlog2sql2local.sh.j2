@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dumpdir="{{ atl_product_home }}/tmp/binlog_parsed"
+dumpdir="{{ atl_product_home }}/binlog_parsed"
 test -d $dumpdir || mkdir -p $dumpdir
 
 
@@ -18,16 +18,16 @@ dumpfile="${dumpdir}/$(date --iso-8601=seconds)_${tag}.sql"
 echo "Writing parsed binlog to ${dumpfile}"
 
 # Potential race; i.e. file could be closed before binlog2sql starts reading it
-lastlog=$(mysql -h "{{ atl_db_host }}" \
-		--user="{{ atl_rds_master_user }}" \
-		--password="{{ atl_rds_master_password }}" \
+lastlog=$(mysql -h '{{ atl_db_host }}' \
+		--user='{{ atl_rds_master_user }}' \
+		--password='{{ atl_rds_master_password }}' \
 		--batch -sre 'show binary logs;' \
 	      | tail -1 | awk '{print $1}')
 
-binlog2sql.py -u "{{ atl_rds_master_user }}" --stop-never \
-	      -p "{{ atl_rds_master_password }}" \
-	      -h "{{ atl_db_host }}" \
-	      -d "{{ atl_jdbc_db_name }}" \
+binlog2sql.py -u '{{ atl_rds_master_user }}' --stop-never \
+	      -p '{{ atl_rds_master_password }}' \
+	      -h '{{ atl_db_host }}' \
+	      -d '{{ atl_jdbc_db_name }}' \
 	      --start-file $lastlog > $dumpfile
 
 
