@@ -9,7 +9,9 @@ database:
       - 'cwd_%'
       - AO_ED669C_IDP_CONFIG
       - mailserver
-
+    queries:
+      propertyentry:
+        - "SELECT * FROM propertyentry WHERE property_key = 'jira.mail.send.disabled'"
 
 # filesystem:
 #   retained:
