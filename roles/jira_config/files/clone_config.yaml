@@ -11,7 +11,7 @@ database:
       - mailserver
     queries:
       propertyentry:
-        - SELECT * FROM propertyentry WHERE property_key = 'jira.mail.send.disabled'
+        - WHERE property_key = 'jira.mail.send.disabled'
 
 # filesystem:
 #   retained:
