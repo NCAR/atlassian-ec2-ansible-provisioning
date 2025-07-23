@@ -1,11 +1,7 @@
 ---
 filesystem:
   retained:
-    - '*/cluster.properties'
     - '*/dbconfig.xml'
-    - '*/keys/*'
-    - '*/secrets-config.yaml'
-    - '*/secured/*'
 
 database:
   retained:
@@ -13,23 +9,39 @@ database:
       - 'cwd_%'
       - AO_ED669C_IDP_CONFIG
       - mailserver
-    queries: {}
-#      cwd_directory_attribute:
-#        - "directory_id = (SELECT id FROM cwd_directory WHERE directory_type = 'CROWD')"
-  
-  substitutions:
-    # This must contain at least the table where the base url is set
-    # Can contain SQL wildcards
-    tables:
-      - 'AO_%'
-      - changeitem
-      - customfieldvalue
-      - gadgetuserpreference
-      - jiraaction
-      - jiraissue
-      - oauthconsumer
-      - propertystring
-      - propertytext
 
-    # Base url and site FQDN are automatically substituted for all in tables above 
-    strings: {}
+
+# filesystem:
+#   retained:
+#     - '*/cluster.properties'
+#     - '*/dbconfig.xml'
+#     - '*/keys/*'
+#     - '*/secrets-config.yaml'
+#     - '*/secured/*'
+
+# database:
+#   retained:
+#     tables:
+#       - 'cwd_%'
+#       - AO_ED669C_IDP_CONFIG
+#       - mailserver
+#     queries: {}
+# #      cwd_directory_attribute:
+# #        - "directory_id = (SELECT id FROM cwd_directory WHERE directory_type = 'CROWD')"
+  
+#   substitutions:
+#     # This must contain at least the table where the base url is set
+#     # Can contain SQL wildcards
+#     tables:
+#       - 'AO_%'
+#       - changeitem
+#       - customfieldvalue
+#       - gadgetuserpreference
+#       - jiraaction
+#       - jiraissue
+#       - oauthconsumer
+#       - propertystring
+#       - propertytext
+
+#     # Base url and site FQDN are automatically substituted for all in tables above 
+#     strings: {}

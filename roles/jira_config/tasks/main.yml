@@ -151,14 +151,6 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
   
-- name: Install clone_config.yaml (used by restore_for_clone.sh)
-  ansible.builtin.copy:
-    src: clone_config.yaml
-    dest: /var/clone_config.yaml
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-    mode: '0400'
-
 - name: Install get_baseurl.sh (used by restore_for_clone.sh)
   ansible.builtin.copy:
     src: get_baseurl.sh
@@ -182,4 +174,20 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
-   
+
+- name: Install clone_config.yaml (used by restore_for_clone.sh)
+  ansible.builtin.copy:
+    src: clone_config.yaml
+    dest: /var/clone_config.yaml
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0400'
+    
+# This gets run by restore_for_clone.sh
+- name: Install clone_postprocess.sh script
+  ansible.builtin.template:
+    src: clone_postprocess.sh.j2
+    dest: "/usr/local/bin/clone_postprocess.sh"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
