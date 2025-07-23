@@ -168,7 +168,8 @@ EOF
 mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
 
 # Generate list of tables for literal string substitutions
-touch edit_tables="${TEMPDIR}/edit_tables"
+edit_tables="${TEMPDIR}/edit_tables"
+touch $edit_tables
 for raw_table in $(yq -r ".database.substitutions.tables[]" /var/clone_config.yaml); do
     if echo $raw_table | grep -Fq '%'; then
 	mysql --defaults-file=$mycnf -sN -e "show tables like '${raw_table}';" >> $edit_tables
