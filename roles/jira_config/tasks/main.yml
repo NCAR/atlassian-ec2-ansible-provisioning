@@ -191,3 +191,27 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
+
+
+#
+# Hack in a config directory to be read by setenv.sh
+#
+- name:
+  ansible.builtin.file:
+    path: "{{ atl_product_installation_versioned }}/bin/jvm_custom_opts.d"
+    state: directory
+    mode: "u=rwX,g=rX,o-rwx"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+
+- name: Read contents of java_opts.d/* into variable in setenv.sh
+  ansible.builtin.lineinfile:
+    path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
+    insertafter: "JVM_SUPPORT_RECOMMENDED_ARGS="
+    line: 'JVM_CUSTOM_ARGS="$(cat {{ atl_product_installation_versioned }}/bin/jvm_custom_opts.d/* 2>/dev/null)"'
+
+- name: Add JVM_CUSTOM_ARGS variable to setenv.sh
+  ansible.builtin.lineinfile:
+        path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
+        search_string: 'JAVA_OPTS="${JAVA_OPTS} ${TOMCAT_JVM_OPTS}'
+        line: 'JAVA_OPTS="${JAVA_OPTS} ${TOMCAT_JVM_OPTS} ${JVM_CODE_CACHE_ARGS} ${JVM_REQUIRED_ARGS} ${DISABLE_NOTIFICATIONS} ${JVM_SUPPORT_RECOMMENDED_ARGS} ${JVM_EXTRA_ARGS} ${JVM_CUSTOM_ARGS} ${JIRA_HOME_MINUSD} ${START_JIRA_JAVA_OPTS}"'
