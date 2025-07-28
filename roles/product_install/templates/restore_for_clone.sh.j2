@@ -80,7 +80,7 @@ if test -e $retained_files; then
 fi
 
 # Restore home directory
-rm -rf "{{ atl_product_home }}/*"
+rm -rf "{{ atl_product_home }}/*" "{{ atl_product_home }}/.*"
 s5cmd cat "${s3_backup_url}/home.tgz" | tar -C "{{ atl_product_home }}" -xzf -
 
 # untar retained over sync'd directory

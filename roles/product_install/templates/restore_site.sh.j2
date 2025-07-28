@@ -53,7 +53,7 @@ export TEMPDIR=$(mktemp -p /var/tmp -d)
 # Restore home directory
 ##############################################
 echo "Restoring home directory from site backup"
-rm -rf "{{ atl_product_home }}/*"
+rm -rf "{{ atl_product_home }}/*" "{{ atl_product_home }}/.*"
 s5cmd cat "${s3_backup_url}/home.tgz" | tar -C "{{ atl_product_home }}" -xzf -
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 
