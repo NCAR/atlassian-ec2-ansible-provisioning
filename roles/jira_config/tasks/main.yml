@@ -142,15 +142,7 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
   changed_when: false  # For Molecule idempotence check
-    
-- name: Install recovery_admin script
-  ansible.builtin.template:
-    src: recovery_admin.sh.j2
-    dest: "/usr/local/bin/recovery_admin.sh"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-    mode: '0500'
-  
+      
 - name: Install get_baseurl.sh (used by restore_for_clone.sh)
   ansible.builtin.copy:
     src: get_baseurl.sh
@@ -198,9 +190,9 @@
 #
 - name:
   ansible.builtin.file:
-    path: "{{ atl_product_installation_versioned }}/bin/jvm_custom_opts.d"
+    path: "{{ atl_jvm_custom_opts_dir }}"
     state: directory
-    mode: "u=rwX,g=rX,o-rwx"
+    mode: "0700"
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
 
@@ -215,3 +207,28 @@
         path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
         search_string: 'JAVA_OPTS="${JAVA_OPTS} ${TOMCAT_JVM_OPTS}'
         line: 'JAVA_OPTS="${JAVA_OPTS} ${TOMCAT_JVM_OPTS} ${JVM_CODE_CACHE_ARGS} ${JVM_REQUIRED_ARGS} ${DISABLE_NOTIFICATIONS} ${JVM_SUPPORT_RECOMMENDED_ARGS} ${JVM_EXTRA_ARGS} ${JVM_CUSTOM_ARGS} ${JIRA_HOME_MINUSD} ${START_JIRA_JAVA_OPTS}"'
+
+- name: Install recovery_admin script
+  ansible.builtin.template:
+    src: recovery_admin.sh.j2
+    dest: "/usr/local/bin/recovery_admin.sh"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+
+- name: Install recovery_admin script
+  ansible.builtin.template:
+    src: recovery_admin.sh.j2
+    dest: "/usr/local/bin/recovery_admin.sh"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+
+- name: Install script to toggle email at tomcat level
+  ansible.builtin.template:
+    src: toggle_email.sh.j2
+    dest: "/usr/local/bin/toggle_email.sh"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+    

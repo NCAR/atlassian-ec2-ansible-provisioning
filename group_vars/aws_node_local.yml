@@ -152,6 +152,7 @@ atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port
 atl_jvm_heap: "{{ lookup('env', 'ATL_JVM_HEAP') or '2048m' }}"
 atl_jvm_opts: "{{ lookup('env', 'ATL_JVM_OPTS') or '' }}"
 atl_catalina_opts: "{{ lookup('env', 'ATL_CATALINA_OPTS') or '' }}"
+atl_jvm_custom_opts_dir: "{{ atl_product_installation_current }}/bin/jvm_custom_opts.d"
 atl_proxy_name:  "{{ lookup('env', 'ATL_PROXY_NAME') | lower }}"
 atl_proxy_port:  "{{ lookup('env', 'ATL_TOMCAT_PROXYPORT') }}"
 atl_tomcat_port: "{{ lookup('env', 'ATL_TOMCAT_DEFAULTCONNECTORPORT') or '8080' }}"
