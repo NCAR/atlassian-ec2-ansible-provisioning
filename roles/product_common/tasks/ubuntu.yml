@@ -49,6 +49,6 @@
 #     url: "{{ atl_s5cmd_url }}"
 #     dest: /tmp
     
-- name: Install s5cmd for backups
-  ansible.builtin.apt:
-    deb: "/tmp/{{ atl_s5cmd_url | basename }}"
+# - name: Install s5cmd for backups
+#   ansible.builtin.apt:
+#     deb: "/tmp/{{ atl_s5cmd_url | basename }}"
