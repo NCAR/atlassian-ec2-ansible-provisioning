@@ -42,12 +42,12 @@
     name:
       - fonts-dejavu-core  # Required by installer
 
-- name: Download s5cmd (advanced s3 client)
-  ansible.builtin.get_url:
-    headers:
-      user-agent: curl/7.81.0
-    url: "{{ atl_s5cmd_url }}"
-    dest: /tmp
+# - name: Download s5cmd (advanced s3 client)
+#   ansible.builtin.get_url:
+#     headers:
+#       user-agent: curl/7.81.0
+#     url: "{{ atl_s5cmd_url }}"
+#     dest: /tmp
     
 - name: Install s5cmd for backups
   ansible.builtin.apt:

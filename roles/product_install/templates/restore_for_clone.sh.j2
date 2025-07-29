@@ -41,12 +41,12 @@ if systemctl is-active --quiet $APP; then
     exit 1
 fi
 
-if ! s5cmd ls "${s3_backup_url}/home.tgz" > /dev/null 2>&1; then
+if ! aws s3 ls "${s3_backup_url}/home.tgz" > /dev/null 2>&1; then
     echo "s3_backup_url doesn't have home tar archive"
     exit 1
 fi
 
-if ! s5cmd ls "${s3_backup_url}/database" > /dev/null 2>&1; then
+if ! aws s3 ls "${s3_backup_url}/database" > /dev/null 2>&1; then
     echo "s3_backup_url doesn't have database"
     exit 1
 fi
@@ -81,7 +81,7 @@ fi
 
 # Restore home directory
 rm -rf "{{ atl_product_home }}/*" "{{ atl_product_home }}/.*"
-s5cmd cat "${s3_backup_url}/home.tgz" | tar -C "{{ atl_product_home }}" -xzf -
+aws s3 cp "${s3_backup_url}/home.tgz" - | tar -C "{{ atl_product_home }}" -xzf -
 
 # untar retained over sync'd directory
 if test -e $retained_files_tar; then

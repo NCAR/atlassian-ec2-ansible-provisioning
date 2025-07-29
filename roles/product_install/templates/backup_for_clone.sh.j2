@@ -53,7 +53,7 @@ fi
 # FS backup; use tar to preserve symlinks
 #
 echo ">>> Backing up home filesystem, starting $(date)"
-tar --one-file-system -C "{{ atl_product_home }}" -zcf - . | s5cmd pipe "${bucket_url}/home.tgz"
+tar --one-file-system -C "{{ atl_product_home }}" -zcf - . | aws s3 cp - "${bucket_url}/home.tgz"
 
 #home_fs="{{ atl_product_home }}"
 #bucket_fs_url="${bucket_url}/home/"
