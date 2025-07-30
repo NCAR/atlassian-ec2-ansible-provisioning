@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#
+# Enable/disable email at tomcat level
+#
+
+ACTION=$1
+
+tomcat_var_file="{{ atl_jvm_custom_opts_dir }}/disable_email"
+
+case $ACTION in
+    'on')
+	if test -e $tomcat_var_file; then
+	    echo 'Mail already disabled'
+	else
+	    echo '-Datlassian.mail.senddisabled=true' > $tomcat_var_file
+	fi
+	;;
+
+    'off')
+	if ! test -e $tomcat_var_file; then
+	    echo 'Mail already enabled'
+	else
+	    rm $tomcat_var_file
+	fi
+	;;
+    *)
+	echo "Usage: $0 [on|off]"
+	echo "Toggle email on/off via tomcat args"
+	exit 1
+	;;
+esac
