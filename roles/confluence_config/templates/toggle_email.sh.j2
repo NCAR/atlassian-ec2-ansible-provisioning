@@ -11,7 +11,7 @@ tomcat_var_file="{{ atl_jvm_custom_opts_dir }}/disable_email"
 case $ACTION in
     'on')
 	if test -e $tomcat_var_file; then
-	    echo 'Mail already disabled'
+	    echo 'Mail already enabled'
 	else
 	    echo '-Datlassian.mail.senddisabled=true' > $tomcat_var_file
 	fi
@@ -19,7 +19,7 @@ case $ACTION in
 
     'off')
 	if ! test -e $tomcat_var_file; then
-	    echo 'Mail already enabled'
+	    echo 'Mail already disabled'
 	else
 	    rm $tomcat_var_file
 	fi
