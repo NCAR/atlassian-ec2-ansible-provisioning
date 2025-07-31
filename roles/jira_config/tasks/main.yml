@@ -184,7 +184,6 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
-
 #
 # Hack in a config directory to be read by setenv.sh
 #
@@ -200,7 +199,7 @@
   ansible.builtin.lineinfile:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
     insertafter: "JVM_SUPPORT_RECOMMENDED_ARGS="
-    line: 'JVM_CUSTOM_ARGS="$(cat {{ atl_product_installation_versioned }}/bin/jvm_custom_opts.d/* 2>/dev/null)"'
+    line: 'JVM_CUSTOM_ARGS="$(cat {{ atl_product_installation_versioned }}/bin/jvm_custom_opts.d/* 2>/dev/null | tr -d \"\n\")"'
 
 - name: Add JVM_CUSTOM_ARGS variable to setenv.sh
   ansible.builtin.lineinfile:
