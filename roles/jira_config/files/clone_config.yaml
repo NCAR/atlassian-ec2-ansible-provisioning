@@ -17,6 +17,8 @@ database:
     queries:
       propertyentry:
         - property_key = "jira.mail.send.disabled"
+      propertystring:
+        - id = (select ID from propertyentry where property_key = 'jira.title')
 
 
 # database:
