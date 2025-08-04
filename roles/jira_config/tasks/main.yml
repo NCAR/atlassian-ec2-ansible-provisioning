@@ -1,12 +1,4 @@
 ---
-
-# GETS OVERWRITTEN BY INSTALL WIZARD
-# - name: Create database config
-#   ansible.builtin.template:
-#     src: dbconfig.xml.j2
-#     dest: "{{ atl_product_home }}/dbconfig.xml.aws_secretsmanager"
-#     owner: "{{ atl_product_user }}"
-
 - name: Create cluster config
   ansible.builtin.template:
     src: cluster.properties.j2
@@ -158,7 +150,11 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
-    
+
+# This gets run as a systemd pre-exec script everytime jira runs. This
+# is ugly but this file gets overwritten by the install wizard and
+# also anytime jira thinks it contains a plaintext password which it
+# replaces with ATL_SECURED
 - name: Install script to hack AWS secrets manager config into dbconfig.xml
   ansible.builtin.template:  
     src: dbconfig_enable_aws_secrets.sh.j2
