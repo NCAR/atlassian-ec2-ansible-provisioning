@@ -13,7 +13,7 @@ case $ACTION in
 	if test -e $tomcat_var_file; then
 	    echo 'Mail already disabled in tomcat config'
 	else
-	    echo '-Datlassian.mail.senddisabled=true' > $tomcat_var_file
+	    echo '-Datlassian.mail.senddisabled=true -Datlassian.mail.fetchdisabled=true' > $tomcat_var_file
 	fi
 	;;
 

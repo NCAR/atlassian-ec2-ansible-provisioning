@@ -4,7 +4,7 @@
 
 ACTION=$1
 
-setenv_file="{{ atl_product_installation_current }}/bin/setenv.sh"
+tomcat_var_file="{{ atl_jvm_custom_opts_dir }}/recovery_admin_user"
 
 case $ACTION in
     'enable')
@@ -12,24 +12,16 @@ case $ACTION in
 	# Enable recovery_admin user in setenv.sh
 	#
 	bandanaval='true'
-
-	setenv_backup=$(dirname $setenv_file)/$(basename $setenv_file).$(date --iso-8601=seconds)
-	cp $setenv_file $setenv_backup
-	echo "setenv.sh file has been backed up to \"$setenv_backup\""
-	
-	recovery_admin_password=$(fgrep 'atlassian.recovery.password' $setenv_file | sed -e 's/.*password=\(.*\)[[:space:]].*/\1/')
-	if ! test -z $recovery_admin_password; then
+	if test -e $tomcat_var_file; then
+	    recovery_admin_password=$(fgrep 'atlassian.recovery.password' $tomcat_var_file | sed -e 's/.*password=\(.*\)[[:space:]].*/\1/')
 	    echo "Recovery_admin user already enabled."
 	    echo "Login URL: https://{{ atl_proxy_name }}/login.action?auth_fallback"
 	    grep -oh 'Recovery admin username:.*' "{{ atl_product_home }}/logs/atlassian-confluence-security.log" | tail -1
 	    echo "Recovery admin password: '${recovery_admin_password}'"
+	    exit 1
 	else
-	    recovery_admin_search_line='CATALINA_OPTS="${START_CONFLUENCE_JAVA_OPTS} ${CATALINA_OPTS}"'
 	    recovery_admin_password=$(pwgen -s 32 1)
-	    add_line='CATALINA_OPTS="-Datlassian.recovery.password='$recovery_admin_password' ${CATALINA_OPTS}"'
-	    perl -i -spe 's/(\Q$recovery_admin_search_line\E)/$add_line\n$1/;' -- \
-		 -recovery_admin_search_line="$recovery_admin_search_line" \
-		 -add_line="$add_line" $setenv_file
+	    echo "-Datlassian.recovery.password='$recovery_admin_password'" > $tomcat_var_file
 	    echo "recovery_admin password is: $recovery_admin_password"
 	fi
 	echo "When confluence is restarted, find recovery admin user name like this:"
@@ -41,7 +33,11 @@ case $ACTION in
 	# Disable recovery_admin user in setenv.sh
 	#
 	bandanaval='false'
-	perl -i -lne 'print unless /\Q-Datlassian.recovery.password=\E/;' $setenv_file
+	if ! test -e $tomcat_var_file; then
+	    echo "recovery_admin already disabled"
+	    exit 1
+	else
+	    rm $tomcat_var_file
 	;;
     *)
 	echo "Usage: $0 [enable|disable]"
