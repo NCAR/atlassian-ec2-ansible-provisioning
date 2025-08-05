@@ -8,3 +8,8 @@
       - libxml2-utils
       - pwgen
       - xmlstarlet
+
+- name: Add cloud-init envvars to root shell via .bashrc
+  ansible.builtin.lineinfile:
+    path: /root/.bashrc
+    line: tmpfile=$(mktemp); grep export /var/lib/cloud/instance/user-data.txt > $tmpfile; source $tmpfile; rm $tmpfile
