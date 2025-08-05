@@ -232,7 +232,7 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
 
--name: Insert conf.d mechanism in setenv.sh file
+- name: Insert conf.d mechanism in setenv.sh file
   ansible.builtin.blockinfile:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
     insertbefore: "export CATALINA_OPTS="
