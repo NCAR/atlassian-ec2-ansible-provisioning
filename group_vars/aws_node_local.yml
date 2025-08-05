@@ -16,7 +16,6 @@ git_version: "2.14.4"
 #
 # Common to all apps; can be overridden in app pulumi config
 #
-atl_db_driver: "{{ lookup('env', 'ATL_DB_DRIVER') or 'com.mysql.cj.jdbc.Driver' }}"
 atl_jdbc_dialect: "{{ lookup('env', 'ATL_JDBC_DIALECT') or 'org.hibernate.dialect.MySQLDialect' }}"
 atl_mysql_jdbc_connector: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR') or 'mysql-connector-j-8.0.33' }}"
 atl_mysql_jdbc_connector_url: "{{ lookup('env', 'ATL_MYSQL_JDBC_CONNECTOR_URL') or 'https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz' }}"
@@ -108,7 +107,7 @@ atl_enable_cluster: "{{ lookup('env', 'ATL_ENABLE_CLUSTER') | bool or false }}"
 atl_db_engine: "{{ lookup('env', 'ATL_DB_ENGINE') }}"
 atl_db_host: "{{ lookup('env', 'ATL_DB_HOST') }}"
 atl_db_port: "{{ lookup('env', 'ATL_DB_PORT') }}"
-atl_db_driver: "{{ lookup('env', 'ATL_DB_DRIVER') }}"
+atl_db_driver: "{{ lookup('env', 'ATL_DB_DRIVER') or 'com.mysql.cj.jdbc.Driver' }}"
 
 atl_db_poolminsize: "{{ lookup('env', 'ATL_DB_POOLMINSIZE') or '20' }}"
 atl_db_poolmaxsize: "{{ lookup('env', 'ATL_DB_POOLMAXSIZE') or '100' }}"
