@@ -236,9 +236,11 @@
   ansible.builtin.blockinfile:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
     insertbefore: "export CATALINA_OPTS="
-    marker: "### {mark} ANSIBLE MANAGED BLOCK ###"
+    prepend_newline: true
+    append_newline: true
+#    marker: "### {mark} ANSIBLE MANAGED BLOCK ###"
     block: |
-      JVM_CUSTOM_ARGS="$(cat {{ atl_product_installation_versioned }}/bin/jvm_custom_opts.d/* 2>/dev/null)
+      JVM_CUSTOM_ARGS=$(cat {{ atl_product_installation_versioned }}/bin/jvm_custom_opts.d/* 2>/dev/null)
       CATALINA_OPTS="${CATALINA_OPTS} ${JVM_CUSTOM_ARGS}"
 
 - name: Install recovery_admin script
