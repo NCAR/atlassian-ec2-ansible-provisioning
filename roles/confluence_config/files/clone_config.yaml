@@ -10,45 +10,56 @@ filesystem:
 database:
   retained:
     tables:
+      - 'cwd_%'
       - AO_ED669C_IDP_CONFIG
-      - CLUSTERSAFETY
-      - journalentry
-      - cwd_app_dir_mapping
-      - cwd_app_dir_operation
-      - cwd_application
-      - cwd_directory
-      - cwd_directory_attribute
-      - cwd_directory_operation
-      - cwd_group
-      - cwd_membership
-      - cwd_synchronisation_status
-      - cwd_synchronisation_token
-      - cwd_user
-      - cwd_user_attribute
-
-    queries:
-      BANDANA:
-        - "BANDANAKEY = 'confluence.server.id'"
-      PLUGINDATA:
-        - "PLUGINKEY = 'com.atlassian.plugins.authentication.atlassian-authentication-plugin'"
-      cwd_directory_attribute:
-        - "directory_id = (SELECT id FROM cwd_directory WHERE directory_type = 'CROWD')"
-  
-  substitutions:
-    tables:
-      - 'AO_%'
       - BANDANA
-      - BODYCONTENT
-      - DENORMALISED_CONTENT
-      - DRAFT
-      - EVENTS
-      - LINKS
-      - OS_PROPERTYENTRY
-      - PAGETEMPLATES
-      - SNAPSHOTS
+    queries: {}
+      # BANDANA:
+      #   - "BANDANAKEY = 'confluence.server.id'"
+      # PLUGINDATA:
+      #   - "PLUGINKEY = 'com.atlassian.plugins.authentication.atlassian-authentication-plugin'"
+      # cwd_directory_attribute:
+      #   - "directory_id = (SELECT id FROM cwd_directory WHERE directory_type = 'CROWD')"
   
-    strings: {}
+  substitutions: {}
+    tables: {}
+      # - 'AO_%'
+      # - BANDANA
+      # - BODYCONTENT
+      # - DENORMALISED_CONTENT
+      # - DRAFT
+      # - EVENTS
+      # - LINKS
+      # - OS_PROPERTYENTRY
+      # - PAGETEMPLATES
+      # - SNAPSHOTS
+      strings: {}
 
+
+
+  #   queries:
+  #     BANDANA:
+  #       - "BANDANAKEY = 'confluence.server.id'"
+  #     PLUGINDATA:
+  #       - "PLUGINKEY = 'com.atlassian.plugins.authentication.atlassian-authentication-plugin'"
+  #     cwd_directory_attribute:
+  #       - "directory_id = (SELECT id FROM cwd_directory WHERE directory_type = 'CROWD')"
+  
+  # substitutions:
+  #   tables:
+  #     - 'AO_%'
+  #     - BANDANA
+  #     - BODYCONTENT
+  #     - DENORMALISED_CONTENT
+  #     - DRAFT
+  #     - EVENTS
+  #     - LINKS
+  #     - OS_PROPERTYENTRY
+  #     - PAGETEMPLATES
+  #     - SNAPSHOTS
+  
+  #   strings: {}
+    
 
     
 ##### confluence.ucar.edu
