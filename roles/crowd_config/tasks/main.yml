@@ -222,3 +222,12 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
+
+- name: Install toggle_email.sh file
+  ansible.builtin.copy:
+    src: toggle_email.sh
+    dest: /usr/local/bin/toggle_email.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+    
