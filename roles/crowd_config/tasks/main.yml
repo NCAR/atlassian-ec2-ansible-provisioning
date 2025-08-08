@@ -165,34 +165,34 @@
     path: "{{ atl_product_home_shared }}/crowd.cfg.xml"
   register: crowd_cfg_stat_result
 
-- block:
-  - name: Assert JDBC password to same as atl_jdbc_password
-    community.general.xml:
-      path: "{{ atl_product_home_shared }}/crowd.cfg.xml"
-      xpath: "/application-configuration/properties/property[@name='hibernate.connection.password']"
-      value: "{{ atl_jdbc_password }}"
+# - block:
+#   - name: Assert JDBC password to same as atl_jdbc_password
+#     community.general.xml:
+#       path: "{{ atl_product_home_shared }}/crowd.cfg.xml"
+#       xpath: "/application-configuration/properties/property[@name='hibernate.connection.password']"
+#       value: "{{ atl_jdbc_password }}"
 
-  - name: Assert JDBC url to same as atl_jdbc_url
-    community.general.xml:
-      path: "{{ atl_product_home_shared }}/crowd.cfg.xml"
-      xpath: "/application-configuration/properties/property[@name='hibernate.connection.url']"
-      value: "{{ atl_jdbc_url }}?reWriteBatchedInserts=true"
+#   - name: Assert JDBC url to same as atl_jdbc_url
+#     community.general.xml:
+#       path: "{{ atl_product_home_shared }}/crowd.cfg.xml"
+#       xpath: "/application-configuration/properties/property[@name='hibernate.connection.url']"
+#       value: "{{ atl_jdbc_url }}?reWriteBatchedInserts=true"
 
-  - name: Assert hibernate.c3p0.max_size to same as atl_db_poolmaxsize
-    community.general.xml:
-      path: "{{ atl_product_home_shared }}/crowd.cfg.xml"
-      xpath: "/application-configuration/properties/property[@name='hibernate.c3p0.max_size']"
-      value: "{{ atl_db_poolmaxsize }}"
-    when: atl_db_poolmaxsize is defined
+#   - name: Assert hibernate.c3p0.max_size to same as atl_db_poolmaxsize
+#     community.general.xml:
+#       path: "{{ atl_product_home_shared }}/crowd.cfg.xml"
+#       xpath: "/application-configuration/properties/property[@name='hibernate.c3p0.max_size']"
+#       value: "{{ atl_db_poolmaxsize }}"
+#     when: atl_db_poolmaxsize is defined
 
-  - name: Assert hibernate.c3p0.min_size to same as atl_db_poolminsize
-    community.general.xml:
-      path: "{{ atl_product_home_shared }}/crowd.cfg.xml"
-      xpath: "/application-configuration/properties/property[@name='hibernate.c3p0.min_size']"
-      value: "{{ atl_db_poolminsize }}"
-    when: atl_db_poolminsize is defined
+#   - name: Assert hibernate.c3p0.min_size to same as atl_db_poolminsize
+#     community.general.xml:
+#       path: "{{ atl_product_home_shared }}/crowd.cfg.xml"
+#       xpath: "/application-configuration/properties/property[@name='hibernate.c3p0.min_size']"
+#       value: "{{ atl_db_poolminsize }}"
+#     when: atl_db_poolminsize is defined
 
-  when: crowd_cfg_stat_result.stat.exists
+#   when: crowd_cfg_stat_result.stat.exists
 
 - name: Remove crowd.xml to prevent duplicates from appearing in cluster reporting
   ansible.builtin.file:
