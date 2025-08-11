@@ -20,7 +20,7 @@ Usage: $0 s3_backup_url
 
 Restore cloned database and home directory for app "$APP";
 s3_backup_url must contain files
-- home.tgz      App home tar archive
+- home.zst      App home tar archive
 - database/   Backup as created by mysqlsh
 
 WARNING: there is no way for the script to differentiate between a
@@ -41,7 +41,7 @@ if systemctl is-active --quiet $APP; then
     exit 1
 fi
 
-if ! aws s3 ls "${s3_backup_url}/home.tgz" > /dev/null 2>&1; then
+if ! aws s3 ls "${s3_backup_url}/home.zst" > /dev/null 2>&1; then
     echo "s3_backup_url doesn't have home tar archive"
     exit 1
 fi
@@ -72,20 +72,20 @@ retained_files="${TEMPDIR}/retained_files_list"
 for pattern in $(yq -r '.filesystem.retained[]' /var/clone_config.yaml); do
     (cd {{ atl_product_home }}; find . -type f -wholename "$pattern" >> $retained_files)
 done
-retained_files_tar="${TEMPDIR}/retained_files.tgz"
+retained_files_tar="${TEMPDIR}/retained_files.zst"
 if test -e $retained_files; then
     echo ">>> Retaining files: "
     cat $retained_files
-    tar -C {{ atl_product_home }} --files-from=$retained_files -czf $retained_files_tar
+    tar -C {{ atl_product_home }} --files-from=$retained_files --zstd -cf $retained_files_tar
 fi
 
 # Restore home directory
 rm -rf "{{ atl_product_home }}/*" "{{ atl_product_home }}/.*"
-aws s3 cp "${s3_backup_url}/home.tgz" - | tar -C "{{ atl_product_home }}" -xzf -
+aws s3 cp "${s3_backup_url}/home.zst" - | tar -C "{{ atl_product_home }}" --zstd -xf -
 
 # untar retained over sync'd directory
 if test -e $retained_files_tar; then
-    tar -C {{ atl_product_home }} -zxf $retained_files_tar
+    tar -C {{ atl_product_home }} --zstd -xf $retained_files_tar
     chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 fi
     

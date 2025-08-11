@@ -20,7 +20,7 @@ Usage: $0 s3_backup_url
 
 Restore database and home directory for app "$APP".
 s3_backup_url must contain files
-- home.tgz      App home tar archive
+- home.zst      App home tar archive
 - database/   Backup as created by mysqlsh
 
 THE APPLICATION MUST BE STOPPED BEFORE RESTORE!
@@ -36,7 +36,7 @@ if systemctl is-active --quiet $APP; then
     exit 1
 fi
 
-if ! aws s3 ls "${s3_backup_url}/home.tgz" > /dev/null 2>&1; then
+if ! aws s3 ls "${s3_backup_url}/home.zst" > /dev/null 2>&1; then
     echo "s3_backup_url doesn't have home tar archive"
     exit 1
 fi
@@ -54,7 +54,7 @@ export TEMPDIR=$(mktemp -p /var/tmp -d)
 ##############################################
 echo "Restoring home directory from site backup"
 rm -rf "{{ atl_product_home }}/*" "{{ atl_product_home }}/.*"
-aws s3 cp "${s3_backup_url}/home.tgz" - | tar -C "{{ atl_product_home }}" -xzf -
+aws s3 cp "${s3_backup_url}/home.zst" - | tar -C "{{ atl_product_home }}" --zstd -xf -
 chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 
 # sync directory
