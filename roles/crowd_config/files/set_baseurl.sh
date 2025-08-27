@@ -11,6 +11,6 @@ fi
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 
-mysql --defaults-file=$mycnf -e "UPDATE cwd_property SET property_value = '${baseurl} WHERE property_name = 'base.url';"
+mysql --defaults-file=$mycnf -e "UPDATE cwd_property SET property_value = '${baseurl}' WHERE property_name = 'base.url';"
 
 rm $mycnf
