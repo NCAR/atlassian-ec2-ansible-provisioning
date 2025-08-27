@@ -223,6 +223,14 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
+- name: Install set_baseurl.sh script
+  ansible.builtin.copy:
+    src: set_baseurl.sh
+    dest: /usr/local/bin/set_baseurl.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+    
 - name: Install toggle_email.sh file
   ansible.builtin.copy:
     src: toggle_email.sh
