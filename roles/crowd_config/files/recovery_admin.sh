@@ -21,7 +21,7 @@ case $ACTION in
 	recovery_admin_password=$(fgrep 'atlassian.recovery.password' $setenv_file | sed -e 's/.*password=\(.*\)[[:space:]].*/\1/')
 	if ! test -z $recovery_admin_password; then
 	    echo "Recovery admin user already enabled; password is: ${recovery_admin_password}"
-	    echo "Check $homedir/logs/atlassian-crowd.log for line starting with \"Recovery admin username:\""
+	    echo "Check $homedir/logs/atlassian-crowd.log for line containing \"Recovery admin username:\""
 	else
 	    recovery_admin_password=$(pwgen -s 32 1)
 	    add_line='CATALINA_OPTS="-Datlassian.recovery.password='$recovery_admin_password' ${CATALINA_OPTS}"'
