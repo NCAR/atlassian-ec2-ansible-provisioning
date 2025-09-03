@@ -13,11 +13,13 @@
 - name: Install common support packages
   ansible.builtin.package:
     name:
-      - jq
-      - tar
-      - curl
-      - unzip
+      - amazon-ec2-utils
       - fontconfig
+      - jq
+      - net-tools
+      - nvme-cli
+      - tar
+      - yq
 
 - name: Create product group
   ansible.builtin.group:
