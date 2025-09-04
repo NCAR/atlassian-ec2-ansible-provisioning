@@ -1,22 +1,11 @@
 ---
 
-# - name: Make sure mariadb is present
-#   become: true
-#   yum:
-#     name: mariadb
-#     state: present
-
-# - name: Make sure pymysql is present
-#   become: true
-#   pip:
-#     name: pymysql
-#     state: present
-
 - name: Install packages for mysql
   ansible.builtin.package:
-    - default-mysql-client
-    - python3-pymysql
-    - python3-wheel
+    name:
+      - default-mysql-client
+      - python3-pymysql
+      - python3-wheel
 
 - name: Download MySQL driver
   ansible.builtin.get_url:
