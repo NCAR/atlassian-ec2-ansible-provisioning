@@ -135,7 +135,7 @@
 - name: Install mysql-replication python module for binlog2sql
   ansible.builtin.pip:
     name: mysql-replication==0.21
-    break_system_packages: true
+    extra_args: --break_system_packages
 
 #
 # Install script to save binlog2sql output
