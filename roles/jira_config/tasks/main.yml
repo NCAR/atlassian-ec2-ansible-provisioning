@@ -183,7 +183,7 @@
 #
 # Hack in a config directory to be read by setenv.sh
 #
-- name:
+- name: Create jira custom startup config dir
   ansible.builtin.file:
     path: "{{ atl_jvm_custom_opts_dir }}"
     state: directory
