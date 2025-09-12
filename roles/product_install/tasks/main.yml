@@ -350,7 +350,7 @@
     src: "{{ atl_atlassian_acli_download_url }}"
     dest: /usr/local
     remote_src: yes
-    list_Files: true
+    list_files: true
   register: extracted_files
 - name: Symlink acli
   ansible.builtin.file:
