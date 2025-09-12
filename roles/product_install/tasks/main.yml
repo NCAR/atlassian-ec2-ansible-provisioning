@@ -345,4 +345,23 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
     
+- name: Install Appfire Atlassian ACLI (not same as Atlassian's acli)
+  ansible.builtin.unarchive:
+    src: "{{ atl_atlassian_acli_download_url }}"
+    dest: /usr/local
+    remote_src: yes
+    list_Files: true
+  register: extracted_files
+- name: Symlink acli
+  ansible.builtin.file:
+    src: "/usr/local/{{ extracted_files.files[0] }}/bin/acli"
+    dest: /usr/local/bin/acli
+    state: link
+    force: yes
+
+
+  # ansible.builtin.get_url:
+  #   url: "{{ atl_atlassian_acli_download_url }}"
+  #   dest: "/tmp/acli.zip"
+  #   decompress: false
     
