@@ -1,16 +1,5 @@
 #!/bin/bash
 
-#
-# FIXME ASSUME S3 URL LOOKS LIKE THIS:
-#
-# base_dir
-#       - home
-#       - database
-#
-# It's faster to sync an uncompressed home directory
-# database directory should be as created by mysqlsh
-#
-
 APP="{{ atl_product_family }}"
 
 s3_backup_url_raw=$1
@@ -21,7 +10,8 @@ Usage: $0 s3_backup_url
 Restore cloned database and home directory for app "$APP";
 s3_backup_url must contain files
 - home.zst      App home tar archive
-- database/   Backup as created by mysqlsh
+- plugins.json  App plugin information
+- database/     Backup as created by mysqlsh
 
 WARNING: there is no way for the script to differentiate between a
 simple restore of an existing site and the restore of a clone. If
@@ -46,12 +36,16 @@ if ! aws s3 ls "${s3_backup_url}/home.zst" > /dev/null 2>&1; then
     exit 1
 fi
 
+if ! aws s3 ls "${s3_backup_url}/plugins.json" > /dev/null 2>&1; then
+    echo "s3_backup_url doesn't have home tar archive"
+    exit 1
+fi
+
 if ! aws s3 ls "${s3_backup_url}/database" > /dev/null 2>&1; then
     echo "s3_backup_url doesn't have database"
     exit 1
 fi
 
-#
 mkdir -p /var/atlassian/application-data/tmp > /dev/null 2>&1
 export TEMPDIR=$(mktemp -p /var/atlassian/application-data/tmp -d)
 
@@ -226,6 +220,26 @@ done
 
 echo ">>> Resetting baseurl"
 /usr/local/bin/set_baseurl.sh $dest_baseurl
+
+echo ">>> Copying plugins file to /tmp/plugins.json"
+aws s3 cp "${s3_backup_url}/plugins.json" /tmp/plugins.json
+
+echo
+cat <<PLUGINS_MSG
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+To install plugins:
+- Run "toggle_upm_rest.sh on"
+- Start the application
+- Create a REST API token as an admin user in the GUI
+- Export the token in the shell: "export ATL_REST_TOKEN='MY_REST_TOKEN'"
+- Run install_upm_plugins.sh
+- Check that all plugins have been installed
+- Shut down tha app
+- Run "toggle_upm_rest.sh off"
+- Start the app
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+PLUGINS_MSG
 
 ##############################################
 # Postprocess

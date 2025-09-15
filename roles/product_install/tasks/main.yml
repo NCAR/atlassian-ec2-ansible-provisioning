@@ -354,14 +354,25 @@
   register: extracted_files
 - name: Symlink acli
   ansible.builtin.file:
-    src: "/usr/local/{{ extracted_files.files[0] }}/bin/acli"
+    src: "/usr/local/{{ extracted_files.files[0] }}bin/acli"
     dest: /usr/local/bin/acli
     state: link
     force: yes
 
+- name: Install toggle_upm_rest.sh script
+  ansible.builtin.copy:
+    src: toggle_upm_rest.sh
+    dest: /usr/local/bin/toggle_upm_rest.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
 
-  # ansible.builtin.get_url:
-  #   url: "{{ atl_atlassian_acli_download_url }}"
-  #   dest: "/tmp/acli.zip"
-  #   decompress: false
-    
+- name: Install install_upm_plugins.sh script
+  ansible.builtin.copy:
+    src: install_upm_plugins.sh
+    dest: /usr/local/bin/install_upm_plugins.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+
+
