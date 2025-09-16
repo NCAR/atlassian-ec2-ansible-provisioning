@@ -6,13 +6,13 @@
 PLUGINFILE=/tmp/plugins.json
 
 USER=$1
-if test -z $USER, then
-   cat << 'USAGE'
+if test -z $USER; then
+    cat << 'USAGE'
 $0 admin_user
 
 Install plugins from $PLUGINFILE.
 Admin user's REST API token must be in environment variable $ATL_REST_TOKEN.
-USAGE   
+USAGE
    exit 1
 fi
 
