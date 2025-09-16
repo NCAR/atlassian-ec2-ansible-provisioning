@@ -7,7 +7,7 @@ PLUGINFILE=/tmp/plugins.json
 
 USER=$1
 if test -z $USER, then
-   cat <<EOF 'USAGE'
+   cat << 'USAGE'
 $0 admin_user
 
 Install plugins from $PLUGINFILE.
