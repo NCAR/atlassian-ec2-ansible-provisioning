@@ -4,18 +4,17 @@
 # Install plugins after clone
 #
 PLUGINFILE=/tmp/plugins.json
-ACLI=/usr/local/bin/acli
 
-# USER=$1
-# if test -z $USER, then
-#    cat <<EOF 'USAGE'
-# $0 admin_user
+USER=$1
+if test -z $USER, then
+   cat <<EOF 'USAGE'
+$0 admin_user
 
-# Install plugins from $PLUGINFILE.
-# Admin user's REST API token must be in environment variable $ATL_REST_TOKEN.
-# USAGE   
-#    exit 1
-# fi
+Install plugins from $PLUGINFILE.
+Admin user's REST API token must be in environment variable $ATL_REST_TOKEN.
+USAGE   
+   exit 1
+fi
 
 if ! test -e $PLUGINFILE; then
     echo "File $PLUGINFILE does not exist; should have been created by restore_for_clone.sh"
@@ -27,7 +26,7 @@ if test -v $ATL_REST_TOKEN || test -z $ATL_REST_TOKEN; then
     exit 1
 fi
 
-BASE_CMD="${acli} --server $(/usr/local/bin/get_baseurl.sh) --user ${USER} --token $ATL_REST_TOKEN" 
+BASE_CMD="acli --server $(/usr/local/bin/get_baseurl.sh) --user ${USER} --token $ATL_REST_TOKEN" 
 for app_key in $(jq --raw-output 'keys | .[]' $PLUGINFILE); do
     echo ">>> Installing app $app_key"
     
