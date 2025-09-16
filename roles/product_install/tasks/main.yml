@@ -361,7 +361,7 @@
 
 - name: Install toggle_upm_rest.sh script
   ansible.builtin.template:
-    src: toggle_upm_rest.sh
+    src: toggle_upm_rest.sh.j2
     dest: /usr/local/bin/toggle_upm_rest.sh
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
