@@ -13,7 +13,7 @@ case $ACTION in
 	#
 	bandanaval='true'
 	if test -e $tomcat_var_file; then
-	    recovery_admin_password=$(fgrep 'atlassian.recovery.password' $tomcat_var_file | sed -e 's/.*password=\(.*\)[[:space:]].*/\1/')
+	    recovery_admin_password=$(sed -ne "s/-Datlassian.recovery.password='\(.*\)'/\1/p" $tomcat_var_file)
 	    echo "Recovery_admin user already enabled."
 	    echo "Login URL: https://{{ atl_proxy_name }}/login.action?auth_fallback"
 	    grep -oh 'Recovery admin username:.*' "{{ atl_product_home }}/logs/atlassian-confluence-security.log" | tail -1
