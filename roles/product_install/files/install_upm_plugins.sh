@@ -26,6 +26,7 @@ if test -v $ATL_REST_TOKEN || test -z $ATL_REST_TOKEN; then
     exit 1
 fi
 
+export JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 | perl -ne '/java\.home\s*=\s*(.*)/ && print $1')
 BASE_CMD="acli --server $(/usr/local/bin/get_baseurl.sh) --user ${USER} --token $ATL_REST_TOKEN" 
 for app_key in $(jq --raw-output 'keys | .[]' $PLUGINFILE); do
     echo ">>> Installing app $app_key"
