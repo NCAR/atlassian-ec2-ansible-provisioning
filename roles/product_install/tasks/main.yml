@@ -32,7 +32,8 @@
 #  debugger: always
   
 - name: Debug marketplace
-  var: marketplace_healthcheck
+  ansible.builtin.debug:
+    var: marketplace_healthcheck
   
 - name: Fail
   ansible.builtin.fail:
