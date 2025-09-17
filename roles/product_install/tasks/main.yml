@@ -29,7 +29,11 @@
   until: marketplace_healthcheck.status == 200
   retries: 5
   delay: 10
-
+  debugger: always
+  
+#- name: Debug marketplace
+#  var: marketplace_healthcheck
+  
 - name: Determine if requested version is 'latest'
   ansible.builtin.set_fact:
     version_is_latest: "{{ atl_product_version is undefined or
