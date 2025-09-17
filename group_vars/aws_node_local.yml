@@ -38,8 +38,8 @@ atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_SECURE') }}"
 atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', 'ATL_USE_AWS_SECRETS_FOR_DB') }}"
 
 # Vars with defaults
-atl_home_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_HOME_BASE')' or '/var/atlassian/application-data' }}"
-atl_installation_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_INSTALLATION_BASE')' or '/opt/atlassian' }}"
+atl_home_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_HOME_BASE')' | default('/var/atlassian/application-data') }}"
+atl_installation_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_INSTALLATION_BASE')' | default('/opt/atlassian') }}"
 
 
 # #
