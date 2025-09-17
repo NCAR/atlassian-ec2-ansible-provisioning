@@ -13,59 +13,81 @@ java_major_version: "17"
 #postgres_version: "9.6"
 git_version: "2.14.4"
 
-atl_aws_region: "{{ lookup('env', 'AWS_REGION') }}"
-atl_proxy_name:  "{{ lookup('env', 'ATL_PROXY_NAME') }}"
+aws_region: "{{ lookup("amazon.aws.aws_ssm", "AWS_REGION)" }}
 
-#
-# Variable defaults
-#
-atl_apptunnel_port: ''
-atl_atlassian_acli_download_url: https://appfire.atlassian.net/wiki/download/attachments/60562669/acli-12.1.0-linux-amd64.zip
-atl_aws_enable_cloudwatch: false
-atl_aws_enable_cloudwatch_logs: false
-atl_catalina_opts: ''
-atl_db_driver: com.mysql.cj.jdbc.Driver
-atl_db_maxidle: 20
-atl_db_maxwaitmillis: 30000
-atl_db_minevictableidletimemillis: 5000
-atl_db_minidle: 10
-atl_db_poolmaxsize: 100
-atl_db_poolminsize: 20
-atl_db_removeabandoned: true
-atl_db_removeabandonedtimeout: 300
-atl_db_testonborrow: false
-atl_db_testwhileidle: true
-atl_db_timebetweenevictionrunsmillis: 30000
-atl_db_type: mysql8
-atl_download_secret_name: ''
-atl_enable_cluster: false
-atl_home_base: /var/atlassian/application-data
-atl_installation_base: "/opt/atlassian"
-atl_jdbc_collation: en_US.UTF-8
-atl_jdbc_ctype: en_US.UTF-8
-atl_jdbc_dialect: org.hibernate.dialect.MySQLDialect
-atl_jdbc_encoding: UTF-8
-atl_jdbc_template: template1
-atl_jvm_heap: 2048m
-atl_jvm_opts: ''
-atl_mysql_jdbc_connector: mysql-connector-j-8.0.33
-atl_mysql_jdbc_connector_url: https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz
-atl_mysqlsh_url: https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.4-1ubuntu22.04_amd64.deb
-atl_product_user_uid: 2001
-atl_ssl_proxy: false
-atl_tomcat_acceptcount: 10
-atl_tomcat_connectiontimeout: 20000
-atl_tomcat_contextpath: ''
-atl_tomcat_enablelookups: false
-atl_tomcat_lib_dir: lib
-atl_tomcat_maxthreads: 200
-atl_tomcat_minsparethreads: 10
-atl_tomcat_port: 8080
-atl_tomcat_protocol: HTTP/1.1
-atl_tomcat_redirectport: ''
-atl_tomcat_scheme: http
-atl_tomcat_secure: false
-atl_use_aws_secrets_for_db: true
+atl_aws_default_tags: "{{ lookup("amazon.aws.aws_ssm", "ATL_AWS_DEFAULT_TAGS)" }}
+atl_backup_time: "{{ lookup("amazon.aws.aws_ssm", "ATL_BACKUP_TIME)" }}
+atl_backups_retained: "{{ lookup("amazon.aws.aws_ssm", "ATL_BACKUPS_RETAINED)" }}
+
+atl_db_app_config: "{{ lookup("amazon.aws.aws_ssm", "ATL_DB_APP_CONFIG)" }}
+atl_db_engine: "{{ lookup("amazon.aws.aws_ssm", "ATL_DB_ENGINE)" }}
+atl_db_general_type: "{{ lookup("amazon.aws.aws_ssm", "ATL_DB_GENERAL_TYPE)" }}
+atl_db_host: "{{ lookup("amazon.aws.aws_ssm", "ATL_DB_HOST)" }}
+atl_db_port: "{{ lookup("amazon.aws.aws_ssm", "ATL_DB_PORT)" }}
+atl_dbuser_credential_secret_arn: "{{ lookup("amazon.aws.aws_ssm", "ATL_DBUSER_CREDENTIAL_SECRET_ARN)" }}
+atl_jdbc_db_name: "{{ lookup("amazon.aws.aws_ssm", "ATL_JDBC_DB_NAME)" }}
+atl_playbooks: "{{ lookup("amazon.aws.aws_ssm", "ATL_PLAYBOOKS)" }}
+atl_product_edition: "{{ lookup("amazon.aws.aws_ssm", "ATL_PRODUCT_EDITION)" }}
+atl_product_version: "{{ lookup("amazon.aws.aws_ssm", "ATL_PRODUCT_VERSION)" }}
+atl_proxy_name: "{{ lookup("amazon.aws.aws_ssm", "ATL_PROXY_NAME)" }}
+atl_rds_master_credential_secret_arn: "{{ lookup("amazon.aws.aws_ssm", "ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN)" }}
+atl_s3_path: "{{ lookup("amazon.aws.aws_ssm", "ATL_S3_PATH)" }}
+atl_tomcat_proxyport: "{{ lookup("amazon.aws.aws_ssm", "ATL_TOMCAT_PROXYPORT)" }}
+atl_tomcat_scheme: "{{ lookup("amazon.aws.aws_ssm", "ATL_TOMCAT_SCHEME)" }}
+atl_tomcat_secure: "{{ lookup("amazon.aws.aws_ssm", "ATL_TOMCAT_SECURE)" }}
+atl_use_aws_secrets_for_db: "{{ lookup("amazon.aws.aws_ssm", "ATL_USE_AWS_SECRETS_FOR_DB)" }}
+
+
+# #
+# # Variable defaults
+# #
+# atl_apptunnel_port: ''
+# atl_atlassian_acli_download_url: https://appfire.atlassian.net/wiki/download/attachments/60562669/acli-12.1.0-linux-amd64.zip
+# atl_aws_enable_cloudwatch: false
+# atl_aws_enable_cloudwatch_logs: false
+# atl_catalina_opts: ''
+# atl_db_driver: com.mysql.cj.jdbc.Driver
+# atl_db_maxidle: 20
+# atl_db_maxwaitmillis: 30000
+# atl_db_minevictableidletimemillis: 5000
+# atl_db_minidle: 10
+# atl_db_poolmaxsize: 100
+# atl_db_poolminsize: 20
+# atl_db_removeabandoned: true
+# atl_db_removeabandonedtimeout: 300
+# atl_db_testonborrow: false
+# atl_db_testwhileidle: true
+# atl_db_timebetweenevictionrunsmillis: 30000
+# atl_db_type: mysql8
+# atl_download_secret_name: ''
+# atl_enable_cluster: false
+# atl_home_base: /var/atlassian/application-data
+# atl_installation_base: "/opt/atlassian"
+# atl_jdbc_collation: en_US.UTF-8
+# atl_jdbc_ctype: en_US.UTF-8
+# atl_jdbc_dialect: org.hibernate.dialect.MySQLDialect
+# atl_jdbc_encoding: UTF-8
+# atl_jdbc_template: template1
+# atl_jvm_heap: 2048m
+# atl_jvm_opts: ''
+# atl_mysql_jdbc_connector: mysql-connector-j-8.0.33
+# atl_mysql_jdbc_connector_url: https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz
+# atl_mysqlsh_url: https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.4-1ubuntu22.04_amd64.deb
+# atl_product_user_uid: 2001
+# atl_ssl_proxy: false
+# atl_tomcat_acceptcount: 10
+# atl_tomcat_connectiontimeout: 20000
+# atl_tomcat_contextpath: ''
+# atl_tomcat_enablelookups: false
+# atl_tomcat_lib_dir: lib
+# atl_tomcat_maxthreads: 200
+# atl_tomcat_minsparethreads: 10
+# atl_tomcat_port: 8080
+# atl_tomcat_protocol: HTTP/1.1
+# atl_tomcat_redirectport: ''
+# atl_tomcat_scheme: http
+# atl_tomcat_secure: false
+# atl_use_aws_secrets_for_db: true
 
 # - name: Set default facts
 #   set_fact:
