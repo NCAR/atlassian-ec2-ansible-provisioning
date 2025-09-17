@@ -36,8 +36,10 @@ atl_tomcat_proxyport: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_PROXYPORT') }
 atl_tomcat_scheme: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_SCHEME') }}"
 atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_SECURE') }}"
 atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', 'ATL_USE_AWS_SECRETS_FOR_DB') }}"
-atl_home_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_HOME_BASE')' | '/var/atlassian/application-data' }}"
-atl_installation_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_INSTALLATION_BASE')' | '/opt/atlassian' }}"
+
+# Vars with defaults
+atl_home_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_HOME_BASE')' or '/var/atlassian/application-data' }}"
+atl_installation_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_INSTALLATION_BASE')' or '/opt/atlassian' }}"
 
 
 # #
