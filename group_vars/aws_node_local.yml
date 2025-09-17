@@ -15,13 +15,13 @@ git_version: "2.14.4"
 
 aws_region: "{{ lookup('amazon.aws.aws_ssm', 'AWS_REGION') }}"
 
-atl_aws_default_tags: "{{ lookup('amazon.aws.aws_ssm', 'ATL_AWS_DEFAULT_TAGS') }}"
+atl_aws_default_tags: "{{ lookup('amazon.aws.aws_ssm', 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
 atl_backup_time: "{{ lookup('amazon.aws.aws_ssm', 'ATL_BACKUP_TIME') }}"
 atl_backups_retained: "{{ lookup('amazon.aws.aws_ssm', 'ATL_BACKUPS_RETAINED') }}"
 
-atl_db_app_config: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_APP_CONFIG') }}"
+atl_db_app_config: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_APP_CONFIG') | from_json }}"
 atl_db_engine: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_ENGINE') }}"
-atl_db_general_type: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_GENERAL_TYPE') }}"
+atl_db_general_type: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_GENERAL_TYPE') or 'mysql' }}"
 atl_db_host: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_HOST') }}"
 atl_db_port: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_PORT') }}"
 atl_dbuser_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DBUSER_CREDENTIAL_SECRET_ARN') }}"
@@ -36,6 +36,8 @@ atl_tomcat_proxyport: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_PROXYPORT') }
 atl_tomcat_scheme: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_SCHEME') }}"
 atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_SECURE') }}"
 atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', 'ATL_USE_AWS_SECRETS_FOR_DB') }}"
+atl_home_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_HOME_BASE')' | '/var/atlassian/application-data' }}"
+atl_installation_base: "{{ lookup('amazon.aws.aws_ssm', 'ATL_INSTALLATION_BASE')' | '/opt/atlassian' }}"
 
 
 # #
@@ -61,8 +63,7 @@ atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', 'ATL_USE_AWS_SECRET
 # atl_db_type: mysql8
 # atl_download_secret_name: ''
 # atl_enable_cluster: false
-# atl_home_base: /var/atlassian/application-data
-# atl_installation_base: "/opt/atlassian"
+# 
 # atl_jdbc_collation: en_US.UTF-8
 # atl_jdbc_ctype: en_US.UTF-8
 # atl_jdbc_dialect: org.hibernate.dialect.MySQLDialect
@@ -145,12 +146,6 @@ atl_db_engine_to_db_type_map:
   rds_postgres: "postgres72"
   rds_mysql: "mysql8"
 
-atl_db_general_type_map:
-  aurora_postgres: "postgres"
-  rds_postgres: "postgres"
-  rds_mysql: "mysql"
-atl_db_general_type: "{{ atl_db_general_type_map[atl_db_engine] }}"
-
 atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
 atl_jdbc_password: "{{ atl_jdbc_credential | json_query('password') }}"
 
@@ -169,8 +164,6 @@ atl_clone_bucket_root: "{{ atl_clone_bucket }}/{{ atl_proxy_name }}"
 
 atl_db_dump_root: ="{{ atl_home_base }}/db_backup"
 
-atl_aws_default_tags: "{{ atl_aws_default_tags | from_json }}"
-atl_db_app_config: "{{ atl_db_app_config | from_json }}"
 atl_base_url: "{{ atl_base_url | default('https://' + atl_proxy_name, true) }}"
 
 # Use secretsmanager directly (jira)
