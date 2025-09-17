@@ -26,20 +26,10 @@
     return_content: no
     http_agent: "ansible-httpget_dc-deployments-automation_{{ ansible_play_name }}"
   register: marketplace_healthcheck
-  # until: marketplace_healthcheck.status == 200
+  until: marketplace_healthcheck.status == 200
   retries: 5
   delay: 10
-#  debugger: always
-  
-- name: Debug marketplace
-  ansible.builtin.debug:
-    var: marketplace_healthcheck
-  
-- name: Fail
-  ansible.builtin.fail:
-    msg: Aborting
-
-  
+  when: not ansible_check_mode
   
 - name: Determine if requested version is 'latest'
   ansible.builtin.set_fact:
