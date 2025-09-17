@@ -29,7 +29,7 @@
   # until: marketplace_healthcheck.status == 200
   retries: 5
   delay: 10
-  debugger: always
+#  debugger: always
   
 - name: Debug marketplace
   var: marketplace_healthcheck
