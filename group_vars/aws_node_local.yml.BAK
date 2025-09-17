@@ -1,0 +1,218 @@
+---
+
+# This file is the place for cross-role defaults for all products, and
+# common parameters from the infrastructure-deployment phase of the
+# build (e.g. CloudFormation). Variables defined here will override
+# those defined in `<role>/defaults/main.yml`, although defaults
+# should usually be defined there too. For variable precedence
+# information see:
+#
+#    https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html
+
+java_major_version: "17"
+#postgres_version: "9.6"
+git_version: "2.14.4"
+
+#
+# Common to all apps; can be overridden in app pulumi config
+#
+atl_jdbc_dialect: "{{ lookup('amazon.aws.aws_ssm', 'ATL_JDBC_DIALECT') or 'org.hibernate.dialect.MySQLDialect' }}"
+atl_mysql_jdbc_connector: "{{ lookup('amazon.aws.aws_ssm', 'ATL_MYSQL_JDBC_CONNECTOR') or 'mysql-connector-j-8.0.33' }}"
+atl_mysql_jdbc_connector_url: "{{ lookup('amazon.aws.aws_ssm', 'ATL_MYSQL_JDBC_CONNECTOR_URL') or 'https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz' }}"
+atl_mysqlsh_url: "{{ lookup('amazon.aws.aws_ssm', 'ATL_MYSQLSH_URL') or 'https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.4-1ubuntu22.04_amd64.deb' }}"
+#atl_s5cmd_url: "{{ lookup('amazon.aws.aws_ssm', 'ATL_S5CMD_URL') or 'https://github.com/peak/s5cmd/releases/download/v2.3.0/s5cmd_2.3.0_linux_amd64.deb' }}"
+
+#atl_shared_mountpoint: "/media/atl"
+atl_shared_mountpoint: "{{ atl_product_home }}"
+
+# Simplify NFS mapping by using a fixed UID
+atl_product_user_uid: "{{ lookup('amazon.aws.aws_ssm', 'ATL_PRODUCT_USER_UID') or '2001' }}"
+
+# FIXME: Some of these should be overridden from the environment?
+atl_home_base: "/var/atlassian/application-data"
+atl_product_home: "{{ atl_home_base }}/{{ atl_product_family }}"
+# atl_product_shared_home_map:
+#   confluence: "confluence/shared-home"
+#   jira: "jira/shared"
+#   stash: "bitbucket/shared"
+#   crowd: "crowd/shared"
+
+atl_product_shared_home_map:
+  confluence: "shared-home"
+  jira: "shared"
+  stash: "shared"
+  crowd: "shared"
+atl_product_home_shared: "{{ atl_shared_mountpoint }}/{{ atl_product_shared_home_map[atl_product_family] }}"
+
+atl_product_shared_plugins: "{{ atl_product_home_shared }}/plugins/installed-plugins"
+
+atl_installation_base: "/opt/atlassian"
+atl_product_edition:  "{{ lookup('amazon.aws.aws_ssm', 'ATL_PRODUCT_EDITION') }}"
+atl_product_installation_base: "{{ atl_installation_base }}/{{ atl_product_edition }}"
+atl_product_installation_versioned: "{{ atl_product_installation_base }}/{{ atl_product_version }}"
+atl_product_installation_current: "{{ atl_product_installation_base }}/current"
+atl_tomcat_lib_dir: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_LIB_DIR') or 'lib' }}"
+atl_installer_temp: "{{ atl_installation_base }}/tmp"
+
+# NOTE: If using the non-installer java we expect to have the full JDK
+# installed and linked to `/usr/lib/jvm/java`.
+# See product_common/task/ubuntu.yml for an example of apropriate
+# linking using `alternatives`.
+atl_java_home: "{{ '/usr/lib/jvm/java' if atl_use_system_jdk | bool else (atl_product_installation_current + '/jre') }}"
+atl_java_binary: "{{ atl_java_home }}/bin/java"
+
+atl_product_logs_default: &logs_default
+  - path: "{{ atl_product_installation_current }}/logs/*"
+    type: product
+  - path: "{{ atl_product_home }}/logs/*"
+    type: product
+  - path: "{{ atl_product_home }}/log/*"
+    type: product
+  - path: "{{ atl_product_home }}/logs/audit/*"
+    type: audit
+  - path: "{{ atl_product_home }}/log/audit/*"
+    type: audit
+  - path: "/var/log/ansible-bootstrap.log"
+    type: provisioning
+  - path: "/var/log/cfn-*.log"
+    type: provisioning
+
+atl_product_logs:
+  confluence:
+    *logs_default
+  jira:
+    *logs_default
+  stash:
+    *logs_default
+  crowd:
+    *logs_default
+
+
+#  The following are imports from the environment. These are generally
+#  set in /etc/atl by the CloudFormation template and sourced before
+#  Ansible is run. See bin/ansible-with-atl-env for a convenient wrapper
+atl_product_version: "{{ lookup('amazon.aws.aws_ssm', 'ATL_PRODUCT_VERSION') }}"
+
+atl_efs_id: "{{ lookup('amazon.aws.aws_ssm', 'ATL_EFS_ID') }}"
+atl_aws_stack_name: "{{ lookup('amazon.aws.aws_ssm', 'ATL_AWS_STACK_NAME') }}"
+atl_aws_region: "{{ lookup('amazon.aws.aws_ssm', 'AWS_REGION') }}"
+atl_aws_iam_role: "{{ lookup('amazon.aws.aws_ssm', 'ATL_AWS_IAM_ROLE') }}"
+atl_aws_iam_role_arn: "{{ lookup('amazon.aws.aws_ssm', 'ATL_AWS_IAM_ROLE_ARN') }}"
+
+atl_aws_enable_cloudwatch: "{{ lookup('amazon.aws.aws_ssm', 'ATL_AWS_ENABLE_CLOUDWATCH') | bool or false }}"
+atl_aws_enable_cloudwatch_logs: "{{ lookup('amazon.aws.aws_ssm', 'ATL_AWS_ENABLE_CLOUDWATCH_LOGS') | bool or false }}"
+
+atl_enable_cluster: "{{ lookup('amazon.aws.aws_ssm', 'ATL_ENABLE_CLUSTER') | bool or false }}"
+
+atl_db_engine: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_ENGINE') }}"
+atl_db_host: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_HOST') }}"
+atl_db_port: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_PORT') }}"
+atl_db_driver: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_DRIVER') or 'com.mysql.cj.jdbc.Driver' }}"
+
+atl_db_poolminsize: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_POOLMINSIZE') or '20' }}"
+atl_db_poolmaxsize: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_POOLMAXSIZE') or '100' }}"
+atl_db_minidle: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_MINIDLE') or '10' }}"
+atl_db_maxidle: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_MAXIDLE') or '20' }}"
+
+atl_db_maxwaitmillis: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_MAXWAITMILLIS') or '30000' }}"
+atl_db_timebetweenevictionrunsmillis: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_TIMEBETWEENEVICTIONRUNSMILLIS') or '30000' }}"
+atl_db_minevictableidletimemillis: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_MINEVICTABLEIDLETIMEMILLIS') or '5000' }}"
+atl_db_removeabandoned: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_REMOVEABANDONED') or 'true' }}"
+atl_db_removeabandonedtimeout: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_REMOVEABANDONEDTIMEOUT') or '300' }}"
+atl_db_testwhileidle: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_TESTWHILEIDLE') or 'true' }}"
+atl_db_testonborrow: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_TESTONBORROW') or 'false' }}"
+atl_db_engine_to_db_type_map:
+  aurora_postgres: "postgresaurora96"
+  rds_postgres: "postgres72"
+  rds_mysql: "mysql8"
+atl_db_type: "{{ atl_db_engine_to_db_type_map[atl_db_engine] | default('mysql8') }}"
+atl_db_general_type_map:
+  aurora_postgres: "postgres"
+  rds_postgres: "postgres"
+  rds_mysql: "mysql"
+atl_db_general_type: "{{ atl_db_general_type_map[atl_db_engine] }}"
+
+atl_download_secret_name: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DOWNLOAD_SECRET_NAME') or '' }}"
+
+atl_jdbc_db_name: "{{ lookup('amazon.aws.aws_ssm', 'ATL_JDBC_DB_NAME') }}"
+atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', lookup('amazon.aws.aws_ssm', 'ATL_DBUSER_CREDENTIAL_SECRET_ARN'), on_denied='error')}}"
+atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
+atl_jdbc_password: "{{ atl_jdbc_credential | json_query('password') }}"
+atl_jdbc_encoding: "{{ lookup('amazon.aws.aws_ssm', 'ATL_JDBC_ENCODING') or 'UTF-8' }}"
+atl_jdbc_collation: "{{ lookup('amazon.aws.aws_ssm', 'ATL_JDBC_COLLATION') or 'en_US.UTF-8' }}"
+atl_jdbc_ctype: "{{ lookup('amazon.aws.aws_ssm', 'ATL_JDBC_CTYPE') or 'en_US.UTF-8' }}"
+atl_jdbc_template: "{{ lookup('amazon.aws.aws_ssm', 'ATL_JDBC_TEMPLATE') or 'template1' }}"
+atl_jdbc_query_params_for_engine:
+  aurora_postgres: "?targetServerType=master"
+  rds_mysql: 
+    crowd: "?useUnicode=true&amp;characterEncoding=UTF8&amp;sessionVariables=default_storage_engine=InnoDB&amp;rewriteBatchedStatements=true"
+atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port }}/{{ atl_jdbc_db_name }}{{ atl_jdbc_query_params_for_engine[atl_db_engine][atl_product_family]| default('') }}"
+
+atl_jvm_heap: "{{ lookup('amazon.aws.aws_ssm', 'ATL_JVM_HEAP') or '2048m' }}"
+atl_jvm_opts: "{{ lookup('amazon.aws.aws_ssm', 'ATL_JVM_OPTS') or '' }}"
+atl_catalina_opts: "{{ lookup('amazon.aws.aws_ssm', 'ATL_CATALINA_OPTS') or '' }}"
+atl_jvm_custom_opts_dir: "{{ atl_product_installation_current }}/bin/jvm_custom_opts.d"
+atl_proxy_name:  "{{ lookup('amazon.aws.aws_ssm', 'ATL_PROXY_NAME') | lower }}"
+atl_proxy_port:  "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_PROXYPORT') }}"
+atl_tomcat_port: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_DEFAULTCONNECTORPORT') or '8080' }}"
+atl_ssl_proxy: "{{ lookup('amazon.aws.aws_ssm', 'ATL_SSL_PROXY') or 'false' }}"
+atl_apptunnel_port: "{{ lookup('amazon.aws.aws_ssm', 'ATL_APPTUNNEL_PORT') or '' }}"
+
+atl_tomcat_acceptcount: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_ACCEPTCOUNT') or '10' }}"
+atl_tomcat_connectiontimeout: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_CONNECTIONTIMEOUT') or '20000' }}"
+atl_tomcat_contextpath: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_CONTEXTPATH') or '' }}"
+atl_tomcat_enablelookups: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_ENABLELOOKUPS') or 'false' }}"
+atl_tomcat_maxthreads: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_MAXTHREADS') or '200' }}"
+atl_tomcat_minsparethreads: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_MINSPARETHREADS') or '10' }}"
+atl_tomcat_protocol: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_PROTOCOL') or 'HTTP/1.1' }}"
+atl_tomcat_redirectport: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_REDIRECTPORT') or '' }}"
+atl_tomcat_scheme: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_SCHEME') or 'http' }}"
+atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', 'ATL_TOMCAT_SECURE') or 'false' }}"
+
+# atl_fileserver_host: "{{ lookup('amazon.aws.aws_ssm', 'ATL_FILESERVER_IP') }}"
+# atl_elasticsearch_host: "{{ lookup('amazon.aws.aws_ssm', 'ATL_ELASTICSEARCH_HOST') }}"
+# atl_elasticsearch_protocol: "{{ lookup('amazon.aws.aws_ssm', 'ATL_ELASTICSEARCH_PROTOCOL') or 'http' }}"
+# atl_elasticsearch_endpoint: "{{ atl_elasticsearch_protocol }}://{{ atl_elasticsearch_host }}"
+# atl_elasticsearch_s3_bucket: "{{ lookup('amazon.aws.aws_ssm', 'ATL_ELASTICSEARCH_S3_BUCKET') }}"
+
+# atl_nfs_server_device: "{{ lookup('amazon.aws.aws_ssm', 'ATL_NFS_SERVER_DEVICE') }}"
+# atl_nfs_disk_volume_type: "{{ lookup('amazon.aws.aws_ssm', 'ATL_NFS_DISK_VOLUME_TYPE') }}"
+# atl_nfs_disk_volume_iops: "{{ lookup('amazon.aws.aws_ssm', 'ATL_NFS_DISK_VOLUME_IOPS') }}"
+atl_rds_instance_id: "{{ lookup('amazon.aws.aws_ssm', 'ATL_RDS_INSTANCE_ID') }}"
+atl_rds_instance_class: "{{ lookup('amazon.aws.aws_ssm', 'ATL_RDS_INSTANCE_CLASS') }}"
+atl_rds_multi_az: "{{ lookup('amazon.aws.aws_ssm', 'ATL_RDS_MULTI_AZ') }}"
+atl_rds_subnet_group_name: "{{ lookup('amazon.aws.aws_ssm', 'ATL_RDS_SUBNET_GROUP_NAME') }}"
+atl_rds_security_group: "{{ lookup('amazon.aws.aws_ssm', 'ATL_RDS_SECURITY_GROUP') }}"
+
+# Database master user
+atl_rds_master_credential: "{{ lookup('amazon.aws.aws_secret', lookup('amazon.aws.aws_ssm', 'ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN'), on_denied='error')}}"
+atl_rds_master_user: "{{ atl_rds_master_credential | json_query('username') }}"
+atl_rds_master_password: "{{ atl_rds_master_credential | json_query('password') }}"
+
+
+#atl_attachments_bucket: "{{ lookup('amazon.aws.aws_ssm', 'ATL_ATTACHMENTS_BUCKET') }}"
+#atl_backup_bucket:  "{{ lookup('amazon.aws.aws_ssm', 'ATL_BACKUP_BUCKET') }}"
+atl_clone_bucket: "{{ lookup('amazon.aws.aws_ssm', 'ATL_CLONE_BUCKET') }}"
+atl_clone_bucket_root: "{{ atl_clone_bucket }}/{{ atl_proxy_name }}"
+
+atl_db_dump_root: ="{{ atl_home_base }}/db_backup"
+atl_backup_time: "{{ lookup('amazon.aws.aws_ssm', 'ATL_BACKUP_TIME') }}"
+atl_backups_retained: "{{ lookup('amazon.aws.aws_ssm', 'ATL_BACKUPS_RETAINED') }}"
+
+atl_aws_default_tags: "{{ lookup('amazon.aws.aws_ssm', 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
+
+atl_db_app_config: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_APP_CONFIG') | from_json }}"
+
+#atl_base_url: "{{ lookup('amazon.aws.aws_ssm', 'ATL_BASE_URL') or 'https://{{ atl_proxy_name }}' }}"
+atl_base_url: "{{ lookup('amazon.aws.aws_ssm', 'ATL_BASE_URL') | default('https://' +  atl_proxy_name, true) }}"
+
+#atl_proxy_name:  "{{ lookup('amazon.aws.aws_ssm', 'ATL_PROXY_NAME') | lower }}"
+
+atl_s3_path: "{{ lookup('amazon.aws.aws_ssm', 'ATL_S3_PATH') }}"
+
+# Use secretsmanager directly (jira)
+atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', 'ATL_USE_AWS_SECRETS_FOR_DB') | bool | default(true) }}"
+atl_secretsmanager_aws_secret_id: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DBUSER_CREDENTIAL_SECRET_ARN') if atl_use_aws_secrets_for_db else '' }}"
+
+atl_atlassian_acli_download_url: https://appfire.atlassian.net/wiki/download/attachments/60562669/acli-12.1.0-linux-amd64.zip
+
