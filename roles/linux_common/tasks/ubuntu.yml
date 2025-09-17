@@ -8,16 +8,6 @@
       - libxml2-utils
       - pwgen
       - xmlstarlet
-
-# - name: Add cloud-init envvars to root shell via .bashrc
-#   ansible.builtin.lineinfile:
-#     path: /root/.bashrc
-#     line: tmpfile=$(mktemp); grep export /var/lib/cloud/instance/user-data.txt > $tmpfile; source $tmpfile; rm $tmpfile
-
-# - name: Add JAVA_HOME to .bashrc
-#   ansible.builtin.lineinfile:
-#     path: /root/.bashrc
-#     line: export JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 | perl -ne '/java\.home\s*=\s*(.*)/ && print $1')
     
 - name: Customizations for root .bashrc
   ansible.builtin.blockinfile:
