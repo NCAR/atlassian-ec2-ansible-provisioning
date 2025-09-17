@@ -167,3 +167,4 @@ tasks:
 - name: Abort run
   ansible.builtin.fail:
     msg: Abort run
+  when: always
