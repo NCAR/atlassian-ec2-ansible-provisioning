@@ -164,3 +164,6 @@ tasks:
     loop: "{{ lookup('amazon.aws.aws_ssm', '/{{ atl_proxy_name}}/', {{ atl_aws_region }}, bypath=true, droppath=true) | dict2items }}"
 
 
+- name: Abort run
+  ansible.builtin.fail:
+    msg: Abort run
