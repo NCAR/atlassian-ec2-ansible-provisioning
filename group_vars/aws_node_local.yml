@@ -16,12 +16,16 @@ java_major_version: "17"
 #postgres_version: "9.6"
 git_version: "2.14.4"
 
+#
 # Vars from environment
+#
 atl_proxy_name: "{{ lookup('env', 'ATL_PROXY_NAME') }}"
 atl_playbooks: "{{ lookup('env', 'ATL_PLAYBOOKS') }}"
 atl_aws_region: "{{ lookup('env', 'AWS_REGION') }}"
 
+#
 # Vars from ssm (mandatory)
+#
 atl_aws_default_tags: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
 atl_db_app_config: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_APP_CONFIG') | from_json }}"
 atl_db_engine: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_ENGINE') }}"
@@ -38,19 +42,66 @@ atl_tomcat_scheme: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' +
 atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_SECURE') }}"
 atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_USE_AWS_SECRETS_FOR_DB') }}"
 
+#
 # Vars from ssm that have defaults (non-mandatory)
+#
+atl_apptunnel_port: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_APPTUNNEL_PORT', errors='ignore') | default('', true) }}"
+atl_atlassian_acli_download_url:  "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_ATLASSIAN_ACLI_DOWNLOAD_URL',  errors='ignore') | default('https://appfire.atlassian.net/wiki/download/attachments/60562669/acli-12.1.0-linux-amd64.zip', true) }}"
+atl_aws_enable_cloudwatch: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_AWS_ENABLE_CLOUDWATCH', errors='ignore') | default(false, true) }}"
+atl_aws_enable_cloudwatch_logs: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_AWS_ENABLE_CLOUDWATCH_LOGS', errors='ignore') | default(false, true) }}"
 atl_backup_time: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_BACKUP_TIME', errors='ignore') | default('01:00', true) }}"
 atl_backups_retained: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_BACKUPS_RETAINED', errors='ignore') | default(5, true) }}"
+atl_catalina_opts: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_CATALINA_OPTS', errors='ignore') | default('', true) }}"
+atl_db_driver: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_DRIVER', errors='ignore') | default('com.mysql.cj.jdbc.Driver', true) }}"
 atl_db_general_type: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_GENERAL_TYPE', errors='ignore') | default('mysql', true) }}"
+atl_db_maxidle: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_MAXIDLE', errors='ignore') | default(20, true) }}"
+atl_db_maxwaitmillis: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_MAXWAITMILLIS', errors='ignore') | default(30000, true) }}"
+atl_db_minevictableidletimemillis: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_MINEVICTABLEIDLETIMEMILLIS', errors='ignore') | default(5000, true) }}"
+atl_db_minidle: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_MINIDLE', errors='ignore') | default(10, true) }}"
+atl_db_poolmaxsize: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_POOLMAXSIZE', errors='ignore') | default(100, true) }}"
+atl_db_poolminsize: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_POOLMINSIZE', errors='ignore') | default(20, true) }}"
+atl_db_removeabandoned: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_REMOVEABANDONED', errors='ignore') | default(true, true) }}"
+atl_db_removeabandonedtimeout: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_REMOVEABANDONEDTIMEOUT', errors='ignore') | default(300, true) }}"
+atl_db_testonborrow: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_TESTONBORROW', errors='ignore') | default(false, true) }}"
+atl_db_testwhileidle: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_TESTWHILEIDLE', errors='ignore') | default(true, true) }}"
+atl_db_timebetweenevictionrunsmillis: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_TIMEBETWEENEVICTIONRUNSMILLIS', errors='ignore') | default(30000, true) }}"
+atl_db_type: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_TYPE', errors='ignore') | default('mysql8', true) }}"
+atl_download_secret_name: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DOWNLOAD_SECRET_NAME', errors='ignore') | default('', true) }}"
+atl_enable_cluster: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_ENABLE_CLUSTER', errors='ignore') | default(false, true) }}"
 atl_home_base: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_HOME_BASE',  errors='ignore') | default('/var/atlassian/application-data', true) }}"
 atl_installation_base: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_INSTALLATION_BASE', errors='ignore') | default('/opt/atlassian', true) }}"
-atl_atlassian_acli_download_url:  "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_ATLASSIAN_ACLI_DOWNLOAD_URL',  errors='ignore') | default('https://appfire.atlassian.net/wiki/download/attachments/60562669/acli-12.1.0-linux-amd64.zip', true) }}"
+atl_jdbc_collation: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_JDBC_COLLATION', errors='ignore') | default('en_US.UTF-8', true) }}"
+atl_jdbc_ctype: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_JDBC_CTYPE', errors='ignore') | default('en_US.UTF-8', true) }}"
+atl_jdbc_dialect: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_JDBC_DIALECT', errors='ignore') | default('org.hibernate.dialect.MySQLDialect', true) }}"
+atl_jdbc_encoding: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_JDBC_ENCODING', errors='ignore') | default('UTF-8', true) }}"
+atl_jdbc_template: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_JDBC_TEMPLATE', errors='ignore') | default('template1', true) }}"
+atl_jvm_heap: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_JVM_HEAP', errors='ignore') | default('2048m', true) }}"
+atl_jvm_opts: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_JVM_OPTS', errors='ignore') | default('', true) }}"
+atl_mysql_jdbc_connector: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_MYSQL_JDBC_CONNECTOR', errors='ignore') | default('mysql-connector-j-8.0.33', true) }}"
+atl_mysql_jdbc_connector_url: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_MYSQL_JDBC_CONNECTOR_URL', errors='ignore') | default('https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz', true) }}"
+atl_mysqlsh_url: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_MYSQLSH_URL', errors='ignore') | default('https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.4-1ubuntu22.04_amd64.deb', true) }}"
+atl_product_user_uid: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_PRODUCT_USER_UID', errors='ignore') | default(2001, true) }}"
+atl_ssl_proxy: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_SSL_PROXY', errors='ignore') | default(false, true) }}"
+atl_tomcat_acceptcount: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_ACCEPTCOUNT', errors='ignore') | default(10, true) }}"
+atl_tomcat_connectiontimeout: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_CONNECTIONTIMEOUT', errors='ignore') | default(20000, true) }}"
+atl_tomcat_contextpath: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_CONTEXTPATH', errors='ignore') | default('', true) }}"
+atl_tomcat_enablelookups: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_ENABLELOOKUPS', errors='ignore') | default(false, true) }}"
+atl_tomcat_lib_dir: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_LIB_DIR', errors='ignore') | default('lib', true) }}"
+atl_tomcat_maxthreads: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_MAXTHREADS', errors='ignore') | default(200, true) }}"
+atl_tomcat_minsparethreads: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_MINSPARETHREADS', errors='ignore') | default(10, true) }}"
+atl_tomcat_port: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_PORT', errors='ignore') | default(8080, true) }}"
+atl_tomcat_protocol: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_PROTOCOL', errors='ignore') | default('HTTP/1.1', true) }}"
+atl_tomcat_redirectport: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_REDIRECTPORT', errors='ignore') | default('', true) }}"
+atl_tomcat_scheme: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_SCHEME', errors='ignore') | default('http', true) }}"
+atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_SECURE', errors='ignore') | default(false, true) }}"
+atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_USE_AWS_SECRETS_FOR_DB', errors='ignore') | default(true, true) }}"
+
+
 
 # #
 # # Variable defaults
 # #
 # atl_apptunnel_port: ''
-# atl_atlassian_acli_download_url: https://appfire.atlassian.net/wiki/download/attachments/60562669/acli-12.1.0-linux-amd64.zip
 # atl_aws_enable_cloudwatch: false
 # atl_aws_enable_cloudwatch_logs: false
 # atl_catalina_opts: ''
@@ -79,7 +130,6 @@ atl_atlassian_acli_download_url:  "{{ lookup('amazon.aws.aws_ssm', '/' + atl_pro
 # atl_jvm_opts: ''
 # atl_mysql_jdbc_connector: mysql-connector-j-8.0.33
 # atl_mysql_jdbc_connector_url: https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz
-# atl_mysqlsh_url: https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.4-1ubuntu22.04_amd64.deb
 # atl_product_user_uid: 2001
 # atl_ssl_proxy: false
 # atl_tomcat_acceptcount: 10
