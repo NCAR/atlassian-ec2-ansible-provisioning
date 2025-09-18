@@ -30,7 +30,7 @@ atl_aws_default_tags: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/
 atl_db_app_config: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_APP_CONFIG') | from_json }}"
 atl_db_engine: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_ENGINE') }}"
 atl_db_host: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_HOST') }}"
-atl_db_port: "{{ lookup('amazon.aws.aws_ssm', '/' + 'atl_proxy_name + '/' + ATL_DB_PORT') | int }}"
+atl_db_port: "{{ lookup('amazon.aws.aws_ssm', '/' + 'atl_proxy_name + '/' + ATL_DB_PORT') | str }}"
 atl_dbuser_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DBUSER_CREDENTIAL_SECRET_ARN') }}"
 atl_jdbc_db_name: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_JDBC_DB_NAME') }}"
 atl_product_edition: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_PRODUCT_EDITION') }}"
