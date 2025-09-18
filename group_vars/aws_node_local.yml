@@ -44,7 +44,7 @@ atl_backups_retained: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/
 atl_db_general_type: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_DB_GENERAL_TYPE', errors='ignore') | default('mysql') }}"
 atl_home_base: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_HOME_BASE',  errors='ignore') | default('/var/atlassian/application-data') }}"
 atl_installation_base: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_INSTALLATION_BASE', errors='ignore') | default('/opt/atlassian') }}"
-
+atl_atlassian_acli_download_url:  "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_ATLASSIAN_ACLI_DOWNLOAD_URL',  errors='ignore') | default('https://appfire.atlassian.net/wiki/download/attachments/60562669/acli-12.1.0-linux-amd64.zip') }}"
 
 # #
 # # Variable defaults
