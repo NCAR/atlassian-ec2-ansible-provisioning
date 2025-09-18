@@ -18,17 +18,17 @@ git_version: "2.14.4"
 
 # Vars from environment
 atl_proxy_name: "{{ lookup('env', 'ATL_PROXY_NAME') }}"
+atl_playbooks: "{{ lookup('env', 'ATL_PLAYBOOKS') }}"
 aws_region: "{{ lookup('env', 'AWS_REGION') }}"
 
 # Vars from ssm (mandatory)
-atl_aws_default_tags: "{{ lookup('amazon.aws.aws_ssm', 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
+atl_aws_default_tags: "{{ lookup('amazon.aws.aws_ssm', atl_proxy_name + '/' + 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
 atl_db_app_config: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_APP_CONFIG') | from_json }}"
 atl_db_engine: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_ENGINE') }}"
 atl_db_host: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_HOST') }}"
 atl_db_port: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DB_PORT') }}"
 atl_dbuser_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', 'ATL_DBUSER_CREDENTIAL_SECRET_ARN') }}"
 atl_jdbc_db_name: "{{ lookup('amazon.aws.aws_ssm', 'ATL_JDBC_DB_NAME') }}"
-atl_playbooks: "{{ lookup('amazon.aws.aws_ssm', 'ATL_PLAYBOOKS') }}"
 atl_product_edition: "{{ lookup('amazon.aws.aws_ssm', 'ATL_PRODUCT_EDITION') }}"
 atl_product_version: "{{ lookup('amazon.aws.aws_ssm', 'ATL_PRODUCT_VERSION') }}"
 atl_rds_master_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', 'ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN') }}"
