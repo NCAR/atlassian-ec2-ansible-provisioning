@@ -38,9 +38,6 @@ atl_product_version: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/'
 atl_rds_master_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN') }}"
 atl_s3_path: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_S3_PATH') }}"
 atl_tomcat_proxyport: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_PROXYPORT') }}"
-atl_tomcat_scheme: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_SCHEME') }}"
-atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_SECURE') }}"
-atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_USE_AWS_SECRETS_FOR_DB') }}"
 
 #
 # Vars from ssm that have defaults (non-mandatory)
