@@ -86,7 +86,7 @@ atl_tomcat_enablelookups: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name 
 atl_tomcat_lib_dir: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_LIB_DIR', errors='ignore') | default('lib', true) }}"
 atl_tomcat_maxthreads: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_MAXTHREADS', errors='ignore') | default(200, true) }}"
 atl_tomcat_minsparethreads: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_MINSPARETHREADS', errors='ignore') | default(10, true) }}"
-atl_tomcat_port: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_PORT', errors='ignore') | default('8080', true) }}"
+atl_tomcat_port: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_PORT', errors='ignore') | default(8080, true) }}"
 atl_tomcat_protocol: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_PROTOCOL', errors='ignore') | default('HTTP/1.1', true) }}"
 atl_tomcat_redirectport: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_REDIRECTPORT', errors='ignore') | default('', true) }}"
 atl_tomcat_scheme: "{{ lookup('amazon.aws.aws_ssm', '/' + atl_proxy_name + '/' + 'ATL_TOMCAT_SCHEME', errors='ignore') | default('http', true) }}"
