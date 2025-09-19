@@ -1,24 +1,29 @@
 ---
-- name: Check for existing version cache file
-  ansible.builtin.stat:
-    path: "{{ atl_product_version_cache }}"
-  register: cached
+# - name: Check for existing version cache file
+#   ansible.builtin.stat:
+#     path: "{{ atl_product_version_cache }}"
+#   register: cached
 
-# Case: File exists, always use its value
-- name: Use version for product version
-  block:
+# # Case: File exists, always use its value
+# - name: Use version for product version
+#   block:
 
-    - name: Read cached version from file
-      ansible.builtin.command: "cat {{ atl_product_version_cache }}"
-      register: atl_product_version_file
-      changed_when: false
+#     - name: Read cached version from file
+#       ansible.builtin.command: "cat {{ atl_product_version_cache }}"
+#       register: atl_product_version_file
+#       changed_when: false
 
-    - name: Set the local var to cached version
-      ansible.builtin.set_fact:
-        atl_cached_version: "{{ atl_product_version_file.stdout }}"
+#     - name: Set the local var to cached version
+#       ansible.builtin.set_fact:
+#         atl_cached_version: "{{ atl_product_version_file.stdout }}"
 
-  when: cached.stat.exists
+#   when: cached.stat.exists
 
+- name: Short circuit cached version logic; always set cached version to atl_product_version
+  ansible.builtin.set_fact:
+    atl_cached_version: "{{ atl_product_version }}"
+
+  
 - name: Confirm marketplace is available
   ansible.builtin.uri:
     url: "{{ atl_marketplace_base }}/healthcheck"

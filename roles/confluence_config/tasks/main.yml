@@ -85,11 +85,6 @@
     recurse: true
   changed_when: false  # For Molecule idempotence check
 
-
-- name: Abort
-  ansible.builtin.fail:
-    msg: "ATL_PRODUCT_VERSION: {{ atl_product_version }}; ATL_PRODUCT_INSTALLATION_VERSIONED: {{ atl_product_installation_versioned }}"
-
 - name: Limit permissions on the installation directory, non-recursively
   ansible.builtin.file:
     path: "{{ atl_product_installation_versioned }}"
