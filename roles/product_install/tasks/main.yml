@@ -42,14 +42,14 @@
                            not atl_product_version or
                            atl_product_version == 'latest' }}"
 
-# Case: File doesn't exist and no version has been set; find latest.
-- name: Fetch and cache latest version when no override
-  block:
+# # Case: File doesn't exist and no version has been set; find latest.
+# - name: Fetch and cache latest version when no override
+#   block:
 
-    - name: Fetch the latest edition version
-      ansible.builtin.include_tasks: "{{ atl_product_edition }}_version_latest.yml"
+#     - name: Fetch the latest edition version
+#       ansible.builtin.include_tasks: "{{ atl_product_edition }}_version_latest.yml"
 
-  when: not cached.stat.exists and version_is_latest | bool
+#   when: not cached.stat.exists and version_is_latest | bool
 
 
 ######################################################################
