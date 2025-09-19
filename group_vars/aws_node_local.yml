@@ -38,7 +38,10 @@ atl_dbuser_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 
 atl_jdbc_db_name: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_JDBC_DB_NAME') }}"
 atl_product_edition: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_PRODUCT_EDITION') }}"
 atl_product_version: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_PRODUCT_VERSION') }}"
+
+#atl_rds_master_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN') }}"
 atl_rds_master_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN') }}"
+
 atl_s3_path: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_S3_PATH') }}"
 atl_tomcat_proxyport: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_PROXYPORT') }}"
 
