@@ -205,9 +205,6 @@ atl_db_engine_to_db_type_map:
   rds_postgres: "postgres72"
   rds_mysql: "mysql8"
 
-atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
-atl_jdbc_password: "{{ atl_jdbc_credential | json_query('password') }}"
-
 atl_jdbc_query_params_for_engine:
   aurora_postgres: "?targetServerType=master"
   rds_mysql: 
@@ -216,10 +213,13 @@ atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port
 
 atl_jvm_custom_opts_dir: "{{ atl_product_installation_current }}/bin/jvm_custom_opts.d"
 
-#atl_rds_master_credential: "{{ lookup('amazon.aws.aws_secret', lookup('amazon.aws.aws_ssm', 'ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN'), on_denied='error')}}"
 atl_rds_master_credential: "{{ lookup('amazon.aws.aws_secret', atl_rds_master_credential_secret_arn, on_denied='error')}}"
 atl_rds_master_user: "{{ atl_rds_master_credential | json_query('username') }}"
 atl_rds_master_password: "{{ atl_rds_master_credential | json_query('password') }}"
+
+atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', atl_dbuser_credential_secret_arn, on_denied='error')}}"
+atl_jdbc_user: "{{ atl_jdbc_credential | json_query('user') }}"
+atl_jdbc_password: "{{ atl_jdbc_credential | json_query('password') }}"
 
 atl_clone_bucket_root: "{{ atl_clone_bucket }}/{{ atl_proxy_name }}"
 
