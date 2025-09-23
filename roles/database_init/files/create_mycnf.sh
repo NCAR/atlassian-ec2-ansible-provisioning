@@ -7,11 +7,16 @@
 #
 
 # Extract the relevant env vars from cloud-init.
-set_vars=$(mktemp)
-grep '^export ATL_' /var/lib/cloud/instance/user-data.txt > $set_vars
-. $set_vars
-rm $set_vars
+# set_vars=$(mktemp)
+# grep '^export ATL_' /var/lib/cloud/instance/user-data.txt > $set_vars
+# . $set_vars
+# rm $set_vars
 
+
+ATL_DB_HOST=$(aws ssm get-parameter --name '/stage-wiki-aws.ucar.edu/ATL_DB_HOST' | jq -r '.Parameter.Value')
+ATL_JDBC_DB_NAME=$(aws ssm get-parameter --name '/stage-wiki-aws.ucar.edu/ATL_JDBC_DB_NAME' | jq -r '.Parameter.Value')
+
+ATL_DBUSER_CREDENTIAL_SECRET_ARN=$(aws ssm get-parameter --name '/stage-wiki-aws.ucar.edu/ATL_DBUSER_CREDENTIAL_SECRET_ARN' | jq -r '.Parameter.Value')
 secret_string=$(aws secretsmanager get-secret-value --secret-id "$ATL_DBUSER_CREDENTIAL_SECRET_ARN" --output json | jq -r '.SecretString')
 dbuser=$(echo $secret_string | jq -r '.user')
 dbpassword=$(echo $secret_string | jq -r '.password')
