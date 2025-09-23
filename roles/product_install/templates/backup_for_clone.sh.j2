@@ -27,6 +27,13 @@ source $aws_env_vars
 rm $aws_env_vars
 
 #
+# Backup plugin list
+#
+echo ">>> Backing up plugin list, starting $(date)"
+/usr/local/bin/get_upm_plugins.py $ATL_PROXY_NAME | aws s3 cp - "${bucket_url}/plugins.json"
+test $? -eq 0 || exit 1
+
+#
 # DB backup
 #
 bucket_db_path="$(echo $bucket_url  | cut -d '/' -f4-)/database"

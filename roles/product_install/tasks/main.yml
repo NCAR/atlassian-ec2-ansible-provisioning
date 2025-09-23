@@ -381,4 +381,12 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
+- name: Install get_upm_plugins.sh script
+  ansible.builtin.copy:
+    src: get_upm_plugins.sh
+    dest: /usr/local/bin/get_upm_plugins.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+    
 
