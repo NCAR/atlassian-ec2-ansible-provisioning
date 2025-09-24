@@ -1,4 +1,6 @@
-#!/usr/bin/python3                                                                                                                                                             
+#!/usr/bin/python3
+
+# Get UPM json for all enabled user-installed plugins
 
 import argparse
 import json
@@ -7,7 +9,8 @@ import requests
 import sys
 
 parser = argparse.ArgumentParser(
-    epilog="Environment variable ATL_REST_TOKEN must be set"
+    description="Get UPM json for all enabled user-installed plugins via REST API.",
+    epilog="Environment variable ATL_REST_TOKEN must be set!"
 )
 parser.add_argument("atlassian_server")
 args = parser.parse_args()
@@ -25,13 +28,17 @@ headers={
 
 response = requests.get(base_url + "/plugins/1.0/", headers=headers)
 
+status_first_digit = int(str(num)[0])
+if status_first_digit == 4:
+    raise Exception("Request to REST API failed with code " + str(response.status_code) + "; API token expired or user doesn't have permission?")
+if status_first_digit == 5:
+    raise Exception("Request to REST API failed with code " + str(response.status_code) + "; app not running or API not available?")
 if response.status_code != 200:
-    print(f'Error: {response.status_code}')
-    sys.exit(1)
+    raise Exception("Request to REST API failed with code " + str(response.status_code))
 
 user_plugins={}
 for plugin in response.json()["plugins"]:
-    if not ( plugin["enabled"] and plugin["userInstalled"] and plugin["usesLicensing"] ):
+    if not ( plugin["enabled"] and plugin["userInstalled"] ):
         continue
     key = plugin["key"]
 
@@ -40,16 +47,9 @@ for plugin in response.json()["plugins"]:
         detail_baseurl,
         headers=headers)
     if version_response.status_code != 200:
-        print("Could not get version or license information for plugin " + key, file=sys.stderr)
+        print("Could not get version for plugin " + key, file=sys.stderr)
         continue
 
-    user_plugin = {
-        "name":  plugin["name"],
-        "version": plugin["version"],
-        "raw_license": version_response.json()["licenseDetails"]["rawLicense"]
-    }
-
-    user_plugins[key] = user_plugin
+    user_plugins[key] = plugin
 
 print( json.dumps(user_plugins) )
-
