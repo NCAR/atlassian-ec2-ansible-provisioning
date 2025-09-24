@@ -27,9 +27,16 @@ rm $aws_env_vars
 #
 # Backup plugin list
 #
-echo ">>> Backing up plugin list, starting $(date)"
-/usr/local/bin/get_upm_plugins.py {{ atl_proxy_name }} | aws s3 cp - "${bucket_url}/plugins.json"
-test $? -eq 0 || exit 1
+if systemctl is-active --quiet {{ atl_product_family }}; then
+    echo ">>> Backing up plugin list, starting $(date)"
+    plugins_file=$(mktemp)
+    /usr/local/bin/get_upm_plugins.py {{ atl_proxy_name }} > $plugins_file
+    test $? -eq 0 || exit 1
+    aws s3 cp $plugins_file "${bucket_url}/plugins.json"
+    rm $plugins_file
+else
+    echo ">>> Can't back up plugins because service isn't running so no access to REST API; continuing anyway"
+fi
 
 #
 # DB backup

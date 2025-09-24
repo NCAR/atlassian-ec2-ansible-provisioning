@@ -36,14 +36,13 @@ if ! aws s3 ls "${s3_backup_url}/home.zst" > /dev/null 2>&1; then
     exit 1
 fi
 
-if ! aws s3 ls "${s3_backup_url}/plugins.json" > /dev/null 2>&1; then
-    echo "s3_backup_url doesn't have home tar archive"
-    exit 1
-fi
-
 if ! aws s3 ls "${s3_backup_url}/database" > /dev/null 2>&1; then
     echo "s3_backup_url doesn't have database"
     exit 1
+fi
+
+if ! aws s3 ls "${s3_backup_url}/plugins.json" > /dev/null 2>&1; then
+    echo "s3_backup_url doesn't have plugins list; continuing anyway"
 fi
 
 mkdir -p /var/atlassian/application-data/tmp > /dev/null 2>&1
@@ -221,11 +220,12 @@ done
 echo ">>> Resetting baseurl"
 /usr/local/bin/set_baseurl.sh $dest_baseurl
 
-echo ">>> Copying plugins file to /tmp/plugins.json"
-aws s3 cp "${s3_backup_url}/plugins.json" /tmp/plugins.json
+if aws s3 ls "${s3_backup_url}/plugins.json" > /dev/null 2>&1; then
+    echo ">>> Copying plugins file to /tmp/plugins.json"
+    aws s3 cp "${s3_backup_url}/plugins.json" /tmp/plugins.json
 
-echo
-cat <<PLUGINS_MSG
+    echo
+    cat <<PLUGINS_MSG
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 To install plugins:
@@ -240,6 +240,9 @@ To install plugins:
 - Start the app
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PLUGINS_MSG
+else
+    echo ">>> Plugin list is not available; plugins will need to be installed by hand"
+fi
 
 ##############################################
 # Postprocess

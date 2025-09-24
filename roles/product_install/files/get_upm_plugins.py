@@ -42,14 +42,17 @@ for plugin in response.json()["plugins"]:
         continue
     key = plugin["key"]
 
-    detail_baseurl = base_url + "/plugins/1.0/available/" + key + "-key"
-    version_response = requests.get(
-        detail_baseurl,
-        headers=headers)
-    if version_response.status_code != 200:
-        print("Could not get version for plugin " + key, file=sys.stderr)
-        continue
-
+    # Get license if it has one
+    if ( plugin["usesLicensing"] ):
+        detail_baseurl = base_url + "/plugins/1.0/available/" + key + "-key"
+        version_response = requests.get(
+            detail_baseurl,
+            headers=headers)
+        if version_response.status_code != 200:
+            print("Plugin " + key + " is licensed but can't get license from API", file=sys.stderr)
+            continue
+        plugin["rawLicense"] = version_response.json()["licenseDetails"]["rawLicense"]
+    
     user_plugins[key] = plugin
 
 print( json.dumps(user_plugins) )

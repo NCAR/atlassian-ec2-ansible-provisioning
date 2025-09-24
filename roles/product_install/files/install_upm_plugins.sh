@@ -1,16 +1,17 @@
 #!/bin/bash
 
 #
-# Install plugins after clone
+# Install plugins after clone; uses appfire acli
 #
-PLUGINFILE=/tmp/plugins.json
 
 USER=$1
-if test -z $USER; then
-    cat << 'USAGE'
-$0 admin_user
+PLUGINFILE=$2
 
-Install plugins from $PLUGINFILE.
+if test -z $USER || test -z $PLUGINFILE; then
+    cat << 'USAGE'
+$0 admin_user plugin_file.json
+
+Install plugins from plugin_file.json
 Admin user's REST API token must be in environment variable $ATL_REST_TOKEN.
 USAGE
    exit 1
@@ -32,14 +33,16 @@ for app_key in $(jq --raw-output 'keys | .[]' $PLUGINFILE); do
     echo ">>> Installing app $app_key"
     
     version=$(jq --raw-output ".\"${app_key}\".version" $PLUGINFILE)
-    license=$(jq --raw-output ".\"${app_key}\".raw_license" $PLUGINFILE)
     
     # Install 
     $BASE_CMD --action installApp --app $app_key --version $version --wait
 
     # License
-    echo $license | $BASE_CMD --action addLicense --app $app_key --file "-"
-
+    license=$(jq --raw-output ".\"${app_key}\".raw_license" $PLUGINFILE)
+    if ! -z $license; then
+	echo $license | $BASE_CMD --action addLicense --app $app_key --file "-"
+    fi
+	
     # Enable
     $BASE_CMD --action enableApp --app $app_key
 done
