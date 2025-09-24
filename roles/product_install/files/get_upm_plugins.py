@@ -28,7 +28,7 @@ headers={
 
 response = requests.get(base_url + "/plugins/1.0/", headers=headers)
 
-status_first_digit = int(str(num)[0])
+status_first_digit = int(str(response.status_code)[0])
 if status_first_digit == 4:
     raise Exception("Request to REST API failed with code " + str(response.status_code) + "; API token expired or user doesn't have permission?")
 if status_first_digit == 5:

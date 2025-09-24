@@ -28,7 +28,7 @@ rm $aws_env_vars
 # Backup plugin list
 #
 echo ">>> Backing up plugin list, starting $(date)"
-/usr/local/bin/get_upm_plugins.py $ATL_PROXY_NAME | aws s3 cp - "${bucket_url}/plugins.json"
+/usr/local/bin/get_upm_plugins.py {{ atl_proxy_name }} | aws s3 cp - "${bucket_url}/plugins.json"
 test $? -eq 0 || exit 1
 
 #
