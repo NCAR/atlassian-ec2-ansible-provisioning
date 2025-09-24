@@ -12,9 +12,9 @@
 # cat /tmp/p.json | jq -r ".Parameters[] | \"export \(.Name | split(\"/\") | last)=\(.Value)\""
 # aws ssm get-parameters-by-path --path '/stage-kb-aws.ucar.edu/' | jq -r ".Parameters[] | \"export \(.Name | split(\"/\") | last)=\(.Value)\""
 
-java_major_version: "17"
+#java_major_version: "17"
 #postgres_version: "9.6"
-git_version: "2.14.4"
+# git_version: "2.14.4"
 
 #
 # Vars from environment
@@ -29,6 +29,7 @@ ssm_prefix: "{{ '/' + atl_proxy_name + '/' }}"
 #
 # Vars from ssm (mandatory)
 #
+java_major_version: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'JAVA_MAJOR_VERSION') | from_json }}"
 atl_aws_default_tags: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
 atl_db_app_config: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_DB_APP_CONFIG') | from_json }}"
 atl_db_engine: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_DB_ENGINE') }}"
