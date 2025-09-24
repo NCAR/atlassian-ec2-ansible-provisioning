@@ -7,7 +7,7 @@ ACTION=$1
 tomcat_var_file="{{ atl_jvm_custom_opts_dir }}/recovery_admin_user"
 
 case $ACTION in
-    'enable')
+    'on')
 	#
 	# Enable recovery_admin user in setenv.sh
 	#
@@ -28,7 +28,7 @@ case $ACTION in
 	echo "grep 'Recovery admin username' {{ atl_product_home }}/logs/atlassian-confluence-security.log"
 	echo "Login at this URL: https://{{ atl_proxy_name }}/login.action?auth_fallback"
 	;;
-    'disable')
+    'off')
 	#
 	# Disable recovery_admin user in setenv.sh
 	#
@@ -41,7 +41,7 @@ case $ACTION in
 	fi
 	;;
     *)
-	echo "Usage: $0 [enable|disable]"
+	echo "Usage: $0 [on|off]"
 	echo "Enable/disable confluence recovery_admin user."
 	exit 1
 	;;

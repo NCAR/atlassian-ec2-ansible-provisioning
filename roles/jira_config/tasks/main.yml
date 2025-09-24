@@ -201,10 +201,10 @@
       JVM_CUSTOM_ARGS=$(cat {{ atl_product_installation_current }}/bin/jvm_custom_opts.d/* 2>/dev/null  | tr "\n" " ")
       JAVA_OPTS="${JAVA_OPTS} ${JVM_CUSTOM_ARGS}"
 
-- name: Install recovery_admin script
+- name: Install toggle_recovery_admin script
   ansible.builtin.template:
-    src: recovery_admin.sh.j2
-    dest: "/usr/local/bin/recovery_admin.sh"
+    src: toggle_recovery_admin.sh.j2
+    dest: "/usr/local/bin/toggle_recovery_admin.sh"
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'

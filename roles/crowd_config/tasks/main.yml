@@ -199,10 +199,10 @@
     path: "{{ atl_product_installation_versioned }}/apache-tomcat/conf/Catalina/localhost/crowd.xml"
     state: absent
 
-- name: Install recovery_admin script
+- name: Install toggle_recovery_admin script
   ansible.builtin.copy:
-    src: recovery_admin.sh
-    dest: "/usr/local/bin/recovery_admin.sh"
+    src: toggle_recovery_admin.sh
+    dest: "/usr/local/bin/toggle_recovery_admin.sh"
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'

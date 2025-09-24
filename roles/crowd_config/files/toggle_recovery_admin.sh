@@ -10,7 +10,7 @@ setenv_file=/opt/atlassian/crowd/current/apache-tomcat/bin/setenv.sh
 recovery_admin_search_line='# END ANSIBLE MANAGED CATALINA_OPTS'
 
 case $ACTION in
-    'enable')
+    'on')
 	#
 	# Enable recovery_admin user in setenv.sh
 	#
@@ -32,14 +32,14 @@ case $ACTION in
 	    echo "Check $homedir/logs/atlassian-crowd.log for line starting with \"Recovery admin username:\" after restart"
 	fi
 	;;
-    'disable')
+    'off')
 	#
 	# Disable recovery_admin user in setenv.sh
 	#
 	perl -i -lne 'print unless /\Q-Datlassian.recovery.password=\E/;' $setenv_file
 	;;
     *)
-	echo "Usage: $0 [enable|disable]"
+	echo "Usage: $0 [on|off]"
 	echo "Enable/disable crowd recovery_admin user."
 	exit 1
 	;;

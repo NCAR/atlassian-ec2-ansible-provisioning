@@ -25,8 +25,8 @@
     dest: "{{ atl_product_installation_versioned }}/{{ atl_tomcat_lib_dir }}/{{ atl_mysql_jdbc_connector }}.jar"
 
 - name: Install create_mycnf script
-  ansible.builtin.copy:
-    src: create_mycnf.sh
+  ansible.builtin.template:
+    src: create_mycnf.sh.j2
     dest: "/usr/local/bin/create_mycnf.sh"
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"

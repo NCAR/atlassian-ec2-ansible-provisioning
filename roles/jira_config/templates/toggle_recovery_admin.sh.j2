@@ -10,7 +10,7 @@ ACTION=$1
 tomcat_var_file="{{ atl_jvm_custom_opts_dir }}/recovery_admin_user"
 
 case $ACTION in
-    'enable')
+    'on')
 	#
 	# Enable recovery_admin user via tomcat vars
 	#	
@@ -37,7 +37,7 @@ case $ACTION in
 	echo "Recovery admin username is shown on login page."
 	;;
     
-    'disable')
+    'off')
 	if ! test -e $tomcat_var_file; then
 	    echo "recovery_admin already disabled"
 	    exit 1
@@ -52,7 +52,7 @@ case $ACTION in
 	fi
 	;;
     *)
-	echo "Usage: $0 [enable|disable]"
+	echo "Usage: $0 [on|off]"
 	echo "Enable/disable jira recovery_admin user."
 	exit 1
 	;;
