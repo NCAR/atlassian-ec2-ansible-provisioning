@@ -8,7 +8,8 @@ if test -z "$s3_backup_url_raw"; then
 Usage: $0 s3_backup_url
 
 Restore cloned database and home directory for app "$APP";
-s3_backup_url must contain files
+s3_backup_url should contain files
+- VERSION       Version of app
 - home.zst      App home tar archive
 - plugins.json  App plugin information
 - database/     Backup as created by mysqlsh
@@ -43,6 +44,17 @@ fi
 
 if ! aws s3 ls "${s3_backup_url}/plugins.json" > /dev/null 2>&1; then
     echo "s3_backup_url doesn't have plugins list; continuing anyway"
+fi
+
+backup_version=$(aws s3 cp "${s3_backup_url}/VERSION" -)
+if test -z $backup_version; then
+    echo "s3_backup_url doesn't have VERSION file; continuing anyway"
+else
+    current_version=$(basename $(readlink -f /opt/atlassian/*/current))
+    if [ "$backup_version" != "$current_version" ]; then
+	echo "Current app version is \"$current_version\", backup version is \"$backup_version\"; can't clone"
+	exit 1
+    fi
 fi
 
 mkdir -p /var/atlassian/application-data/tmp > /dev/null 2>&1
