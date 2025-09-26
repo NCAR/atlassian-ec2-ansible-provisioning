@@ -12,7 +12,7 @@
     # See group_vars/aws_node_local.yml, which pull vars from the environment.
     atl_product_family: "jira"
     atl_product_user: "jira"
-    atl_product_edition: "jira-{{ atl_product_edition }}"
+#    atl_product_edition: "jira-{{ atl_product_edition }}"
     atl_install_jsd_as_obr: "{{ lookup('env', 'ATL_JSD_ASOBR') | bool }}"
     atl_systemd_service_name: "jira.service"
 
