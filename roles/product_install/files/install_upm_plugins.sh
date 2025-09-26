@@ -39,7 +39,7 @@ for app_key in $(jq --raw-output 'keys | .[]' $PLUGINFILE); do
 
     # License
     license=$(jq --raw-output ".\"${app_key}\".rawLicense" $PLUGINFILE)
-    if ! test -z $license; then
+    if ! test -z "${license}"; then
 	echo "${license}" | $BASE_CMD --action addLicense --app $app_key --file "-"
     fi
 	
