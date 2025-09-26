@@ -40,6 +40,7 @@ if systemctl is-active --quiet {{ atl_product_family }}; then
 	rm $plugins_file
     else
 	echo ">>> Can't back up plugins because ATL_REST_TOKEN env var is not set; continuing anyway"
+    fi
 else
     echo ">>> Can't back up plugins because service isn't running so no access to REST API; continuing anyway"
 fi
