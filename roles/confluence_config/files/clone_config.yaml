@@ -3,36 +3,35 @@
 #
 # What we want for a CLONE PROVISION
 #
-filesystem:
-  retained:
-    - '*/confluence.cfg.xml'
-    - '*/synchrony-args.properties'
-    - '*/keys/*'
-database:
-  retained:
-    tables: {}
-    queries: {}
+clone:
+  filesystem:
+    retained:
+      - '*/confluence.cfg.xml'
+      - '*/synchrony-args.properties'
+  database:
+    retained:
+      tables: {}
+      queries: {}
         
     
-# #        
-# # What we (probably) want for a CLONE REFRESH
-# #
-# filesystem:
-#   retained:
-#     - '*/confluence.cfg.xml'
-#     - '*/synchrony-args.properties'
-#     - '*/keys/*'
-#     - '*/secrets-config.yaml'
-#     - '*/secured/*'
+#        
+# What we (probably) want for a CLONE REFRESH
+#
+refresh:
+  filesystem:
+    retained:
+      - '*/confluence.cfg.xml'
+      - '*/synchrony-args.properties'
+      - '*/keys/*'
+      - '*/secrets-config.yaml'
+      - '*/secured/*'
 
-# database:
-#   retained:
-#     tables:
-#       - 'cwd_%'
-#       - AO_ED669C_IDP_CONFIG
-#       - BANDANA
-#     queries: {}
-  
- 
+  database:
+    retained:
+      tables:
+        - 'cwd_%'
+        - AO_ED669C_IDP_CONFIG
+        - BANDANA
+      queries: {}
 
 

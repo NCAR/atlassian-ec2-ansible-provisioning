@@ -3,40 +3,42 @@
 #
 # What we want for a CLONE PROVISION
 #
-filesystem:
-  retained:
-    - '*/cluster.properties'
-    - '*/dbconfig.xml'
+clone:
+  filesystem:
+    retained:
+      - '*/cluster.properties'
+      - '*/dbconfig.xml'
 
-database:
-  retained:
-    tables: {}
-    queries:
-      propertystring:
-        - id = (select ID from propertyentry where property_key = 'jira.title')
+  database:
+    retained:
+      tables: {}
+      queries:
+        propertystring:
+          - id = (select ID from propertyentry where property_key = 'jira.title')
 
-# #        
-# # What we (probably) want for a CLONE REFRESH
-# #
-# filesystem:
-#   retained:
-#     - '*/cluster.properties'
-#     - '*/dbconfig.xml'
-#     - '*/keys/*'
-#     - '*/secrets-config.yaml'
-#     - '*/secured/*'
-# #    - '*/filestore-config.yaml' # For s3 attachments 
+          
+#        
+# What we (probably) want for a CLONE REFRESH
+#
+refresh:
+  filesystem:
+    retained:
+      - '*/cluster.properties'
+      - '*/dbconfig.xml'
+      - '*/keys/*'
+      - '*/secrets-config.yaml'
+      - '*/secured/*'
+      # - '*/filestore-config.yaml' # For s3 attachments 
 
-# database:
-#   retained:
-#     tables:
-#       - 'cwd_%'
-#       - AO_ED669C_IDP_CONFIG
-#       - mailserver
-#     queries:
-#       propertyentry:
-#         - property_key = "jira.mail.send.disabled"
-#       propertystring:
-#         - id = (select ID from propertyentry where property_key = 'jira.title')
-
+  database:
+    retained:
+      tables:
+        - 'cwd_%'
+        - AO_ED669C_IDP_CONFIG
+        - mailserver
+      queries:
+        propertystring:
+          - id = (select ID from propertyentry where property_key = 'jira.title')
+#        propertyentry:
+#          - property_key = "jira.mail.send.disabled"
 
