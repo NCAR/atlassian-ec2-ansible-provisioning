@@ -1,25 +1,31 @@
 ---
+
+#
+# What we want for a CLONE PROVISION
+#
 filesystem:
   retained:
     - '*/cluster.properties'
     - '*/dbconfig.xml'
-    - '*/keys/*'
-    - '*/secrets-config.yaml'
-    - '*/secured/*'
-#    - '*/filestore-config.yaml' # For s3 attachments 
-    
+
 database:
   retained:
-    tables:
-      - 'cwd_%'
-      - AO_ED669C_IDP_CONFIG
-      - mailserver
+    tables: {}
     queries:
-      propertyentry:
-        - property_key = "jira.mail.send.disabled"
       propertystring:
         - id = (select ID from propertyentry where property_key = 'jira.title')
 
+# #        
+# # What we (probably) want for a CLONE REFRESH
+# #
+# filesystem:
+#   retained:
+#     - '*/cluster.properties'
+#     - '*/dbconfig.xml'
+#     - '*/keys/*'
+#     - '*/secrets-config.yaml'
+#     - '*/secured/*'
+# #    - '*/filestore-config.yaml' # For s3 attachments 
 
 # database:
 #   retained:
@@ -27,23 +33,10 @@ database:
 #       - 'cwd_%'
 #       - AO_ED669C_IDP_CONFIG
 #       - mailserver
-#     queries: {}
-# #      cwd_directory_attribute:
-# #        - "directory_id = (SELECT id FROM cwd_directory WHERE directory_type = 'CROWD')"
-  
-#   substitutions:
-#     # This must contain at least the table where the base url is set
-#     # Can contain SQL wildcards
-#     tables:
-#       - 'AO_%'
-#       - changeitem
-#       - customfieldvalue
-#       - gadgetuserpreference
-#       - jiraaction
-#       - jiraissue
-#       - oauthconsumer
-#       - propertystring
-#       - propertytext
+#     queries:
+#       propertyentry:
+#         - property_key = "jira.mail.send.disabled"
+#       propertystring:
+#         - id = (select ID from propertyentry where property_key = 'jira.title')
 
-#     # Base url and site FQDN are automatically substituted for all in tables above 
-#     strings: {}
+
