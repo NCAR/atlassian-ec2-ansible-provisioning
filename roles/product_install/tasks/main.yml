@@ -321,23 +321,10 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
-# # Needed for restore_for_clone.sh
-# - name: Install yq python package
-#   ansible.builtin.pip:
-#     name: yq
-
 - name: Install restore_site.sh script
   ansible.builtin.template:
     src: restore_site.sh.j2
     dest: "/usr/local/bin/restore_site.sh"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-    mode: '0500'
-    
-- name: Install restore_for_clone.sh script
-  ansible.builtin.template:
-    src: restore_for_clone.sh.j2
-    dest: "/usr/local/bin/restore_for_clone.sh"
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
