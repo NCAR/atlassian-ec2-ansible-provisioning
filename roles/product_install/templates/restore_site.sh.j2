@@ -1,10 +1,5 @@
 #!/bin/bash
 
-APP="{{ atl_product_family }}"
-
-clone_mode=$1
-s3_backup_url_raw=$2
-
 usage () {
     cat << EOF
 Usage: $0 [--raw|--clone|--refresh] s3_backup_url
@@ -28,16 +23,27 @@ install_upm_plugins.sh script must be run to install plugins.
 
 EOF
 exit 1
-fi
 }
 
-if test -z "$clone_mode" || test -z "$s3_backup_url_raw"; then
+APP="{{ atl_product_family }}"
+
+
+APP="{{ atl_product_family }}"
+
+clone_mode=$1
+s3_backup_url_raw=$2
+
+
+if [ $# -ne 2 ]; then
     usage
 fi
-if ! echo "$clone_mode" | grep -Pq "^(--raw|--clone|--refresh)$"; then
+
+clone_mode=$(echo $1 | tr -d '-')
+if ! echo "$clone_mode" | grep -Pq "^(raw|clone|refresh)$"; then
     usage
 fi
-clone_mode=$(echo $clone_mode | tr -d '-')
+
+s3_backup_url_raw=$2
 
 
 # Lop off last char if it's /
