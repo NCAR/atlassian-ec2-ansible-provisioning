@@ -95,7 +95,7 @@ retained_files="${TEMPDIR}/retained_files_list"
 retained_files_tar="${TEMPDIR}/retained_files.zst"
 
 if [ "$clone_mode" != "raw" ]; then
-    for pattern in $(yq -r ${clone_mode}.filesystem.retained[] /var/clone_config.yaml); do
+    for pattern in $(yq -r ".${clone_mode}.filesystem.retained[]" /var/clone_config.yaml); do
 	(cd {{ atl_product_home }}; find . -type f -wholename "$pattern" >> $retained_files)
     done
 
@@ -133,7 +133,7 @@ if [ "$clone_mode" != "raw" ]; then
 
     # Generate list of full tables to retain
     full_tables="${TEMPDIR}/full_tables"
-    for raw_table in $(yq -r "${clone_mode}.database.retained.tables[]" /var/clone_config.yaml); do
+    for raw_table in $(yq -r ".${clone_mode}.database.retained.tables[]" /var/clone_config.yaml); do
 	if echo $raw_table | grep -Fq '%'; then
 	    mysql --defaults-file=$mycnf -sN -e "show tables like '${raw_table}';" >> $full_tables
 	else
@@ -155,7 +155,7 @@ if [ "$clone_mode" != "raw" ]; then
     fi
 
     # Queries
-    queried_tables=$(yq -r "${clone_mode}.database.retained.queries | keys[]" /var/clone_config.yaml)
+    queried_tables=$(yq -r ".${clone_mode}.database.retained.queries | keys[]" /var/clone_config.yaml)
     for table in $queried_tables; do
 	echo ">>> Dumping query for table $table"    
 	mkdir -p "${mysql_to_restore}/${table}" >/dev/null 2>&1
@@ -170,7 +170,7 @@ if [ "$clone_mode" != "raw" ]; then
                       --skip-triggers \
 		      --where="$query" \
 		      {{ atl_jdbc_db_name }} $table > $(mktemp -p "${mysql_to_restore}/${table}")
-	done < <(yq -r "${clone_mode}.database.retained.queries.${table}[]" /var/clone_config.yaml)
+	done < <(yq -r ".${clone_mode}.database.retained.queries.${table}[]" /var/clone_config.yaml)
     done
     
 fi
@@ -201,7 +201,7 @@ mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
 if [ "$clone_mode" != "raw" ]; then
     edit_tables="${TEMPDIR}/edit_tables"
     touch $edit_tables
-    for raw_table in $(yq -r "${clone_mode}.database.substitutions.tables[]" /var/clone_config.yaml); do
+    for raw_table in $(yq -r ".${clone_mode}.database.substitutions.tables[]" /var/clone_config.yaml); do
 	if echo $raw_table | grep -Fq '%'; then
 	    mysql --defaults-file=$mycnf -sN -e "show tables like '${raw_table}';" >> $edit_tables
 	else
@@ -231,9 +231,9 @@ if [ "$clone_mode" != "raw" ]; then
 	perl -s -p -i -e 's/\Q$src\E/$dst/g' -- -src=$src_baseurl -dst=$dest_baseurl $tablesql
 	perl -s -p -i -e 's/\Q$src\E/$dst/g' -- -src=$src_site -dst=$dest_site $tablesql
 	
-	for subst_str in $(yq -r "${clone_mode}.database.substitutions.strings[]" /var/clone_config.yaml); do
+	for subst_str in $(yq -r ".${clone_mode}.database.substitutions.strings[]" /var/clone_config.yaml); do
 	    # https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
-	    subst_val=$(yq -r "${clone_mode}.database.substitutions.strings.\"${subst_str}\"" /var/clone_config.yaml)
+	    subst_val=$(yq -r ".${clone_mode}.database.substitutions.strings.\"${subst_str}\"" /var/clone_config.yaml)
 	    perl -s -p -i -e 's/\Q$src\E/$dst/g' -- -src=$subst_str -dst=$subst_val $tablesql
 	done
 	
