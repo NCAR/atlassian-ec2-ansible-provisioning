@@ -25,14 +25,8 @@ EOF
 exit 1
 }
 
-APP="{{ atl_product_family }}"
-
 
 APP="{{ atl_product_family }}"
-
-clone_mode=$1
-s3_backup_url_raw=$2
-
 
 if [ $# -ne 2 ]; then
     usage
@@ -296,4 +290,3 @@ fi
 test -e /usr/local/bin/clone_postprocess && /usr/local/bin/clone_postprocess
 
 rm -rf $TEMPDIR
-rm $mycnf
