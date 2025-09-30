@@ -219,7 +219,7 @@
     mode: '0500'
 
 - name: Install script to delete lock; runs as ExecStartPre
-  ansible.builtin.file:  
+  ansible.builtin.copy:  
     src: confluence_delete_lock.sh
     dest: /usr/local/bin/confluence_delete_lock.sh
     owner: "{{ atl_product_user }}"
