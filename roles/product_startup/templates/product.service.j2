@@ -20,6 +20,7 @@ StandardError=journal+console
 ExecStartPre=/usr/local/bin/dbconfig_enable_aws_secrets.sh
 {% elif (atl_product_family == "confluence") %}
 ExecStartPre=/usr/local/bin/confluence_cfg_enable_aws_secrets.sh
+ExecStartPre=/usr/local/bin/confluence_delete_lock.sh
 {% endif %}
 {% endif %}
 

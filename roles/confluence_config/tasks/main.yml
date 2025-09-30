@@ -210,7 +210,7 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
     
-- name: Install script to hack AWS secrets manager config into confluence.cfg.xml
+- name: Install script to hack AWS secrets manager config into confluence.cfg.xml; runs as ExecStartPre
   ansible.builtin.template:  
     src: confluence_cfg_enable_aws_secrets.sh.j2
     dest: /usr/local/bin/confluence_cfg_enable_aws_secrets.sh
@@ -218,6 +218,14 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
+- name: Install script to delete lock; runs as ExecStartPre
+  ansible.builtin.file:  
+    src: confluence_delete_lock.sh
+    dest: /usr/local/bin/confluence_delete_lock.sh
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+    mode: '0500'
+    
 #
 # Hack in a config directory to be read by setenv.sh This is where
 # recovery_admin.sh and toggle_email.sh drop options
