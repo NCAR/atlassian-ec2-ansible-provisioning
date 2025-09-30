@@ -8,8 +8,15 @@ TAR_COMPRESSION_RATIO=2.41
 
 tag=$1
 if test -z "$tag"; then
-    echo "Usage: $0 tag"
-    exit 1
+        cat << 'USAGE'
+$0 tag
+
+Backup site for future restore or clone with restore_site.sh script.
+If an admin user's is in the environment variable ATL_REST_TOKEN,
+the script will back up plugins. 
+
+USAGE
+   exit 1
 fi
 
 bucket_url="{{ atl_s3_path }}backups/$(date --iso-8601=seconds)-${tag}"
@@ -39,9 +46,11 @@ if systemctl is-active --quiet {{ atl_product_family }}; then
 	aws s3 cp $plugins_file "${bucket_url}/plugins.json"
 	rm $plugins_file
     else
+	echo '{}' | aws s3 cp - "${bucket_url}/plugins.json"
 	echo ">>> Can't back up plugins because ATL_REST_TOKEN env var is not set; continuing anyway"
     fi
 else
+    echo '{}' | aws s3 cp - "${bucket_url}/plugins.json"
     echo ">>> Can't back up plugins because service isn't running so no access to REST API; continuing anyway"
 fi
 
