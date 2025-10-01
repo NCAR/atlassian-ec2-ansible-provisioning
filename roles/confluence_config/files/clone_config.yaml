@@ -1,6 +1,30 @@
 ---
 
 #
+# STRUCTURE
+#
+# mode:
+#   filesystem:
+#     retained: []
+#   database:
+#     retained:
+#       tables: []
+#       queries:
+#         table1:
+#           - query1
+#           - query2
+#         table2:
+#           - query3
+#           - query4
+#     substitutions:
+#       tables:
+#         - table1
+#         - table2
+#       strings:
+#         string1: subst1
+#         string2: subst2
+
+#
 # What we want for a CLONE PROVISION
 #
 clone:
@@ -10,9 +34,11 @@ clone:
       - '*/synchrony-args.properties'
   database:
     retained:
-      tables: {}
+      tables: []
       queries: {}
-        
+    substitutions:
+      tables: []
+      strings: []
     
 #        
 # What we (probably) want for a CLONE REFRESH
@@ -25,7 +51,6 @@ refresh:
       - '*/keys/*'
       - '*/secrets-config.yaml'
       - '*/secured/*'
-
   database:
     retained:
       tables:
@@ -33,5 +58,8 @@ refresh:
         - AO_ED669C_IDP_CONFIG
         - BANDANA
       queries: {}
+    substitutions:
+      tables: []
+      strings: []
 
 

@@ -1,6 +1,30 @@
 ---
 
 #
+# STRUCTURE
+#
+# mode:
+#   filesystem:
+#     retained: []
+#   database:
+#     retained:
+#       tables: []
+#       queries:
+#         table1:
+#           - query1
+#           - query2
+#         table2:
+#           - query3
+#           - query4
+#     substitutions:
+#       tables:
+#         - table1
+#         - table2
+#       strings:
+#         string1: subst1
+#         string2: subst2
+
+#
 # What we want for a CLONE PROVISION
 #
 clone:
@@ -8,14 +32,15 @@ clone:
     retained:
       - '*/cluster.properties'
       - '*/dbconfig.xml'
-
   database:
     retained:
-      tables: {}
+      tables: []
       queries:
         propertystring:
           - id = (select ID from propertyentry where property_key = 'jira.title')
-
+    substitutions:
+      tables: []
+      strings: []
           
 #        
 # What we (probably) want for a CLONE REFRESH
@@ -29,7 +54,6 @@ refresh:
       - '*/secrets-config.yaml'
       - '*/secured/*'
       # - '*/filestore-config.yaml' # For s3 attachments 
-
   database:
     retained:
       tables:
@@ -39,6 +63,6 @@ refresh:
       queries:
         propertystring:
           - id = (select ID from propertyentry where property_key = 'jira.title')
-#        propertyentry:
-#          - property_key = "jira.mail.send.disabled"
-
+    substitutions:
+      tables: []
+      strings: []
