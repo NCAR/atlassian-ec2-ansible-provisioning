@@ -121,6 +121,7 @@ fi
 ##############################################
 # Restore database
 ##############################################
+mycnf=$(/usr/local/bin/create_mycnf.sh)
 if [ "$clone_mode" != "raw" ]; then
 
     # Reset baseurl at the the end
@@ -129,7 +130,6 @@ if [ "$clone_mode" != "raw" ]; then
     
     # Save stuff we need from the database.  We do this by creating dumps
     # for these by passing queries to mysqldump
-    mycnf=$(/usr/local/bin/create_mycnf.sh)
     mysql_to_restore="${TEMPDIR}/mysql_to_restore"
     mkdir $mysql_to_restore
 
