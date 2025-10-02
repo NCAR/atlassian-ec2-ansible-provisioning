@@ -212,7 +212,13 @@ atl_jdbc_query_params_for_engine:
     crowd: "?useUnicode=true&amp;characterEncoding=UTF8&amp;sessionVariables=default_storage_engine=InnoDB&amp;rewriteBatchedStatements=true"
 atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port }}/{{ atl_jdbc_db_name }}{{ atl_jdbc_query_params_for_engine[atl_db_engine][atl_product_family]| default('') }}"
 
-atl_jvm_custom_opts_dir: "{{ atl_product_installation_current }}/bin/jvm_custom_opts.d"
+#atl_jvm_custom_opts_dir: "{{ atl_product_installation_current }}/bin/jvm_custom_opts.d"
+atl_product_jvm_bindir_map:
+  confluence: "{{ atl_product_installation_current }}/bin"
+  jira: "{{ atl_product_installation_current }}/bin"
+  crowd: "{{ atl_product_installation_current }}/apache-tomcat/bin"
+atl_product_jvm_bindir: "{{ atl_product_jvm_bindir_map[atl_product_family] }}"
+atl_jvm_custom_opts_dir: "{{ atl_product_jvm_bindir }}/jvm_custom_opts.d"
 
 atl_rds_master_credential: "{{ lookup('amazon.aws.aws_secret', atl_rds_master_credential_secret_arn, on_denied='error')}}"
 atl_rds_master_user: "{{ atl_rds_master_credential | json_query('username') }}"
