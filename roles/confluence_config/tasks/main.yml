@@ -226,20 +226,6 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
     
-#
-# Hack in a config directory to be read by setenv.sh This is where
-# recovery_admin.sh and toggle_email.sh drop options
-# FIXME it would be great to convert most of setenv.sh to use this
-# mechanism.
-#
-- name:
-  ansible.builtin.file:
-    path: "{{ atl_jvm_custom_opts_dir }}"
-    state: directory
-    mode: "0700"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-
 - name: Insert conf.d mechanism in setenv.sh file
   ansible.builtin.blockinfile:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"

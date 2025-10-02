@@ -352,6 +352,21 @@
     state: link
     force: yes
 
+# Hack in a config directory to be read by setenv.sh,
+# to add options to the jvm
+- name:
+  ansible.builtin.file:
+    path: "{{ atl_jvm_custom_opts_dir }}"
+    state: directory
+    mode: "0700"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
+
+- name:
+    ansible.builtin.copy:
+      content: "-Duser.timezone={{ atl_default_tz }}\n"
+      dest: "{{ atl_jvm_custom_opts_dir }}/default_tz""
+    
 - name: Install toggle_upm_rest.sh script
   ansible.builtin.template:
     src: toggle_upm_rest.sh.j2

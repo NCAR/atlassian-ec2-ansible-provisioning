@@ -99,7 +99,7 @@ atl_tomcat_redirectport: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMC
 atl_tomcat_scheme: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_SCHEME', errors='ignore') | default('http', true) }}"
 atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_SECURE', errors='ignore') | default(false, true) }}"
 atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_USE_AWS_SECRETS_FOR_DB', errors='ignore') | default(true, true) }}"
-
+atl_default_tz: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_DEFAULT_TZ', errors='ignore') | default('America/Denver', true) }}"
 
 
 # #
