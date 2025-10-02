@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# This is used to crudely calculate whether we need to pass the
-# --expected-size argument to "aws s3 cp" command. Since the wiki is
-# probably the only site that needs this, I've derived from the
-# compression ratio for kb.
-TAR_COMPRESSION_RATIO=2.41
-
 tag=$1
 if test -z "$tag"; then
         cat << USAGE
@@ -90,23 +84,17 @@ fi
 #
 echo ">>> Backing up home filesystem, starting $(date)"
 
-# Calculate an expected size, which is needed for streaming to "aws
-# cp" if it's over 50GB. This is an *extremely* crude guess based on
-# the ratio for kb.ucar.edu, since the only one over is probably
-# wiki.ucar.edu.  I'm assuming that the --expected-size argument is
-# ignored if it's under.          
+# Get size of homedir in bytes; should be less when compressed so this is max
 homedir="{{ atl_product_home }}"
 home_size=$(df --output=used -B 1 $homedir | grep -v Used)
-compressed_home_size=$(echo "scale=0;$home_size/$TAR_COMPRESSION_RATIO" | bc -l)
-echo "Expected size of home backup (for aws cp): $(echo "scale=2;$compressed_home_size/1073741824" | bc -l)GB"
+echo ">>> Expected size of home backup (for aws cp): ${home_size}"
 
 tar --one-file-system \
     --directory $homedir \
     --verbose \
     --create \
-    --zstd \
+    --use-compress-program='/usr/bin/zstd -T$(nproc)' \
     --file - . | aws s3 cp - "${bucket_url}/home.zst" --expected-size $compressed_home_size
-
 
 echo ">>> Finished at: " $(date)
 echo "Total elapsed time: " $(printf '%dh:%dm:%ds\n' $(($SECONDS/3600)) $(($SECONDS%3600/60)) $((SECONDS%60)))
