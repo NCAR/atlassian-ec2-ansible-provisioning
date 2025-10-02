@@ -365,7 +365,7 @@
 - name:
     ansible.builtin.copy:
       content: "-Duser.timezone={{ atl_default_tz }}\n"
-      dest: "{{ atl_jvm_custom_opts_dir }}/default_tz""
+      dest: "{{ atl_jvm_custom_opts_dir }}/default_tz"
     
 - name: Install toggle_upm_rest.sh script
   ansible.builtin.template:
