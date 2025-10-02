@@ -87,13 +87,12 @@ rm $aws_env_vars
 ##############################################
 # Restore home directory
 ##############################################
-echo ">>> Restoring home directory from clone backup"
+echo ">> Restoring home directory from clone backup"
 
 # Tar up local retained files
 # Filenames are for find command
 retained_files="${TEMPDIR}/retained_files_list"
 retained_files_tar="${TEMPDIR}/retained_files.zst"
-
 if [ "$clone_mode" != "raw" ]; then
     for pattern in $(yq -r ".${clone_mode}.filesystem.retained[]" /var/clone_config.yaml); do
 	(cd {{ atl_product_home }}; find . -type f -wholename "$pattern" >> $retained_files)
@@ -111,8 +110,7 @@ echo ">>> Deleting contents of home directory"
 rm -rf {{ atl_product_home }}/* {{ atl_product_home }}/.*
 
 echo ">>> Restoring home directory from backup"
-#aws s3 cp "${s3_backup_url}/home.zst" - | tar -C "{{ atl_product_home }}" --zstd -xf -
-aws s3 cp "${s3_backup_url}/home.zst" - | tar -C "{{ atl_product_home }}"  --use-compress-program='/usr/bin/zstd -d -M1024' -xf -
+aws s3 cp "${s3_backup_url}/home.zst" - | tar -C "{{ atl_product_home }}" --zstd -xf -
 
 # untar retained over sync'd directory
 if test -e $retained_files_tar; then
