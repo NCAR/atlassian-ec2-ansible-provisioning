@@ -182,8 +182,10 @@ bucketname=$(echo $s3_backup_url | cut -d '/' -f3)
 prefix="$(echo $s3_backup_url | cut -d '/' -f4-)/database"
 
 # Restore clone database over existing database
-echo ">>> Restoring database from clone backup"
+echo ">> Restoring database from clone backup"
+echo ">>> Dropping all tables"
 /usr/local/bin/drop_all_tables.sh
+
 mysqlsh_cmd="${TEMPDIR}/mysqlsh_cmd"
 cat << EOF >$mysqlsh_cmd
 util.loadDump(
@@ -197,6 +199,7 @@ util.loadDump(
   }
 )
 EOF
+echo ">>> Performing restore"
 mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
 
 # Generate list of tables for literal string substitutions
