@@ -187,7 +187,7 @@
     prepend_newline: true
     append_newline: true
     block: |
-      JVM_CUSTOM_ARGS=$(cat {{ atl_product_installation_current }}/bin/jvm_custom_opts.d/* 2>/dev/null  | tr "\n" " ")
+      JVM_CUSTOM_ARGS=$(cat {{ atl_jvm_custom_opts_dir }}/* 2>/dev/null  | tr "\n" " ")
       JAVA_OPTS="${JAVA_OPTS} ${JVM_CUSTOM_ARGS}"
 
 - name: Install toggle_recovery_admin script
