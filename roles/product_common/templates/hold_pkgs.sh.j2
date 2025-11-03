@@ -2,5 +2,14 @@
 
 pkg_wildcards="{{ atl_hold_pkg_wildcards | join(' ') }}"
 
-apt-mark hold $pkg_wildcards
+# apt-mark will mark uninstalled packages as held, so we need to use
+# dpkg to get the list of matching packages that are actually
+# installed
+for wildcard in pkg_wildcards; do
+    for package in $(dpkg -l "'${wildcard}'" | grep '^i' | awk '{print $2}'); do
+	apt-mark hold $package
+    done
+done
+
+
 
