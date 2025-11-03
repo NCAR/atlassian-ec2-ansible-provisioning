@@ -23,7 +23,8 @@
     - name: Install Eclipse Temurin JDK
       ansible.builtin.apt:
         name: "temurin-{{ java_major_version }}-jdk"
-        update_cache: yes
+        update_cache: true
+        allow_change_held_packages: true
         state: present
 
     - name: Ensure common JDK symlink exists
@@ -42,13 +43,8 @@
     name:
       - fonts-dejavu-core  # Required by installer
 
-# - name: Download s5cmd (advanced s3 client)
-#   ansible.builtin.get_url:
-#     headers:
-#       user-agent: curl/7.81.0
-#     url: "{{ atl_s5cmd_url }}"
-#     dest: /tmp
-    
-# - name: Install s5cmd for backups
-#   ansible.builtin.apt:
-#     deb: "/tmp/{{ atl_s5cmd_url | basename }}"
+- name: Install script to hold packages
+  ansible.builtin.template:
+    src: hold_pkgs.sh.j2
+    dest: /usr/local/bin/hold_pkgs.sh
+    mode: 0750

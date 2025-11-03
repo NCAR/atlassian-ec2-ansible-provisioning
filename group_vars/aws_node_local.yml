@@ -12,10 +12,6 @@
 # cat /tmp/p.json | jq -r ".Parameters[] | \"export \(.Name | split(\"/\") | last)=\(.Value)\""
 # aws ssm get-parameters-by-path --path '/stage-kb-aws.ucar.edu/' | jq -r ".Parameters[] | \"export \(.Name | split(\"/\") | last)=\(.Value)\""
 
-#java_major_version: "17"
-#postgres_version: "9.6"
-# git_version: "2.14.4"
-
 #
 # Vars from environment
 #
@@ -236,4 +232,9 @@ atl_base_url: "{{ atl_base_url | default('https://' + atl_proxy_name, true) }}"
 # Use secretsmanager directly (jira)
 atl_secretsmanager_aws_secret_id: "{{ atl_dbuser_credential_secret_arn }}"
 
+# Wildcards for packages we want to hold
+atl_hold_pkg_wildcards:
+  - "*jdk*"
+  - "systemd*"
+  - "linux-*"
 

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+pkg_wildcards="{{ atl_held_pkg_wildcards | join(' ') }}"
+
+apt-mark hold $pkg_wildcards
+

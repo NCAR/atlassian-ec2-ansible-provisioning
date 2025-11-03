@@ -33,3 +33,4 @@
     - role: confluence_common
     - role: confluence_config
     - role: product_startup
+    - role: post_run

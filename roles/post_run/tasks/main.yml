@@ -1,0 +1,4 @@
+# Stuff that should happen after everythign else, on each run
+
+- name: Run script to hold packages
+  command: /usr/local/bin/hold_pkgs.sh

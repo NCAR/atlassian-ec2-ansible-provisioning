@@ -38,3 +38,5 @@
       tags: [skip_on_stack_update]
     - role: jira_config
     - role: product_startup
+    - role: post_run
+      
