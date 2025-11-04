@@ -1,6 +1,6 @@
 ---
-java_major_version: "17"
-postgres_version: "9.6"
+# java_major_version: "17"
+# postgres_version: "9.6"
 
 # Disable these when using the product installer, otherwise we end up
 # fighting with it.

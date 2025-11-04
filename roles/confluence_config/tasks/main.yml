@@ -134,26 +134,6 @@
     group: "{{ atl_product_user }}"
   changed_when: false  # For Molecule idempotence check
 
-- name: Assert baseurl to same as atl_proxy_name
-  community.postgresql.postgresql_query:
-    login_host: "{{ atl_db_host }}"
-    login_user: "{{ atl_jdbc_user }}"
-    login_password: "{{ atl_jdbc_password }}"
-    db: "{{ atl_jdbc_db_name }}"
-    query: >
-      update bandana set bandanavalue=regexp_replace(bandanavalue, %s, %s)
-      where bandanacontext = '_GLOBAL' and bandanakey = 'atlassian.confluence.settings';
-    positional_args:
-      - "<baseUrl>.*</baseUrl>"
-      - "<baseUrl>{{ atl_tomcat_scheme }}://{{ atl_proxy_name }}{{ atl_tomcat_contextpath }}</baseUrl>"
-  when:
-    - atl_proxy_name is defined
-    - atl_tomcat_scheme is defined
-    - db_created is undefined or not db_created.changed
-  tags:
-    - skip_on_stack_update
-  ignore_errors: yes  # For Molecule as it has no db test framework included
-
 - name: Create JVM font fallback directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -226,20 +206,6 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
     
-#
-# Hack in a config directory to be read by setenv.sh This is where
-# recovery_admin.sh and toggle_email.sh drop options
-# FIXME it would be great to convert most of setenv.sh to use this
-# mechanism.
-#
-- name:
-  ansible.builtin.file:
-    path: "{{ atl_jvm_custom_opts_dir }}"
-    state: directory
-    mode: "0700"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-
 - name: Insert conf.d mechanism in setenv.sh file
   ansible.builtin.blockinfile:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"

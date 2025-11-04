@@ -12,10 +12,6 @@
 # cat /tmp/p.json | jq -r ".Parameters[] | \"export \(.Name | split(\"/\") | last)=\(.Value)\""
 # aws ssm get-parameters-by-path --path '/stage-kb-aws.ucar.edu/' | jq -r ".Parameters[] | \"export \(.Name | split(\"/\") | last)=\(.Value)\""
 
-#java_major_version: "17"
-#postgres_version: "9.6"
-# git_version: "2.14.4"
-
 #
 # Vars from environment
 #
@@ -99,7 +95,7 @@ atl_tomcat_redirectport: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMC
 atl_tomcat_scheme: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_SCHEME', errors='ignore') | default('http', true) }}"
 atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_SECURE', errors='ignore') | default(false, true) }}"
 atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_USE_AWS_SECRETS_FOR_DB', errors='ignore') | default(true, true) }}"
-
+atl_default_tz: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_DEFAULT_TZ', errors='ignore') | default('America/Denver', true) }}"
 
 
 # #
@@ -212,7 +208,12 @@ atl_jdbc_query_params_for_engine:
     crowd: "?useUnicode=true&amp;characterEncoding=UTF8&amp;sessionVariables=default_storage_engine=InnoDB&amp;rewriteBatchedStatements=true"
 atl_jdbc_url: "jdbc:{{ atl_db_general_type }}://{{ atl_db_host }}:{{ atl_db_port }}/{{ atl_jdbc_db_name }}{{ atl_jdbc_query_params_for_engine[atl_db_engine][atl_product_family]| default('') }}"
 
-atl_jvm_custom_opts_dir: "{{ atl_product_installation_current }}/bin/jvm_custom_opts.d"
+atl_product_jvm_bindir_map:
+  confluence: "{{ atl_product_installation_current }}/bin"
+  jira: "{{ atl_product_installation_current }}/bin"
+  crowd: "{{ atl_product_installation_current }}/apache-tomcat/bin"
+atl_product_jvm_bindir: "{{ atl_product_jvm_bindir_map[atl_product_family] }}"
+atl_jvm_custom_opts_dir: "{{ atl_product_jvm_bindir }}/jvm_custom_opts.d"
 
 atl_rds_master_credential: "{{ lookup('amazon.aws.aws_secret', atl_rds_master_credential_secret_arn, on_denied='error')}}"
 atl_rds_master_user: "{{ atl_rds_master_credential | json_query('username') }}"
@@ -231,4 +232,9 @@ atl_base_url: "{{ atl_base_url | default('https://' + atl_proxy_name, true) }}"
 # Use secretsmanager directly (jira)
 atl_secretsmanager_aws_secret_id: "{{ atl_dbuser_credential_secret_arn }}"
 
+# Wildcards for packages we want to hold
+atl_hold_pkg_wildcards:
+  - "*jdk*"
+  - "systemd*"
+  - "linux-*"
 

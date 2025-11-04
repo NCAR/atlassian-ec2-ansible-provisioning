@@ -87,13 +87,12 @@ rm $aws_env_vars
 ##############################################
 # Restore home directory
 ##############################################
-echo ">>> Restoring home directory from clone backup"
+echo ">> Restoring home directory from clone backup"
 
 # Tar up local retained files
 # Filenames are for find command
 retained_files="${TEMPDIR}/retained_files_list"
 retained_files_tar="${TEMPDIR}/retained_files.zst"
-
 if [ "$clone_mode" != "raw" ]; then
     for pattern in $(yq -r ".${clone_mode}.filesystem.retained[]" /var/clone_config.yaml); do
 	(cd {{ atl_product_home }}; find . -type f -wholename "$pattern" >> $retained_files)
@@ -107,7 +106,10 @@ if [ "$clone_mode" != "raw" ]; then
 fi
 
 # Restore home directory
-rm -rf "{{ atl_product_home }}/*" "{{ atl_product_home }}/.*"
+echo ">>> Deleting contents of home directory"
+rm -rf {{ atl_product_home }}/* {{ atl_product_home }}/.*
+
+echo ">>> Restoring home directory from backup"
 aws s3 cp "${s3_backup_url}/home.zst" - | tar -C "{{ atl_product_home }}" --zstd -xf -
 
 # untar retained over sync'd directory
@@ -119,6 +121,7 @@ fi
 ##############################################
 # Restore database
 ##############################################
+mycnf=$(/usr/local/bin/create_mycnf.sh)
 if [ "$clone_mode" != "raw" ]; then
 
     # Reset baseurl at the the end
@@ -127,7 +130,6 @@ if [ "$clone_mode" != "raw" ]; then
     
     # Save stuff we need from the database.  We do this by creating dumps
     # for these by passing queries to mysqldump
-    mycnf=$(/usr/local/bin/create_mycnf.sh)
     mysql_to_restore="${TEMPDIR}/mysql_to_restore"
     mkdir $mysql_to_restore
 
@@ -180,8 +182,10 @@ bucketname=$(echo $s3_backup_url | cut -d '/' -f3)
 prefix="$(echo $s3_backup_url | cut -d '/' -f4-)/database"
 
 # Restore clone database over existing database
-echo ">>> Restoring database from clone backup"
+echo ">> Restoring database from clone backup"
+echo ">>> Dropping all tables"
 /usr/local/bin/drop_all_tables.sh
+
 mysqlsh_cmd="${TEMPDIR}/mysqlsh_cmd"
 cat << EOF >$mysqlsh_cmd
 util.loadDump(
@@ -195,6 +199,7 @@ util.loadDump(
   }
 )
 EOF
+echo ">>> Performing restore"
 mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
 
 # Generate list of tables for literal string substitutions

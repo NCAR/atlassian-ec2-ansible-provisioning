@@ -180,17 +180,6 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
-#
-# Hack in a config directory to be read by setenv.sh
-#
-- name: Create jira custom startup config dir
-  ansible.builtin.file:
-    path: "{{ atl_jvm_custom_opts_dir }}"
-    state: directory
-    mode: "0700"
-    owner: "{{ atl_product_user }}"
-    group: "{{ atl_product_user }}"
-
 - name: Insert conf.d mechanism in setenv.sh file
   ansible.builtin.blockinfile:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
@@ -198,7 +187,7 @@
     prepend_newline: true
     append_newline: true
     block: |
-      JVM_CUSTOM_ARGS=$(cat {{ atl_product_installation_current }}/bin/jvm_custom_opts.d/* 2>/dev/null  | tr "\n" " ")
+      JVM_CUSTOM_ARGS=$(cat {{ atl_jvm_custom_opts_dir }}/* 2>/dev/null  | tr "\n" " ")
       JAVA_OPTS="${JAVA_OPTS} ${JVM_CUSTOM_ARGS}"
 
 - name: Install toggle_recovery_admin script

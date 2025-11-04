@@ -15,7 +15,7 @@
     atl_product_edition: "confluence"
 
     atl_use_system_jdk: true
-    java_major_version: "17"
+#    java_major_version: "17"
     atl_download_format: "tarball"
 
     atl_jdbc_encoding: 'UTF-8'
@@ -33,3 +33,4 @@
     - role: confluence_common
     - role: confluence_config
     - role: product_startup
+    - role: post_run
