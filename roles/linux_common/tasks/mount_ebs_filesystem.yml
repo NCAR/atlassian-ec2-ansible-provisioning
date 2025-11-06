@@ -1,0 +1,28 @@
+---
+
+- name: "Create mountpoint {{ item.value }}"
+  ansible.builtin.file:
+    path:  "{{ item.value }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: "Create an xfs filesystem on {{ item.key }}"
+  community.general.filesystem:
+    fstype: "{{ atl_ebs_fstype }}"
+    state: present
+    dev: "{{ item.key }}"
+
+- name: "Fetch the UUID of {{ item.key }}"
+  command: "/usr/sbin/blkid -s UUID -o value {{ item.key }}"
+  changed_when: false
+  register: blkid_out
+
+- name: "Mount {{ item.key }} by UUID"
+  ansible.posix.mount:
+    path:  "{{ item.value }}"
+    src: "UUID={{ blkid_out.stdout }}"
+    fstype: "{{ atl_ebs_fstype }}"
+    opts: defaults
+    state: mounted

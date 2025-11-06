@@ -238,3 +238,8 @@ atl_hold_pkg_wildcards:
   - "systemd*"
   - "linux-*"
 
+# Device => Mountpoint
+atl_ebs_fstype: xfs
+atl_ebs_filesystems:
+  /dev/nvme1n1: /opt/atlassian
+  /dev/nvme2n1: /var/atlassian/application-data
