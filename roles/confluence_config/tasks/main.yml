@@ -37,7 +37,7 @@
 - name: Override JVM memory settings.
   ansible.builtin.replace:
     path: "{{ atl_product_installation_versioned }}/bin/setenv.sh"
-    regexp: "-{{ item }}\\d+m "
+    regexp: "-{{ item }}[0-9]+[a-zA-Z]+"
     replace: "-{{ item }}{{ atl_jvm_heap }} "
   with_items:
     - 'Xmx'

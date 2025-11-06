@@ -16,8 +16,21 @@
      prepend_newline: true
      marker: "### {mark} ANSIBLE MANAGED BLOCK ###"
      block: |
+       #
        # Source user data env vars into environment for subsequent ansible runs
-       tmpfile=$(mktemp); grep export /var/lib/cloud/instance/user-data.txt > $tmpfile; source $tmpfile; rm $tmpfile
+       #
+       # If the instance has been redeployed, e.g. to change instance
+       # type, current user-data.txt will be empty so we hunt for
+       # whatever we can find from previous instances and hope for the
+       # best
+       tmpfile=$(mktemp) 
+       grep export /var/lib/cloud/instance/user-data.txt > $tmpfile
+       if ! test -s $tmpfile; then
+           grep -h '^export' /var/lib/cloud/instances/*/user-data.txt | sort -u > $tmpfile
+       fi
+       source $tmpfile
+       rm $tmpfile
+       
        # Get java home
        export JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 | perl -ne '/java\.home\s*=\s*(.*)/ && print $1')
        
