@@ -34,10 +34,8 @@
     comment: "Product runtime user"
 
 - name: Mount ebs volumes
-  ansible.builtin.include_tasks: mount_ebs_filesystems.yml
+  ansible.builtin.include_tasks: mount_ebs_filesystem.yml
   loop: "{{ atl_ebs_filesystems | dict2items }}"
-    
-
     
 - name: Stop systemd-cleanup deleting the jvm socket file
   ansible.builtin.copy:
