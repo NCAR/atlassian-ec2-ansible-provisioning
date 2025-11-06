@@ -35,8 +35,7 @@
 
 - name: Mount ebs volumes
   ansible.builtin.include_tasks: mount_ebs_filesystems.yml
-  loop:
-    loop: "{{ atl_ebs_filesystems | dict2items }}"
+  loop: "{{ atl_ebs_filesystems | dict2items }}"
     
 
     
