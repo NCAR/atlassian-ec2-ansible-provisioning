@@ -36,7 +36,16 @@
 - name: Mount ebs volumes
   ansible.builtin.include_tasks: mount_ebs_filesystem.yml
   loop: "{{ atl_ebs_filesystems | dict2items }}"
+
+- name: Test aws cli is installed
+  stat:
+    path: "/usr/local/bin/aws"
+  register: test_aws_installed
     
+- name: Install AWS CLI
+  ansible.builtin.include_tasks: install_aws_cli.yml  
+  when: not test_aws_installed.stat.exists
+  
 - name: Stop systemd-cleanup deleting the jvm socket file
   ansible.builtin.copy:
     src: java.conf
