@@ -1,7 +1,7 @@
 #!/bin/bash
 
 tag=$1
-if test -z "$tag"; then
+if [ -z "$tag" ] || [ "$tag" = "-h" ]; then
         cat << USAGE
 $0 tag
 
@@ -94,7 +94,7 @@ tar --one-file-system \
     --verbose \
     --create \
     --use-compress-program='/usr/bin/zstd -T$(nproc)' \
-    --file - . | aws s3 cp - "${bucket_url}/home.zst" --expected-size $compressed_home_size
+    --file - . | aws s3 cp - "${bucket_url}/home.zst" --expected-size $home_size
 
 echo ">>> Finished at: " $(date)
 echo "Total elapsed time: " $(printf '%dh:%dm:%ds\n' $(($SECONDS/3600)) $(($SECONDS%3600/60)) $((SECONDS%60)))
