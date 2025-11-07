@@ -56,4 +56,5 @@ for app_key in $(jq --raw-output 'keys | .[]' $PLUGINFILE); do
 	
     # Enable
     $BASE_CMD --action enableApp --app $app_key
+    echo
 done
