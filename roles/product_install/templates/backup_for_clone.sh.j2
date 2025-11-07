@@ -6,8 +6,8 @@ if [ -z "$tag" ] || [ "$tag" = "-h" ]; then
 $0 tag
 
 Backup site for future restore or clone with restore_site.sh script.
-If an admin user's is in the environment variable ATL_REST_TOKEN,
-the script will back up plugins. 
+If the environment variable ATL_REST_TOKEN is set with an admin user's
+REST API token, the script will back up plugins.
 
 USAGE
    exit 1

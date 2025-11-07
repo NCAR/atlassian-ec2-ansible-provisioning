@@ -8,11 +8,11 @@ USER=$1
 PLUGINFILE=$2
 
 if test -z $USER || test -z $PLUGINFILE; then
-    cat << 'USAGE'
+    cat << USAGE
 $0 admin_user plugin_file.json
 
 Install plugins from plugin_file.json
-Admin user's REST API token must be in environment variable $ATL_REST_TOKEN.
+Admin user's REST API token must be in environment variable \$ATL_REST_TOKEN.
 USAGE
    exit 1
 fi
