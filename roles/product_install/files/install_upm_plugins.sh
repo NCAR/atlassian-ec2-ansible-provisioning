@@ -35,8 +35,7 @@ fi
 acli_install_dir=$(dirname $(dirname $(readlink $(which acli))))
 $acli_install_dir/acli > /dev/null 2>&1 &
 acli_server_pid=$!
-trap "kill -9 $acli_server_pid" EXIT
-
+trap "killall -9 acli" EXIT
 
 export JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 | perl -ne '/java\.home\s*=\s*(.*)/ && print $1')
 BASE_CMD="acli --server $(/usr/local/bin/get_baseurl.sh) --user ${USER} --token $ATL_REST_TOKEN" 
@@ -58,3 +57,4 @@ for app_key in $(jq --raw-output 'keys | .[]' $PLUGINFILE); do
     $BASE_CMD --action enableApp --app $app_key
     echo
 done
+
