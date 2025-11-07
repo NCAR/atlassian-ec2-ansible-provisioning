@@ -27,6 +27,17 @@ if test -v $ATL_REST_TOKEN || test -z $ATL_REST_TOKEN; then
     exit 1
 fi
 
+#
+# If run directly, the acli binary spews warnings about not being able
+# to start the acli service, even though it works, so we start an acli
+# shell in the background, which starts the service. Hideous
+#
+acli_install_dir=$(dirname $(dirname $(readlink $(which acli))))
+$acli_install_dir/acli > /dev/null 2>&1 &
+acli_server_pid=$!
+trap "kill -9 $acli_server_pid" EXIT
+
+
 export JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 | perl -ne '/java\.home\s*=\s*(.*)/ && print $1')
 BASE_CMD="acli --server $(/usr/local/bin/get_baseurl.sh) --user ${USER} --token $ATL_REST_TOKEN" 
 for app_key in $(jq --raw-output 'keys | .[]' $PLUGINFILE); do
