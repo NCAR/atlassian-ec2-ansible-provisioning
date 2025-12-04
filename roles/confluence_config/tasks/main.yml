@@ -76,6 +76,12 @@
 #     owner: "{{ atl_product_user }}"
 #     group: "{{ atl_product_user }}"
 
+
+- name: Confluence to user custom header true-client-ip instead of x-forwarded-for
+  ansible.builtin.lineinfile:
+    line: <property name="server.tomcat.remoteip.remote-ip-header">true-client-ip</property>
+    path: /var/atlassian/application-data/confluence/confluence.cfg.xml
+
 - name: Limit permissions on the installer temp directory, recursively
   ansible.builtin.file:
     path: "{{ atl_installer_temp }}"
