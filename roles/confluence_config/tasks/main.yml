@@ -82,10 +82,6 @@
     path: /var/atlassian/application-data/confluence/confluence.cfg.xml
     xpath: "/confluence-configuration/properties/property[@name='server.tomcat.remoteip.remote-ip-header']"
     value: true-client-ip
-  #
-  # ansible.builtin.lineinfile:
-  #   line: <property name="server.tomcat.remoteip.remote-ip-header">true-client-ip</property>
-  #   path: /var/atlassian/application-data/confluence/confluence.cfg.xml
 
 - name: Limit permissions on the installer temp directory, recursively
   ansible.builtin.file:

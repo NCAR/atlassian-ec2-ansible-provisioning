@@ -194,6 +194,13 @@
 
 #   when: crowd_cfg_stat_result.stat.exists
 
+- name: Crowd to use custom header true-client-ip instead of x-forwarded-for
+  community.general.xml:
+    path: /var/atlassian/application-data/crowd/shared/crowd.cfg.xml
+    xpath: "/application-configuration/properties/property[@name='server.tomcat.remoteip.remote-ip-header']"
+    value: true-client-ip
+
+
 - name: Remove crowd.xml to prevent duplicates from appearing in cluster reporting
   ansible.builtin.file:
     path: "{{ atl_product_installation_versioned }}/apache-tomcat/conf/Catalina/localhost/crowd.xml"
