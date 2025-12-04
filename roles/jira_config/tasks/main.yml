@@ -28,6 +28,7 @@
 - name: Jira to user custom header true-client-ip instead of x-forwarded-for
   ansible.builtin.lineinfile:
     line: server.tomcat.remoteip.remote-ip-header = true-client-ip
+    path: /var/atlassian/application-data/jira/jira-config.properties
   
 - name: Override JVM memory settings.
   # Ugly but necessary as the product installs this file so we need to make the change here.
