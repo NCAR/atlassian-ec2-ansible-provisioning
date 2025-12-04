@@ -25,6 +25,10 @@
     mode: 0644
   when: jira_config_properties.stat.exists
 
+- name: Jira to user custom header true-client-ip instead of x-forwarded-for
+  ansible.builtin.lineinfile:
+    line: server.tomcat.remoteip.remote-ip-header = true-client-ip
+  
 - name: Override JVM memory settings.
   # Ugly but necessary as the product installs this file so we need to make the change here.
   ansible.builtin.lineinfile:
