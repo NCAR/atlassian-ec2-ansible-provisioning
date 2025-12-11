@@ -49,5 +49,6 @@ esac
 
 mycnf=$(/usr/local/bin/create_mycnf.sh)
 mysql --defaults-file=$mycnf -e "UPDATE BANDANA SET BANDANAVALUE='<string>${bandanaval}</string>' WHERE BANDANAKEY='com.atlassian.plugins.authentication.sso.config.enable-authentication-fallback';"
+mysql --defaults-file=$mycnf -e "UPDATE BANDANA SET BANDANAVALUE='<string>${bandanaval}</string>' WHERE BANDANAKEY='com.atlassian.plugins.authentication.sso.config.show-login-form';"
 rm $mycnf
 
