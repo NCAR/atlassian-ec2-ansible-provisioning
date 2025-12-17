@@ -76,12 +76,13 @@
 #     owner: "{{ atl_product_user }}"
 #     group: "{{ atl_product_user }}"
 
-
-- name: Confluence to use custom header true-client-ip instead of x-forwarded-for
-  community.general.xml:
-    path: /var/atlassian/application-data/confluence/confluence.cfg.xml
-    xpath: "/confluence-configuration/properties/property[@name='server.tomcat.remoteip.remote-ip-header']"
-    value: true-client-ip
+# Not possible unless using cloudfront
+#
+# - name: Confluence to use custom header true-client-ip instead of x-forwarded-for
+#   community.general.xml:
+#     path: /var/atlassian/application-data/confluence/confluence.cfg.xml
+#     xpath: "/confluence-configuration/properties/property[@name='server.tomcat.remoteip.remote-ip-header']"
+#     value: true-client-ip
 
 - name: Limit permissions on the installer temp directory, recursively
   ansible.builtin.file:
