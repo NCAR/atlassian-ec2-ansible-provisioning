@@ -12,12 +12,12 @@
   ansible.builtin.shell:
     cmd: "basename $(readlink /dev/disk/by-uuid/{{ item.key }})"
   register: device
-  
+
 - name: "Create an xfs filesystem on {{ item.key }}"
   community.general.filesystem:
     fstype: "{{ atl_ebs_fstype }}"
     state: present
-    dev: "{{ device }}"
+    dev: "/dev/{{ device.stdout }}"
 
 - name: "Mount {{ item.value }} by UUID"
   ansible.posix.mount:
