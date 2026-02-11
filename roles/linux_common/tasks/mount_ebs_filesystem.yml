@@ -10,7 +10,7 @@
 
 - name: Fetch the device name for the filesystem
   ansible.builtin.shell:
-  cmd: "basename $(readlink /dev/disk/by-uuid/{{ item.key }})"
+    cmd: "basename $(readlink /dev/disk/by-uuid/{{ item.key }})"
   register: device
   
 - name: "Create an xfs filesystem on {{ item.key }}"
