@@ -8,21 +8,21 @@
     group: root
     mode: '0755'
 
+- name: Fetch the device name for the filesystem
+  ansible.builtin.shell:
+  cmd: "basename $(readlink /dev/disk/by-uuid/{{ item.key }})"
+  register: device
+  
 - name: "Create an xfs filesystem on {{ item.key }}"
   community.general.filesystem:
     fstype: "{{ atl_ebs_fstype }}"
     state: present
-    dev: "{{ item.key }}"
+    dev: "{{ device }}"
 
-- name: "Fetch the UUID of {{ item.key }}"
-  command: "/usr/sbin/blkid -s UUID -o value {{ item.key }}"
-  changed_when: false
-  register: blkid_out
-
-- name: "Mount {{ item.key }} by UUID"
+- name: "Mount {{ item.value }} by UUID"
   ansible.posix.mount:
     path:  "{{ item.value }}"
-    src: "UUID={{ blkid_out.stdout }}"
+    src: "UUID={{ item.key }}"
     fstype: "{{ atl_ebs_fstype }}"
     opts: defaults
     state: mounted
