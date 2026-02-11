@@ -239,6 +239,8 @@ atl_hold_pkg_wildcards:
 
 # Device => Mountpoint
 atl_ebs_fstype: xfs
-# atl_ebs_filesystems:
-#   /dev/nvme1n1: /opt/atlassian
-#   /dev/nvme2n1: /var/atlassian/application-data
+
+# These map the volume attachment points to mountpoints
+atl_ebs_filesystems:
+  /dev/sdf: /opt/atlassian
+  /dev/sdg: /var/atlassian/application-data
