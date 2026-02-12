@@ -12,11 +12,11 @@
   ansible.builtin.command: "readlink {{ item.key }}"
   register: nvme_device
 
-- name: "Create an xfs filesystem on /dev/{{ nvme_device }}"
+- name: "Create an xfs filesystem on /dev/{{ nvme_device,stdout }}"
   community.general.filesystem:
     fstype: "{{ atl_ebs_fstype }}"
     state: present
-    dev: "/dev/{{ nvme_device }}"
+    dev: "/dev/{{ nvme_device.stdout }}"
   
 - name: "Get UUID"
   ansible.builtin.shell: "ls -l /dev/disk/by-uuid | grep '{{ nvme_device }}$' | awk '{print $9}'"
@@ -25,7 +25,7 @@
 - name: "Mount {{ item.value }} by UUID"
   ansible.posix.mount:
     path:  "{{ item.value }}"
-    src: "UUID={{ uuid }}"
+    src: "UUID={{ uuid.stdout }}"
     fstype: "{{ atl_ebs_fstype }}"
     opts: defaults
     state: mounted
