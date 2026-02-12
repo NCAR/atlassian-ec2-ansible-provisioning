@@ -19,7 +19,7 @@
     dev: "/dev/{{ nvme_device.stdout }}"
   
 - name: "Get UUID"
-  ansible.builtin.shell: "ls -l /dev/disk/by-uuid | grep '{{ nvme_device }}$' | awk '{print $9}'"
+  ansible.builtin.shell: "ls -l /dev/disk/by-uuid | grep '{{ nvme_device.stdout }}$' | awk '{print $9}'"
   register: uuid
 
 - name: "Mount {{ item.value }} by UUID"
