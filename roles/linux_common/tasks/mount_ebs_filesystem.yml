@@ -8,21 +8,25 @@
     group: root
     mode: '0755'
 
-- name: Fetch the device name for the filesystem
-  ansible.builtin.shell:
-    cmd: "basename $(readlink /dev/disk/by-uuid/{{ item.key }})"
-  register: device
+- name: "Get nvme device"
+  ansible.builtin.command: "readlink {{ item.key }}"
+  register: nvme_device
 
-- name: "Create an xfs filesystem on {{ item.key }}"
+- name: "Create an xfs filesystem on /dev/{{ nvme_device }}"
   community.general.filesystem:
     fstype: "{{ atl_ebs_fstype }}"
     state: present
     dev: "/dev/{{ device.stdout }}"
+  
+- name: "Get UUID"
+  ansible.builtin.shell: "ls -l /dev/disk/by-uuid | grep '{{ nvme_device }}$' | awk '{print $9}'"
+  register: uuid
 
 - name: "Mount {{ item.value }} by UUID"
   ansible.posix.mount:
     path:  "{{ item.value }}"
-    src: "UUID={{ item.key }}"
+    src: "UUID={{ uuid }}"
     fstype: "{{ atl_ebs_fstype }}"
     opts: defaults
     state: mounted
+

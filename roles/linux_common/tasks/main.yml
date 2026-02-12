@@ -33,27 +33,10 @@
     group: "{{ atl_product_user }}"
     comment: "Product runtime user"
 
-- name: Script to map EBS FS UUIDs to mountpoints via FS tags
-  ansible.builtin.copy:
-    src: ebs_uuids_to_mountpoints.sh
-    dest: /usr/local/bin/ebs_uuids_to_mountpoints.sh
-    owner: root
-    group: root
-    mode: "550"
-
-- name: Register output of above script
-  ansible.builtin.shell:  /usr/local/bin/ebs_uuids_to_mountpoints.sh
-  register: ebs_uuids_to_mountpoints_output
-
-- name: Convert above output to dict
-  ansible.builtin.set_fact:
-    uuids2mountpoints: >-
-      {{ dict(ebs_uuids_to_mountpoints_output.stdout_lines | map('split', ':') | list) }}
-
 - name: Mount ebs volumes
   ansible.builtin.include_tasks: mount_ebs_filesystem.yml
-  loop: "{{ uuids2mountpoints | dict2items }}"
-  
+  loop: "{{ atl_ebs_filesystems | dict2items }}"
+
 - name: Test aws cli is installed
   stat:
     path: "/usr/local/bin/aws"
