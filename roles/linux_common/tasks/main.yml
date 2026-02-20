@@ -76,11 +76,5 @@
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "{{ alb_address }} {{ atl_hosts_overrides }}"
-  when: atl_do_host_overrides
+  when: atl_do_hosts_overrides
 
-# - name: Add server to hosts file
-#   ansible.builtin.lineinfile:
-#     path: /etc/hosts
-#     line: "{{ ansible_facts['alb_address'] }} {{ item }}"
-#   loop: "{{ atl_host_overrides: | split(' ') }}"
-#   when: atl_do_host_overrides
