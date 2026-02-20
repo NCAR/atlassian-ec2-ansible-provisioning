@@ -80,6 +80,6 @@
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "{{ item }} {{ atl_hosts_overrides }}"
-    state: XXXX
+    state: "{{ hosts_overrides_state }}"
   loop: "{{ alb_addresses }}"
 
