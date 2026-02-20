@@ -18,7 +18,9 @@
 atl_proxy_name: "{{ lookup('env', 'ATL_PROXY_NAME') }}"
 atl_playbooks: "{{ lookup('env', 'ATL_PLAYBOOKS') }}"
 atl_aws_region: "{{ lookup('env', 'AWS_REGION') }}"
-
+atl_alb_endpoint: "{{ lookup('env', 'ATL_ALB_ENDPOINT') }}"
+atl_host_overrides: "{{ lookup('env', 'ATL_HOSTS_OVERRIDES') | default('', true) }}"
+atl_do_host_overrides: true  # FIXME TESTING ONLY
 
 ssm_prefix: "{{ '/' + atl_proxy_name + '/' }}"
 

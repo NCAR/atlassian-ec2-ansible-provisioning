@@ -61,3 +61,20 @@
   when:
     - systemd_config_changed is defined
     - molecule_yml is not defined  # molecule cannot run systemctl commands and notest doesn't work for handlers
+
+#
+# !!! WARNING WARNING WARNING !!!
+#
+# Using entries in /etc/hosts to override DNS can only return a single address for a given hostname
+# Do not use this in production!!!!
+#
+- name: Lookup DNS for ALB
+  ansible.builtin.set_fact:
+    alb_address: "{{ query('community.dns.lookup', atl_alb_endpoint) | first }}"
+
+- name: Add server to hosts file
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ ansible_facts['alb_address'] }} {{ item }}"
+  loop: "{{ atl_host_overrides: | split(' ') }}"
+  when: atl_do_host_overrides
