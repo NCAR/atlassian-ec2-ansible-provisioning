@@ -70,11 +70,16 @@
 #
 - name: Lookup DNS for ALB
   ansible.builtin.set_fact:
-    alb_address: "{{ query('community.dns.lookup', atl_alb_endpoint) | first }}"
+    alb_addresses: "{{ query('community.dns.lookup', atl_alb_endpoint) }}"
 
+- name: Set state for host overrides
+  ansible.builtin.set_fact:
+    hosts_overrides_state: "{{ atl_do_hosts_overrides | ternary('present', 'absent') }}"
+    
 - name: Add servers to hosts file
   ansible.builtin.lineinfile:
     path: /etc/hosts
-    line: "{{ alb_address }} {{ atl_hosts_overrides }}"
-  when: atl_do_hosts_overrides
+    line: "{{ item }} {{ atl_hosts_overrides }}"
+    state: XXXX
+  loop: "{{ alb_addresses }}"
 
