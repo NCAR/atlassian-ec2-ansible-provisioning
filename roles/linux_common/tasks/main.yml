@@ -75,7 +75,7 @@
 - name: Add servers to hosts file
   ansible.builtin.lineinfile:
     path: /etc/hosts
-    line: "{{ alb_address }} {{ atl_host_overrrides }}"
+    line: "{{ alb_address }} {{ atl_host_overrides }}"
   when: atl_do_host_overrides
     
 # - name: Add server to hosts file
