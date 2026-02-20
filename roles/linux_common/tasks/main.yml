@@ -72,9 +72,15 @@
   ansible.builtin.set_fact:
     alb_address: "{{ query('community.dns.lookup', atl_alb_endpoint) | first }}"
 
-- name: Add server to hosts file
+ - name: Add servers to hosts file
   ansible.builtin.lineinfile:
     path: /etc/hosts
-    line: "{{ ansible_facts['alb_address'] }} {{ item }}"
-  loop: "{{ atl_host_overrides: | split(' ') }}"
+    line: "{{ alb_address }} {{ atl_host_overrrides }}"
   when: atl_do_host_overrides
+    
+# - name: Add server to hosts file
+#   ansible.builtin.lineinfile:
+#     path: /etc/hosts
+#     line: "{{ ansible_facts['alb_address'] }} {{ item }}"
+#   loop: "{{ atl_host_overrides: | split(' ') }}"
+#   when: atl_do_host_overrides
