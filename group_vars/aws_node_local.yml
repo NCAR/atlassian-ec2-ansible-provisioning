@@ -18,15 +18,11 @@
 atl_proxy_name: "{{ lookup('env', 'ATL_PROXY_NAME') }}"
 atl_playbooks: "{{ lookup('env', 'ATL_PLAYBOOKS') }}"
 atl_aws_region: "{{ lookup('env', 'AWS_REGION') }}"
-atl_alb_endpoint: "{{ lookup('env', 'ATL_ALB_ENDPOINT') }}"
-atl_hosts_overrides: "{{ lookup('env', 'ATL_HOSTS_OVERRIDES') | default('', true) }}"
-atl_do_hosts_overrides: "{{ lookup('env', 'ATL_DO_HOSTS_OVERRIDES') | bool }}"
-
-ssm_prefix: "{{ '/' + atl_proxy_name + '/' }}"
 
 #
 # Vars from ssm (mandatory)
 #
+ssm_prefix: "{{ '/' + atl_proxy_name + '/' }}"
 java_major_version: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'JAVA_MAJOR_VERSION') | from_json }}"
 atl_aws_default_tags: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_AWS_DEFAULT_TAGS') | from_json }}"
 atl_db_app_config: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_DB_APP_CONFIG') | from_json }}"
@@ -42,6 +38,12 @@ atl_rds_master_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_prefi
 
 atl_s3_path: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_S3_PATH') }}"
 atl_tomcat_proxyport: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_PROXYPORT') }}"
+
+# FIXME should this be SSM???
+atl_enable_hosts_overrides: "{{ lookup('env', 'ATL_ENABLE_HOSTS_OVERRIDES') | bool }}"
+atl_alb_endpoint: "{{ lookup('amazon.aws.aws_ssm', '/global/alb_endpoint') }}"
+atl_hosts_overrides: "{{ lookup('amazon.aws.aws_ssm', '/global/alb_hosts') }}"
+
 
 #
 # Vars from ssm that have defaults (non-mandatory)

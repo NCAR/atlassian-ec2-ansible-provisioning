@@ -74,7 +74,7 @@
 
 - name: Set state for host overrides
   ansible.builtin.set_fact:
-    hosts_overrides_state: "{{ atl_do_hosts_overrides | ternary('present', 'absent') }}"
+    hosts_overrides_state: "{{ atl_enable_hosts_overrides | ternary('present', 'absent') }}"
     
 - name: Add servers to hosts file
   ansible.builtin.lineinfile:
