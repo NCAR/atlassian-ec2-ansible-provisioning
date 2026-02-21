@@ -39,7 +39,7 @@ atl_rds_master_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_prefi
 atl_s3_path: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_S3_PATH') }}"
 atl_tomcat_proxyport: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_PROXYPORT') }}"
 
-# FIXME should this be SSM???
+# Optionally add explicit entries to hosts file to override DNS for testing
 atl_enable_hosts_overrides: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_ENABLE_HOSTS_OVERRIDES') | bool }}"
 atl_alb_endpoint: "{{ lookup('amazon.aws.aws_ssm', '/global/alb_endpoint') }}"
 atl_hosts_overrides: "{{ lookup('amazon.aws.aws_ssm', '/global/alb_hosts') | replace(',', ' ') }}"
