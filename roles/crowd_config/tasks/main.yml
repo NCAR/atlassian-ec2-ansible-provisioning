@@ -66,7 +66,7 @@
     - "{{ atl_product_shared_plugins }}"
   changed_when: false  # For Molecule idempotence check
 
-name: Create /upmconfig/truststore directory hierarchy
+- name: Create /upmconfig/truststore directory hierarchy
   ansible.builtin.file:
     path: 
     state: directory
