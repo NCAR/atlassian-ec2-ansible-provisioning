@@ -77,7 +77,7 @@
     - "{{ atl_product_home_shared }}/upmconfig"
     - "{{ atl_product_home_shared }}/upmconfig/truststore"
 
- -name: Install Atlassian UPM cert bundles   
+- name: Install Atlassian UPM cert bundles   
   ansible.builtin.unarchive:
     src: "{{ item }}"
     dest: "{{ atl_product_home_shared }}/upmconfig/truststore"
