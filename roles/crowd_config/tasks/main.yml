@@ -74,7 +74,7 @@ name: Create /upmconfig/truststore directory hierarchy
     owner: root
     group: "{{ item }}"
   with_items:
-    - "{{ atl_product_home_shared }}/upmconfig
+    - "{{ atl_product_home_shared }}/upmconfig"
     - "{{ atl_product_home_shared }}/upmconfig/truststore"
     
 - name: Limit permissions on the installer temp directory, recursively
