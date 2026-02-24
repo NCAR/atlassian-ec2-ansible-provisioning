@@ -235,6 +235,10 @@ atl_base_url: "{{ atl_base_url | default('https://' + atl_proxy_name, true) }}"
 # Use secretsmanager directly (jira)
 atl_secretsmanager_aws_secret_id: "{{ atl_dbuser_credential_secret_arn }}"
 
+#
+# Literals
+#
+
 # Wildcards for packages we want to hold
 atl_hold_pkg_wildcards:
   - "*jdk*"
@@ -248,3 +252,9 @@ atl_ebs_fstype: xfs
 atl_ebs_filesystems:
   /dev/sdf: /opt/atlassian
   /dev/sdg: /var/atlassian/application-data
+
+# REF: https://confluence.atlassian.com/upm/updating-atlassian-certificates-bundles-1489470540.html
+atl_upm_cert_bundles:
+  - https://confluence.atlassian.com/upm/files/1489470540/1489470538/1/1736436578459/atlassian_ca_bundle-v1.tar.gz
+  - https://confluence.atlassian.com/upm/files/1489470540/1712980352/1/1767975334909/atlassian_ca_bundle-v2.tar.gz
+

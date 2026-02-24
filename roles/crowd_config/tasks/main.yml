@@ -76,6 +76,16 @@
   with_items:
     - "{{ atl_product_home_shared }}/upmconfig"
     - "{{ atl_product_home_shared }}/upmconfig/truststore"
+
+ -name: Install Atlassian UPM cert bundles   
+  ansible.builtin.unarchive:
+    src: "{{ item }}"
+    dest: "{{ atl_product_home_shared }}/upmconfig/truststore"
+    owner: root
+    group: "{{ atl_product_user }}"
+    mode: '640'
+    remote_src: yes
+  with_items: "{{ atl_upm_cert_bundles }}"
     
 - name: Limit permissions on the installer temp directory, recursively
   ansible.builtin.file:
