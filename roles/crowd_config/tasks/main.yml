@@ -68,7 +68,7 @@
 
 - name: Create /upmconfig/truststore directory hierarchy
   ansible.builtin.file:
-    path: 
+    path: "{{ item }}"
     state: directory
     mode: 0750
     owner: root
