@@ -64,9 +64,19 @@
     - "{{ atl_product_home }}"
     - "{{ atl_product_home_shared }}"
     - "{{ atl_product_shared_plugins }}"
-    - "{{ atl_product_home_shared }}/upmconfig/truststore"    
   changed_when: false  # For Molecule idempotence check
 
+name: Create /upmconfig/truststore directory hierarchy
+  ansible.builtin.file:
+    path: 
+    state: directory
+    mode: 0750
+    owner: root
+    group: "{{ item }}"
+  with_items:
+    - "{{ atl_product_home_shared }}/upmconfig
+    - "{{ atl_product_home_shared }}/upmconfig/truststore"
+    
 - name: Limit permissions on the installer temp directory, recursively
   ansible.builtin.file:
     path: "{{ atl_installer_temp }}"
