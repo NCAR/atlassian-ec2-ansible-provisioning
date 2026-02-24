@@ -64,6 +64,7 @@
     - "{{ atl_product_home }}"
     - "{{ atl_product_home_shared }}"
     - "{{ atl_product_shared_plugins }}"
+    - "{{ atl_product_home_shared }}/upmconfig/truststore"    
   changed_when: false  # For Molecule idempotence check
 
 - name: Limit permissions on the installer temp directory, recursively
