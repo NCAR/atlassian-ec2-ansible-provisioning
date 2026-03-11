@@ -295,3 +295,6 @@ fi
 test -e /usr/local/bin/clone_postprocess && /usr/local/bin/clone_postprocess
 
 rm -rf $TEMPDIR
+
+echo ">>> Finished at: " $(date)
+echo "Total elapsed time: " $(printf '%dh:%dm:%ds\n' $(($SECONDS/3600)) $(($SECONDS%3600/60)) $((SECONDS%60)))
