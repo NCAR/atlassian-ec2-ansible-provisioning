@@ -70,7 +70,7 @@
     owner: root
     group: root
     mode: "644"
-  register: systemd_config_changed
+    daemon_reload: true
     
 - name: Run add_alb_hosts_local.sh on 1 minute after boot then every 30 minutes
   ansible.builtin.copy:
@@ -79,16 +79,11 @@
     owner: root
     group: root
     mode: "644"
-  register: systemd_config_changed
+    state: started
+    enabled: true
+    daemon_reload: true
     
 
-- name: Force systemd to reload daemon configuration
-  ansible.builtin.systemd_service:
-    daemon_reload: yes
-  when:
-    - systemd_config_changed is defined
-
-    
 #
 # !!! WARNING WARNING WARNING !!!
 #
