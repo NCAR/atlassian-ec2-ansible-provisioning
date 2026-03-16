@@ -12,6 +12,9 @@
 # . $set_vars
 # rm $set_vars
 
+# We have /opt/atlassian/tmp set as TMPDIR elsewhere, but we want
+# these to be cleaned on reboot
+export TMPDIR=/tmp
 
 ATL_DB_HOST=$(aws ssm get-parameter --name '/{{ atl_proxy_name }}/ATL_DB_HOST' | jq -r '.Parameter.Value')
 ATL_JDBC_DB_NAME=$(aws ssm get-parameter --name '/{{ atl_proxy_name }}/ATL_JDBC_DB_NAME' | jq -r '.Parameter.Value')
