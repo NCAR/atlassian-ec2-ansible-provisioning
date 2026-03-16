@@ -80,6 +80,12 @@
     group: root
     mode: "644"
   notify: Reload systemd
+
+- name: Enable add_alb_hosts_local.timer
+  ansible.builtin.systemd_service:
+    name: add_alb_hosts_local.timer
+    state: started
+    enabled: true
     
 
 #
