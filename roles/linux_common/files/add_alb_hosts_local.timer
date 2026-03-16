@@ -1,0 +1,9 @@
+[Unit]
+Description=Run add_alb_hosts_local.sh on 1 minute after boot then every 30 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=30minutes
+
+[Install]
+WantedBy=timers.target

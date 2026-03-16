@@ -55,31 +55,49 @@
     mode: "644"
   register: systemd_config_changed
 
+- name: Add entries to hosts file for all domains served by the ALB
+  ansible.builtin.copy:
+    src: add_alb_hosts_local.sh
+    dest: "/usr/local/bin/add_alb_hosts_local.sh"
+    owner: root
+    group: root
+    mode: "500"
+
+- name: Run add_alb_hosts_local.sh on 1 minute after boot then every 30 minutes
+  ansible.builtin.copy:
+    src: add_alb_hosts_local.timer
+    dest: "/etc/systemd/system/add_alb_hosts_local.timer"
+    owner: root
+    group: root
+    mode: "644"
+  register: systemd_config_changed
+    
+
 - name: Force systemd to reload daemon configuration
   ansible.builtin.systemd_service:
     daemon_reload: yes
   when:
     - systemd_config_changed is defined
-    - molecule_yml is not defined  # molecule cannot run systemctl commands and notest doesn't work for handlers
 
+    
 #
 # !!! WARNING WARNING WARNING !!!
 #
 # Using entries in /etc/hosts to override DNS can only return a single address for a given hostname
 # Do not use this in production!!!!
 #
-- name: Lookup DNS for ALB
-  ansible.builtin.set_fact:
-    alb_addresses: "{{ query('community.dns.lookup', atl_alb_endpoint) }}"
+# - name: Lookup DNS for ALB
+#   ansible.builtin.set_fact:
+#     alb_addresses: "{{ query('community.dns.lookup', atl_alb_endpoint) }}"
 
-- name: Set state for host overrides
-  ansible.builtin.set_fact:
-    hosts_overrides_state: "{{ atl_enable_hosts_overrides | ternary('present', 'absent') }}"
+# - name: Set state for host overrides
+#   ansible.builtin.set_fact:
+#     hosts_overrides_state: "{{ atl_enable_hosts_overrides | ternary('present', 'absent') }}"
     
-- name: Add servers to hosts file
-  ansible.builtin.lineinfile:
-    path: /etc/hosts
-    line: "{{ item }} {{ atl_hosts_overrides }}"
-    state: "{{ hosts_overrides_state }}"
-  loop: "{{ alb_addresses }}"
+# - name: Add servers to hosts file
+#   ansible.builtin.lineinfile:
+#     path: /etc/hosts
+#     line: "{{ item }} {{ atl_hosts_overrides }}"
+#     state: "{{ hosts_overrides_state }}"
+#   loop: "{{ alb_addresses }}"
 
