@@ -79,8 +79,6 @@
     owner: root
     group: root
     mode: "644"
-    state: started
-    enabled: true
   notify: Reload systemd
     
 
