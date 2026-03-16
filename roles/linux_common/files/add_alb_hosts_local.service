@@ -1,0 +1,6 @@
+[Unit]
+Description=Add ALB domains to /etc/hosts
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/add_alb_hosts_local.sh

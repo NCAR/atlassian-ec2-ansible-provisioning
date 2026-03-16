@@ -63,6 +63,15 @@
     group: root
     mode: "500"
 
+- name: Run add_alb_hosts_local.sh
+  ansible.builtin.copy:
+    src: add_alb_hosts_local.service
+    dest: "/etc/systemd/system/add_alb_hosts_local.service"
+    owner: root
+    group: root
+    mode: "644"
+  register: systemd_config_changed
+    
 - name: Run add_alb_hosts_local.sh on 1 minute after boot then every 30 minutes
   ansible.builtin.copy:
     src: add_alb_hosts_local.timer
