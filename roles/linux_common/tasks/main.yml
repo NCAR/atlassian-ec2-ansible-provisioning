@@ -55,37 +55,37 @@
     mode: "644" 
   notify: Reload systemd   
 
-- name: Add entries to hosts file for all domains served by the ALB
-  ansible.builtin.copy:
-    src: add_alb_hosts_local.sh
-    dest: "/usr/local/bin/add_alb_hosts_local.sh"
-    owner: root
-    group: root
-    mode: "500"
+# - name: Add entries to hosts file for all domains served by the ALB
+#   ansible.builtin.copy:
+#     src: add_alb_hosts_local.sh
+#     dest: "/usr/local/bin/add_alb_hosts_local.sh"
+#     owner: root
+#     group: root
+#     mode: "500"
 
-- name: Run add_alb_hosts_local.sh
-  ansible.builtin.copy:
-    src: add_alb_hosts_local.service
-    dest: "/etc/systemd/system/add_alb_hosts_local.service"
-    owner: root
-    group: root
-    mode: "644"
-  notify: Reload systemd    
+# - name: Run add_alb_hosts_local.sh
+#   ansible.builtin.copy:
+#     src: add_alb_hosts_local.service
+#     dest: "/etc/systemd/system/add_alb_hosts_local.service"
+#     owner: root
+#     group: root
+#     mode: "644"
+#   notify: Reload systemd    
     
-- name: Run add_alb_hosts_local.sh on 1 minute after boot then every 30 minutes
-  ansible.builtin.copy:
-    src: add_alb_hosts_local.timer
-    dest: "/etc/systemd/system/add_alb_hosts_local.timer"
-    owner: root
-    group: root
-    mode: "644"
-  notify: Reload systemd
+# - name: Run add_alb_hosts_local.sh on 1 minute after boot then every 30 minutes
+#   ansible.builtin.copy:
+#     src: add_alb_hosts_local.timer
+#     dest: "/etc/systemd/system/add_alb_hosts_local.timer"
+#     owner: root
+#     group: root
+#     mode: "644"
+#   notify: Reload systemd
 
-- name: Enable add_alb_hosts_local.timer
-  ansible.builtin.systemd_service:
-    name: add_alb_hosts_local.timer
-    state: started
-    enabled: true
+# - name: Enable add_alb_hosts_local.timer
+#   ansible.builtin.systemd_service:
+#     name: add_alb_hosts_local.timer
+#     state: started
+#     enabled: true
     
 
 #
