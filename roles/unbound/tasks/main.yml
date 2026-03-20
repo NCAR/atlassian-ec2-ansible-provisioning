@@ -49,7 +49,8 @@
 #   notify: Reload systemd
 
 - name: Disable systemd-resolved
-  name: systemd-resolved
+  ansible.builtin.systemd_service:
+    name: systemd-resolved
     enabled: false
     state: stopped
 
