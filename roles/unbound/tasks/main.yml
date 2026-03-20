@@ -14,8 +14,8 @@
     mode: '0755'
     
 - name: Unbound config
-  ansible.builtin.copy:
-    src: unbound.conf
+  ansible.builtin.template:
+    src: unbound.conf.j2
     dest: /etc/unbound/unbound.conf.d/unbound.conf
     owner: root
     group: root
