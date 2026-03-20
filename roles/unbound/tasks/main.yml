@@ -57,7 +57,7 @@
 - name: Create static /etc/resolv.conf
   ansible.builtin.template:
     src: resolv.conf.j2
-    destination: /etc/resolv.conf
+    dest: /etc/resolv.conf
     owner: root
     group: root
     mode: "644"
