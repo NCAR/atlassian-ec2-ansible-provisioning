@@ -1,0 +1,63 @@
+---
+
+#
+# Unbound config
+#
+- name: Install unbound
+  ansible.builtin.package:
+    name: unbound
+
+- name: Create directory /etc/unbound/unbound.conf.d/
+  ansible.builtin.file:
+    path: /etc/unbound/unbound.conf.d/
+    state: directory
+    mode: '0755'
+    
+- name: Unbound config
+  ansible.builtin.copy:
+    src: unbound.conf
+    dest: /etc/unbound/unbound.conf.d/unbound.conf
+    owner: root
+    group: root
+    mode: "644"
+  notify: Reload unbound
+
+- name: Enable unbound service
+  ansible.builtin.systemd_service:
+    name: unbound
+    enabled: true
+    masked: no
+  
+#
+# Systemd config
+# REF: https://www.atlantic.net/vps-hosting/how-to-set-up-unbound-dns-resolver-on-ubuntu/
+#
+
+# - name: Create directory /etc/systemd/resolved.conf.d/
+#   ansible.builtin.file:
+#     path: /etc/systemd/resolved.conf.d/
+#     state: directory
+#     mode: '0755'
+
+# - name: Systemd config to use unbound in place of systemd-resolved
+#   ansible.builtin.copy:
+#     src: systemd_unbound.conf
+#     dest: /etc/systemd/resolved.conf.d/systemd_unbound.conf
+#     owner: root
+#     group: root
+#     mode: "644"
+#   notify: Reload systemd
+
+- name: Disable systemd-resolved
+  name: systemd-resolved
+    enabled: false
+    state: stopped
+
+- name: Create static /etc/resolv.conf
+  ansible.builtin.copy:
+    src: resolv.conf.j2
+    destination: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: "644"
+    attributes: "+i"
