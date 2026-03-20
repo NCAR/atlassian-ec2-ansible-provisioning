@@ -55,7 +55,7 @@
     state: stopped
 
 - name: Create static /etc/resolv.conf
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: resolv.conf.j2
     destination: /etc/resolv.conf
     owner: root
