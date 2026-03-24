@@ -17,3 +17,7 @@
     - atl_startup_enable | bool
     - molecule_yml is not defined
   no_log: true
+
+- name: Reload systemd
+  ansible.builtin.systemd_service:
+    daemon_reload: true

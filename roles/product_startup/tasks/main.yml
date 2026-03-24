@@ -10,3 +10,5 @@
   notify:
     - Enable Product
     - Restart Product
+    - Reload systemd
+    
