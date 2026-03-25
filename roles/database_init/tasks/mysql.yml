@@ -18,12 +18,30 @@
   unarchive:
     src: "/tmp/{{ atl_mysql_jdbc_connector_url | basename }}"
     dest: "/tmp"
+    list_files: true
+  register: mysql_driver_archive_files
 
-- name: Copy the MySQL driver
+- name: Copy the MySQL driver for jira
   copy:
-    src: "/tmp/{{ atl_mysql_jdbc_connector }}/{{ atl_mysql_jdbc_connector }}.jar"
+#    src: "/tmp/{{ atl_mysql_jdbc_connector }}/{{ atl_mysql_jdbc_connector }}.jar"
+    src: "/tmp/{{ mysql_driver_archive_files | select('regex_search', '\.jar$') | first"
     dest: "{{ atl_product_installation_versioned }}/{{ atl_tomcat_lib_dir }}/{{ atl_mysql_jdbc_connector }}.jar"
+  when: atl_product_edition is match("jira") 
+    
+- name: Copy the MySQL driver for confluence
+  copy:
+#    src: "/tmp/{{ atl_mysql_jdbc_connector }}/{{ atl_mysql_jdbc_connector }}.jar"
+    src: "/tmp/{{ mysql_driver_archive_files | select('regex_search', '\.jar$') | first"
+    dest: "{{ atl_product_installation_versioned }}/confluence/WEB-INF/lib/{{ atl_mysql_jdbc_connector }}.jar"
+  when: atl_product_edition is match ("confluence")
 
+- name: Copy the MySQL driver for crowd
+  copy:
+#    src: "/tmp/{{ atl_mysql_jdbc_connector }}/{{ atl_mysql_jdbc_connector }}.jar"
+    src: "/tmp/{{ mysql_driver_archive_files | select('regex_search', '-bin\.jar$') | first"
+    dest: "{{ atl_product_installation_versioned }}/apache-tomcat/lib/{{ atl_mysql_jdbc_connector }}.jar"
+  when: atl_product_edition is match ("crowd")
+  
 - name: Install create_mycnf script
   ansible.builtin.template:
     src: create_mycnf.sh.j2

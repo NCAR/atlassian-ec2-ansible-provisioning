@@ -33,6 +33,7 @@ atl_dbuser_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 
 atl_jdbc_db_name: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_JDBC_DB_NAME') }}"
 atl_product_edition: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_PRODUCT_EDITION') }}"
 atl_product_version: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_PRODUCT_VERSION') }}"
+atl_mysql_jdbc_connector_url: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_MYSQL_JDBC_CONNECTOR_URL) }}"
 
 atl_rds_master_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_RDS_MASTER_CREDENTIAL_SECRET_ARN') }}"
 
@@ -80,8 +81,6 @@ atl_jdbc_encoding: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_JDBC_ENCOD
 atl_jdbc_template: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_JDBC_TEMPLATE', errors='ignore') | default('template1', true) }}"
 atl_jvm_heap: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_JVM_HEAP', errors='ignore') | default('2048m', true) }}"
 atl_jvm_opts: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_JVM_OPTS', errors='ignore') | default('', true) }}"
-atl_mysql_jdbc_connector: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_MYSQL_JDBC_CONNECTOR', errors='ignore') | default('mysql-connector-j-8.0.33', true) }}"
-atl_mysql_jdbc_connector_url: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_MYSQL_JDBC_CONNECTOR_URL', errors='ignore') | default('https://cdn.mysql.com/archives/mysql-connector-java-8.0/mysql-connector-j-8.0.33.tar.gz', true) }}"
 atl_mysqlsh_url: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_MYSQLSH_URL', errors='ignore') | default('https://dev.mysql.com/get/Downloads/MySQL-Shell/mysql-shell_8.4.4-1ubuntu22.04_amd64.deb', true) }}"
 atl_product_user_uid: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_PRODUCT_USER_UID', errors='ignore') | default(2001, true) }}"
 atl_ssl_proxy: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_SSL_PROXY', errors='ignore') | default(false, true) }}"
