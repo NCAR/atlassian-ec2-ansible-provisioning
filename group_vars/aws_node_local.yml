@@ -238,6 +238,9 @@ atl_secretsmanager_aws_secret_id: "{{ atl_dbuser_credential_secret_arn }}"
 # Literals
 #
 
+# Where unbound forwards DNS requests to
+atl_unbound_forward: 10.0.0.2
+
 # Wildcards for packages we want to hold
 atl_hold_pkg_wildcards:
   - "*jdk*"

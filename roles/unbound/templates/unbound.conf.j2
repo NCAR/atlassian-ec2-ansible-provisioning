@@ -1,0 +1,18 @@
+server:
+  port: 53
+  interface: 127.0.0.1
+  access-control: 127.0.0.0/8 allow
+  do-ip4: yes
+  do-ip6: no
+  do-udp: yes
+  do-tcp: yes
+  num-threads: 2
+  num-queries-per-thread: 1024
+  hide-identity: yes
+  hide-version: yes
+  prefetch: yes
+  unblock-lan-zones: yes
+
+forward-zone:
+  name: "."
+  forward-addr: {{ atl_unbound_forward }}

@@ -1,0 +1,69 @@
+---
+
+#
+# Unbound config
+#
+- name: Install unbound
+  ansible.builtin.package:
+    name: unbound
+
+- name: Create directory /etc/unbound/unbound.conf.d/
+  ansible.builtin.file:
+    path: /etc/unbound/unbound.conf.d/
+    state: directory
+    mode: '0755'
+    
+- name: Unbound config
+  ansible.builtin.template:
+    src: unbound.conf.j2
+    dest: /etc/unbound/unbound.conf.d/unbound.conf
+    owner: root
+    group: root
+    mode: "644"
+  notify: Restart unbound
+
+- name: Ensure root-auto-trust-anchor-file.conf is absent
+  ansible.builtin.file:
+    path: /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
+    state: absent
+  
+- name: Enable unbound service
+  ansible.builtin.systemd_service:
+    name: unbound
+    enabled: true
+    masked: no
+  
+#
+# Systemd config
+# REF: https://www.atlantic.net/vps-hosting/how-to-set-up-unbound-dns-resolver-on-ubuntu/
+#
+
+# - name: Create directory /etc/systemd/resolved.conf.d/
+#   ansible.builtin.file:
+#     path: /etc/systemd/resolved.conf.d/
+#     state: directory
+#     mode: '0755'
+
+# - name: Systemd config to use unbound in place of systemd-resolved
+#   ansible.builtin.copy:
+#     src: systemd_unbound.conf
+#     dest: /etc/systemd/resolved.conf.d/systemd_unbound.conf
+#     owner: root
+#     group: root
+#     mode: "644"
+#   notify: Reload systemd
+
+- name: Disable systemd-resolved
+  ansible.builtin.systemd_service:
+    name: systemd-resolved
+    enabled: false
+    state: stopped
+
+- name: Create static /etc/resolv.conf
+  ansible.builtin.template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: "644"
+    attributes: "+i"
