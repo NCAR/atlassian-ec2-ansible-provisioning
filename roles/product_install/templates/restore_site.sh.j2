@@ -115,9 +115,11 @@ aws s3 cp "${s3_backup_url}/home.zst" - | tar -C "{{ atl_product_home }}" --zstd
 # untar retained over sync'd directory
 if test -e $retained_files_tar; then
     tar -C {{ atl_product_home }} --zstd -xf $retained_files_tar
-    chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
 fi
-    
+
+chown -R {{ atl_product_user }}:{{ atl_product_user }} {{ atl_product_home }}
+
+
 ##############################################
 # Restore database
 ##############################################
