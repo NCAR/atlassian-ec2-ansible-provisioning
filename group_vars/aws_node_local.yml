@@ -238,7 +238,10 @@ atl_secretsmanager_aws_secret_id: "{{ atl_dbuser_credential_secret_arn }}"
 # Literals
 #
 
-# Where unbound forwards DNS requests to
+# Where unbound forwards DNS requests to for ucar.edu
+atl_unbound_ucar_forward: 8.8.8.8
+
+# Where unbound forwards DNS requests to generally
 atl_unbound_forward: 10.0.0.2
 
 # Wildcards for packages we want to hold
