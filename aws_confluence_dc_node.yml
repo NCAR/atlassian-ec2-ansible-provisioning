@@ -24,7 +24,6 @@
   roles:
     - role: linux_common
     - role: aws_common
-#    - role: aws_shared_fs_config
     - role: unbound
     - role: product_common
     - role: product_install
