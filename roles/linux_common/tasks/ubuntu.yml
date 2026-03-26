@@ -35,4 +35,4 @@
        export JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 | perl -ne '/java\.home\s*=\s*(.*)/ && print $1')
 
        # Alias to run ansible
-       alias run_ansible='cd /var/ansible/atlassian-ec2-ansible-provisioning/ && git pull && for pb in $ATL_PLAYBOOKS; do ansible-playbook -i inv/aws_node_local $pb; done'
+       alias run_ansible='(cd /var/ansible/atlassian-ec2-ansible-provisioning/ && git pull && for pb in $ATL_PLAYBOOKS; do ansible-playbook -i inv/aws_node_local $pb; done)'
