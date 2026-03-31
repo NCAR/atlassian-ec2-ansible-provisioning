@@ -18,15 +18,10 @@
       - jq
       - net-tools
       - nvme-cli
+      - python3-netaddr
       - tar
       - yq
 
-- name: Install python package
-  ansible.builtin.pip:
-    break_system_packages: true
-    name:
-      - netaddr
-      
 - name: Create product group
   ansible.builtin.group:
     name: "{{ atl_product_user }}"
