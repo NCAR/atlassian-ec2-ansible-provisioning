@@ -23,6 +23,7 @@
 
 - name: Install python package
   ansible.builtin.pip:
+    break_system_packages: true
     name:
       - netaddr
       
