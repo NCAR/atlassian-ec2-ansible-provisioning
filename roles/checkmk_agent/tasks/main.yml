@@ -4,6 +4,6 @@
   ansible.builtin.pip:
     name: netaddr
 
-- name: Import checkmk.general.agent role
-  ansible.builtin.import_role:
-    name: checkmk.general.agent
+# - name: Import checkmk.general.agent role
+#   ansible.builtin.import_role:
+#     name: checkmk.general.agent
