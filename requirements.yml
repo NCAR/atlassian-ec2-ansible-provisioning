@@ -10,3 +10,5 @@ collections:
     version: "8.6.0"
   - name: community.dns
     version: "3.5.1"
+  - name: checkmk.general
+    version: "7.1.0"
