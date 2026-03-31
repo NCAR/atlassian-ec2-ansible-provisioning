@@ -21,6 +21,11 @@
       - tar
       - yq
 
+- name: Install python package
+  ansible.builtin.pip:
+    name:
+      - netaddr
+      
 - name: Create product group
   ansible.builtin.group:
     name: "{{ atl_product_user }}"

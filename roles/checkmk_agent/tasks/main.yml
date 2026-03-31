@@ -1,9 +1,0 @@
----
-
-- name: Install netaddr python module required by checkmk
-  ansible.builtin.pip:
-    name: netaddr
-
-# - name: Import checkmk.general.agent role
-#   ansible.builtin.import_role:
-#     name: checkmk.general.agent

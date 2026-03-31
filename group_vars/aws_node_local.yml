@@ -265,3 +265,38 @@ atl_upm_cert_bundles:
   - https://confluence.atlassian.com/upm/files/1489470540/1489470538/1/1736436578459/atlassian_ca_bundle-v1.tar.gz
   - https://confluence.atlassian.com/upm/files/1489470540/1712980352/1/1767975334909/atlassian_ca_bundle-v2.tar.gz
 
+#
+# checkmk
+# https://galaxy.ansible.com/ui/repo/published/checkmk/general/content/role/agent/
+#
+
+checkmk_agent_version: 2.4.0p21
+checkmk_agent_edition: cre
+checkmk_agent_server_protocol: http
+checkmk_agent_server: "{{ atl_adminserver_private_dns }}"
+
+checkmk_agent_server_validate_certs: false
+checkmk_agent_site: checkmk
+
+checkmk_agent_user: agent_registration
+checkmk_agent_secret: 'qUXf];Di-^{1DvLY}t31RfKkwA%qO4'
+
+checkmk_agent_auto_activate: true
+checkmk_agent_force_foreign_changes: true
+checkmk_agent_add_host: true
+checkmk_agent_host_name: "{{ ansible_nodename }}"
+checkmk_agent_folder: '/'
+checkmk_agent_discover: true
+checkmk_agent_mode: pull
+
+# FIXME needs to be set up on server
+checkmk_agent_update: false
+
+checkmk_agent_tls: false
+checkmk_agent_force_install: false
+
+# False for debugging
+checkmk_agent_no_log: false
+
+checkmk_agent_configure_firewall: true
+
