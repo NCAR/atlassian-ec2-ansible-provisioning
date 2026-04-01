@@ -222,6 +222,8 @@ checkmk_agent_edition: cre
 checkmk_agent_server_protocol: http
 checkmk_agent_server: "{{ atl_adminserver_private_dns }}"
 
+checkmk_agent_server_port: 8001
+
 checkmk_agent_server_validate_certs: false
 checkmk_agent_site: checkmk
 
