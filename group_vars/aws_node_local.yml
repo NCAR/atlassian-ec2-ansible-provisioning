@@ -236,7 +236,7 @@ checkmk_agent_auto_activate: true
 checkmk_agent_force_foreign_changes: true
 checkmk_agent_add_host: true
 checkmk_agent_host_name: "{{ ansible_nodename }}"
-#checkmk_agent_folder: '/'
+checkmk_agent_folder: "/{{ atl_proxy_name }}"
 checkmk_agent_discover: true
 checkmk_agent_mode: pull
 
