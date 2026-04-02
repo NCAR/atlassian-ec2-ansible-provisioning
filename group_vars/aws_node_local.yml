@@ -249,6 +249,7 @@ checkmk_agent_force_install: false
 # False for debugging
 checkmk_agent_no_log: false
 
-checkmk_agent_configure_firewall: true
+# This breaks atlassian unless we specify ports somewhere
+checkmk_agent_configure_firewall: false
 
 

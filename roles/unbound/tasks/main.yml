@@ -59,6 +59,12 @@
     enabled: false
     state: stopped
 
+- name: Disable unbound-resolvconf
+  ansible.builtin.systemd_service:
+    name: unbound-resolvconf
+    enabled: false
+    state: stopped
+    
 - name: Create static /etc/resolv.conf
   ansible.builtin.template:
     src: resolv.conf.j2
