@@ -1,0 +1,7 @@
+---
+
+- name: Install jmxquery python module
+  ansible.builtin.pip:
+    name: jmxquery
+    extra_args: --break-system-packages
+
