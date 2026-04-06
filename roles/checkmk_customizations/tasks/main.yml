@@ -5,7 +5,7 @@
 - name: Install jmxquery python module
   ansible.builtin.pip:
     name: git+https://github.com/fentik/JMXQuery.git
-    extra_args: "--break_system_packages"
+    extra_args: "--break-system-packages"
 
 # Config file is app specific, so in app config role
 - name: Install JMX monitoring script
