@@ -1,7 +1,18 @@
 ---
 
+# https://github.com/fentik/JMXQuery.git
+# This is a fork of the original that fixes json parsing
 - name: Install jmxquery python module
   ansible.builtin.pip:
-    name: jmxquery
-    extra_args: --break-system-packages
+    name: git+https://github.com/fentik/JMXQuery.git
+    break_system_packages: true
+
+# Config file is app specific, so in app config role
+- name: Install JMX monitoring script
+  ansible.builtin.file:
+    src: jmx_monitor.py
+    dest: /usr/local/bin/jmx_monitor.py
+    owner: root
+    group: root
+    mode: '0555'
 
