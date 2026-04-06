@@ -4,7 +4,7 @@
 # This is a fork of the original that fixes json parsing
 - name: Install jmxquery python module
   ansible.builtin.pip:
-    name: git+https://github.com/fentik/JMXQuery.git
+    name: git+https://github.com/fentik/JMXQuery.git#subdirectory=python
     extra_args: "--break-system-packages"
 
 # Config file is app specific, so in app config role
