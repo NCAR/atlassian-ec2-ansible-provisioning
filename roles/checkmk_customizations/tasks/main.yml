@@ -9,7 +9,7 @@
 
 # Config file is app specific, so in app config role
 - name: Install JMX monitoring script
-  ansible.builtin.file:
+  ansible.builtin.copy:
     src: jmx_monitor.py
     dest: /usr/local/bin/jmx_monitor.py
     owner: root
