@@ -1,7 +1,11 @@
 ---
 
-com.atlassian.jira:
-  type: metrics
-  name: value/Number
+'java.lang':
+  - type: Memory/HeapMemoryUsage/used
+
+
+# com.atlassian.jira:
+#   type: metrics
+#   name: value/Number
 
   
