@@ -26,9 +26,9 @@
     group: "{{ atl_product_user }}"
 
 - name: Install jolokia.cfg
-   ansible.builtin.template:
-     src: jolokia.cfg.j2
-     dest: /etc/check_mk/jolokia.cfg
+  ansible.builtin.template:
+    src: jolokia.cfg.j2
+    dest: /etc/check_mk/jolokia.cfg
 
 - name: Java jolokia startup
   ansible.builtin.copy:
