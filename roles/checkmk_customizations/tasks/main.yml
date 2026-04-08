@@ -39,3 +39,4 @@
   ansible.builtin.get_url:
     url: "{{ jolokia_checkmk_plugin_url }}"
     dest: /usr/lib/check_mk_agent/plugins/mk_jolokia.py
+    mode: "0755"
