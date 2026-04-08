@@ -253,6 +253,9 @@ checkmk_agent_no_log: false
 # This breaks atlassian unless we specify ports somewhere
 checkmk_agent_configure_firewall: false
 
+checkmk_agent_host_attributes:
+  alias: "{{ checkmk_agent_folder }} ec2"
+
 #
 # Jolokia
 #
