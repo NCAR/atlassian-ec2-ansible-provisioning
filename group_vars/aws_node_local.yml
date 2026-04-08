@@ -256,7 +256,7 @@ checkmk_agent_configure_firewall: false
 
 # FIXME check this works
 checkmk_agent_host_attributes:
-  alias: "{{ checkmk_agent_folder }} ec2"
+  alias: "{{ atl_proxy_name | split('.') | first }} ec2"
 
 #
 # Jolokia
