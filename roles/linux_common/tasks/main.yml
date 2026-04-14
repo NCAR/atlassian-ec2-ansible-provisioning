@@ -18,6 +18,7 @@
       - jq
       - net-tools
       - nvme-cli
+      - python3-netaddr
       - tar
       - yq
 

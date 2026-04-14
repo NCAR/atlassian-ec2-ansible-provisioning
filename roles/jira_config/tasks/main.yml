@@ -213,3 +213,11 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
     
+- name: Install config file for jmx_monitor
+  ansible.builtin.copy:
+    src: jmx_monitor.yml
+    dest: /usr/local/etc/jmx_monitor.yml
+    owner: root
+    group: root
+    mode: '0444'
+

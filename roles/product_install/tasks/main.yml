@@ -393,5 +393,11 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
-    
 
+# FIXME need to move these into glacier after a month    
+- name: Cron job for nightly backups (this is in addition to AWS Backups managed by pulumi)
+  ansible.builtin.cron:
+    name: Nightly Backup
+    minute: "30"
+    hour: "23"
+    job: "/usr/local/bin/backup_for_clone.sh nightly_backup"
