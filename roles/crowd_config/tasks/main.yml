@@ -1,9 +1,9 @@
 ---
 
-- name: Create server config
-  ansible.builtin.template:
-    src: server.xml.j2
-    dest: "{{ atl_product_installation_versioned }}/apache-tomcat/conf/server.xml"
+# - name: Create server config
+#   ansible.builtin.template:
+#     src: server.xml.j2
+#     dest: "{{ atl_product_installation_versioned }}/apache-tomcat/conf/server.xml"
 
 - name: Set the minimum heap size (Xms)
   ansible.builtin.lineinfile:
