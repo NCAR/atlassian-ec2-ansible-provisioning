@@ -24,7 +24,7 @@
 
 - name: Ensure the target file exists
   ansible.builtin.copy:
-    content: '<meta http-equiv="refresh" content="0;url=https://test-crowd.ucar.edu/crowd"/>'
+    content: "<meta http-equiv=\"refresh\" content=\"0;url=https://test-crowd.ucar.edu/crowd\"/>\n"
     dest: "/opt/atlassian/crowd/current/apache-tomcat/webapps/ROOT/index.jsp"
 
     
