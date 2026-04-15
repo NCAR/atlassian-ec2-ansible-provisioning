@@ -19,7 +19,7 @@
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: absent
-    loop: "{{ webapps_files.files }}"
+  loop: "{{ webapps_files.files }}"
   when: item.path != "/opt/atlassian/crowd/current/apache-tomcat/webapps/ROOT/index.jsp"
 
 - name: Ensure the target file exists
