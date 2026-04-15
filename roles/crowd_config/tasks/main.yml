@@ -5,6 +5,29 @@
     src: server.xml.j2
     dest: "{{ atl_product_installation_versioned }}/apache-tomcat/conf/server.xml"
 
+
+#
+# Create index.jsp; make sure it's the only file
+#
+- name: Find all files in the webapps/ROOT
+  ansible.builtin.find:
+    paths: /opt/atlassian/crowd/current/apache-tomcat/webapps/ROOT
+    file_type: file
+    register: webapps_files
+
+- name: Remove all files except the target file
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+    loop: "{{ webapps_files.files }}"
+  when: item.path != "/opt/atlassian/crowd/current/apache-tomcat/webapps/ROOT/index.jsp"
+
+- name: Ensure the target file exists
+  ansible.builtin.copy:
+    content: '<meta http-equiv="refresh" content="0;url=https://test-crowd.ucar.edu/crowd"/>'
+    dest: "/opt/atlassian/crowd/current/apache-tomcat/webapps/ROOT/index.jsp"
+
+    
 - name: Set the minimum heap size (Xms)
   ansible.builtin.lineinfile:
     path: "{{ atl_product_installation_versioned }}/apache-tomcat/bin/setenv.sh"
