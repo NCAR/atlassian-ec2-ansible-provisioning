@@ -13,7 +13,7 @@
   ansible.builtin.find:
     paths: /opt/atlassian/crowd/current/apache-tomcat/webapps/ROOT
     file_type: file
-    register: webapps_files
+  register: webapps_files
 
 - name: Remove all files except the target file
   ansible.builtin.file:
