@@ -27,27 +27,6 @@
     dest: "{{ atl_product_installation_versioned }}/apache-tomcat/conf/server.xml"
 
 #
-# Add RemoteIpFilter to use X-Forwarded-For for client IP
-#
-- name:  Add RemoteIpFilter to web.xml
-  ansible.builtin.blockinfile:
-    path: /opt/atlassian/crowd/current/apache-tomcat/conf/web.xml
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
-    block: |
-      <filter>
-        <filter-name>RemoteIpFilter</filter-name>
-        <filter-class>org.apache.catalina.filters.RemoteIpFilter</filter-class>
-      </filter>
-
-      <filter-mapping>
-        <filter-name>RemoteIpFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-      </filter-mapping>
-    insertafter: '(?m)^\s*</filter>\s*\n^-->'
-
-    
-#
 # Create index.jsp; make sure it's the only file
 #
 - name: Find all files in the webapps/ROOT

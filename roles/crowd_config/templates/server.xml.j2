@@ -40,6 +40,7 @@
                        </Manager>
               </Context>
             </Host>
+
 	    <Valve className="org.apache.catalina.valves.RemoteIpValve"
 		   remoteIpHeader="x-forwarded-for"
 		   protocolHeader="x-forwarded-proto" />
@@ -47,7 +48,7 @@
 		   directory="logs"
 		   prefix="localhost_access_log"
 		   suffix=".log"
-		   pattern="%t %{User-Agent}i %h %m %r %b %s %I %{X-AUSERNAME}o %{X-AAPPNAME}o" />
+		   pattern="%t %{X-Forwarded-For}i %{User-Agent}i %h %m %r %b %s %I %{X-AUSERNAME}o %{X-AAPPNAME}o" internalProxies="10\..*"/>
         </Engine>
 
         <!-- To connect to an external web server (typically Apache) -->
