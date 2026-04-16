@@ -1,5 +1,26 @@
 ---
 
+#
+# Some of the XML files have DOS line endings
+#
+- name: Install dos2unix package
+  ansible.builtin.package:
+    name:
+      - dos2unix
+
+- name: Get list of xml files in conf directory
+  ansible.builtin.find:
+    paths: "{{ atl_product_installation_versioned }}/apache-tomcat/conf"
+    patterns: "*.xml"
+  register: xml_conf_files
+
+- name: Convert all xml files to unix line endings
+  ansible.builtin.command: "dos2unix {{ item.path }}"
+  loop: "{{ xml_conf_file.files }}"
+      
+#
+#
+#
 - name: Create tomcat server.xml
   ansible.builtin.template:
     src: server.xml.j2
@@ -11,8 +32,7 @@
 - name:  Add RemoteIpFilter to web.xml
   ansible.builtin.blockinfile:
     path: /opt/atlassian/crowd/current/apache-tomcat/conf/web.xml
-    append_newline: true
-    prepend_newline: true
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
     block: |
       <filter>
         <filter-name>RemoteIpFilter</filter-name>
