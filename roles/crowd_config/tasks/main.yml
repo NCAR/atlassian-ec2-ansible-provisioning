@@ -10,7 +10,7 @@
 #
 - name:  Add RemoteIpFilter to web.xml
   ansible.builtin.blockinfile:
-    path: /opt/atlassian/crowd/current/apache-tomcat/conf
+    path: /opt/atlassian/crowd/current/apache-tomcat/conf/web.xml
     append_newline: true
     prepend_newline: true
     block: |
