@@ -16,7 +16,7 @@
 
 - name: Convert all xml files to unix line endings
   ansible.builtin.command: "dos2unix {{ item.path }}"
-  loop: "{{ xml_conf_file.files }}"
+  loop: "{{ xml_conf_files.files }}"
       
 #
 #
