@@ -108,7 +108,7 @@
     - "{{ atl_product_shared_plugins }}"
   changed_when: false  # For Molecule idempotence check
 
-- name: Create /upmconfig/truststore directory hierarchy
+- name: Create /upmconfig/truststore directory hierarchy + import
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -118,6 +118,7 @@
   with_items:
     - "{{ atl_product_home_shared }}/upmconfig"
     - "{{ atl_product_home_shared }}/upmconfig/truststore"
+    - "{{ atl_product_home_shared }}/import"
 
 - name: Install Atlassian UPM cert bundles   
   ansible.builtin.unarchive:
