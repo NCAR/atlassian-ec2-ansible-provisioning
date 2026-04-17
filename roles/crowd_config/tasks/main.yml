@@ -18,14 +18,18 @@
   ansible.builtin.command: "dos2unix {{ item.path }}"
   loop: "{{ xml_conf_files.files }}"
       
-#
-#
-#
+
+  
 - name: Create tomcat server.xml
   ansible.builtin.template:
     src: server.xml.j2
     dest: "{{ atl_product_installation_versioned }}/apache-tomcat/conf/server.xml"
 
+- name: Add access logging options
+  ansible.builtin.copy:
+    content: "-Dcrowd.username.header=true -Dcrowd.appname.header=true"
+    dest: "{{ atl_product_installation_versioned }}/apache-tomcat/bin/jvm_custom_opts.d/access_logging"
+    
 #
 # Create index.jsp; make sure it's the only file
 #
@@ -40,12 +44,12 @@
     path: "{{ item.path }}"
     state: absent
   loop: "{{ webapps_files.files }}"
-  when: item.path != "/opt/atlassian/crowd/current/apache-tomcat/webapps/ROOT/index.jsp"
+  when: item.path !=  "{{ atl_product_installation_versioned }}/apache-tomcat/webapps/ROOT/index.jsp"
 
 - name: Ensure the target file exists
   ansible.builtin.copy:
     content: "<meta http-equiv=\"refresh\" content=\"0;url=https://test-crowd.ucar.edu/crowd\"/>\n"
-    dest: "/opt/atlassian/crowd/current/apache-tomcat/webapps/ROOT/index.jsp"
+    dest: "{{ atl_product_installation_versioned }}/apache-tomcat/webapps/ROOT/index.jsp"
     
 - name: Set the minimum heap size (Xms)
   ansible.builtin.lineinfile:

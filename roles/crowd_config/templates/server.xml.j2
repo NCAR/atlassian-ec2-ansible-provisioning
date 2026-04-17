@@ -48,7 +48,7 @@
 		   directory="logs"
 		   prefix="localhost_access_log"
 		   suffix=".log"
-		   pattern="%t %{X-Forwarded-For}i %{User-Agent}i %h %m %r %b %s %I %{X-AUSERNAME}o %{X-AAPPNAME}o" internalProxies="10\..*"/>
+		   pattern="%t %{User-Agent}i %h %{X-Forwarded-For}i %m %r %b %s %I %{X-AUSERNAME}o %{X-AAPPNAME}o" internalProxies="10\..*"/>
         </Engine>
 
         <!-- To connect to an external web server (typically Apache) -->
