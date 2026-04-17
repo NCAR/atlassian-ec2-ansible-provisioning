@@ -39,12 +39,13 @@
     file_type: file
   register: webapps_files
 
+# NB can't use var in conditional, marked as unsafe
 - name: Remove all files except the target file
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: absent
   loop: "{{ webapps_files.files }}"
-  when: item.path !=  "{{ atl_product_installation_versioned }}/apache-tomcat/webapps/ROOT/index.jsp"
+  when: item.path != "/opt/atlassian/crowd/current/apache-tomcat/webapps/ROOT/index.jsp"
 
 - name: Ensure the target file exists
   ansible.builtin.copy:
