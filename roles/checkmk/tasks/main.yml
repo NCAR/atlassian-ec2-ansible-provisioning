@@ -46,7 +46,7 @@
         description: "HTTP Check"
         comment: "Managed by Ansible"
         disabled: false
-      value_raw: "{'host': {'address': '{{ atl_proxy_name }}'}, 'mode': ('url', {'method': 'GET', 'onredirect': 'follow', 'ssl': 'auto', 'uri': '/'}), 'name': '{{ atl_proxy_name }}'}"
+      value_raw: "{'endpoints': [{'service_name': {'prefix': 'auto', 'name': '{{ atl_proxy_name }}'}, 'url': 'https://{{ atl_proxy_name }}'}], 'standard_settings': {}}"
       location:
         folder: "{{ checkmk_agent_folder }}"
         position: "top"
