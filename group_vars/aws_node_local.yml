@@ -263,5 +263,5 @@ checkmk_agent_host_attributes:
 #
 jolokia_port: 8888
 jolokia_agent_download_url: "https://search.maven.org/remotecontent?filepath=org/jolokia/jolokia-agent-jvm/2.5.1/jolokia-agent-jvm-2.5.1-javaagent.jar"
-jolokia_agent_jar: "{{  atl_tomcat_lib_dir }}/jolokia-javaagent.jar"
+jolokia_agent_jar: "{{ atl_tomcat_lib_dir }}/jolokia-javaagent.jar"
 jolokia_checkmk_plugin_url: "https://git.uiowa.edu/accx/check_mk_agent/-/raw/2.0.16/files/plugins/v2.1.0p20/mk_jolokia.py?inline=false"
