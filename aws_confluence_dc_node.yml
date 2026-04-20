@@ -25,8 +25,6 @@
     - role: linux_common
     - role: aws_common
     - role: unbound
-    - role: checkmk.general.agent
-    - role: checkmk_customizations
     - role: product_common
     - role: product_install
       tags: [skip_on_stack_update]
@@ -34,5 +32,6 @@
       tags: [skip_on_stack_update]
     - role: confluence_common
     - role: confluence_config
+    - role: checkmk
     - role: product_startup
     - role: post_run
