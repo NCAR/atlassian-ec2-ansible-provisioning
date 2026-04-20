@@ -19,7 +19,7 @@
 - name: Create checkmk service folder
   checkmk.general.folder:
 #    _terms: "~{{ checkmk_agent_folder }}"
-    path: "/{{ checkmk_agent_folder }}"
+    path: "{{ checkmk_agent_folder }}"
     server_url: "{{ checkmk_agent_server_protocol }}://{{ checkmk_agent_server }}"
     site: "{{ checkmk_agent_site }}"
     api_user: "{{ checkmk_agent_user }}"
