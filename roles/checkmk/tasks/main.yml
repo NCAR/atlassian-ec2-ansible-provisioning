@@ -37,7 +37,7 @@
       conditions:
         host_name:
           match_on:
-            - "{{ ansible_facts['ansible_hostname'] }}"
+            - "{{ ansible_facts.hostname }}"
           operator: "one_of"
         host_tags: []
         host_labels: []
