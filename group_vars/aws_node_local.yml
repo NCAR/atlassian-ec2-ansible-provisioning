@@ -232,7 +232,7 @@ checkmk_registration_secret_arn: "{{ lookup('env', 'CHECKMK_REGISTRATION_SECRET_
 checkmk_registration_credential: "{{ lookup('amazon.aws.aws_secret', checkmk_registration_secret_arn, on_denied='error')}}"
 checkmk_agent_user: "{{ checkmk_registration_credential | json_query('user') }}"
 checkmk_agent_secret: "{{ checkmk_registration_credential | json_query('password') }}"
-
+checkmk_server_url: "{{ checkmk_agent_server_protocol }}://{{ checkmk_agent_server }}"
 
 checkmk_agent_auto_activate: true
 checkmk_agent_force_foreign_changes: true

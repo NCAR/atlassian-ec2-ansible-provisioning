@@ -18,19 +18,43 @@
 
 - name: Create checkmk service folder
   checkmk.general.folder:
-#    _terms: "~{{ checkmk_agent_folder }}"
     path: "{{ checkmk_agent_folder }}"
-    server_url: "{{ checkmk_agent_server_protocol }}://{{ checkmk_agent_server }}"
+    server_url: "{{ checkmk_server_url }}"
     site: "{{ checkmk_agent_site }}"
     api_user: "{{ checkmk_agent_user }}"
     api_secret: "{{ checkmk_agent_secret }}"
     validate_certs: false
-    
+
+- name: Create checkmk active check for the web site
+  checkmk.general.rule:
+    server_url: "{{ checkmk_server_url }}"
+    site: "{{ checkmk_agent_site }}"
+    api_user: "{{ checkmk_agent_user }}"
+    api_secret: "{{ checkmk_agent_secret }}"
+    validate_certs: false
+    ruleset: "active_checks:http"
+    rule:
+      conditions:
+        host_name:
+          match_on:
+            - "{{ ansible_facts['ansible_hostname'] }}"
+          operator: "one_of"
+        host_tags: []
+        host_labels: []
+        service_labels: []
+      properties:
+        description: "HTTP Check"
+        comment: "Managed by Ansible"
+        disabled: false
+      value_raw: "{'host': {'address': '{{ atl_proxy_name }}'}, 'mode': ('url', {'method': 'GET', 'onredirect': 'follow', 'ssl': 'auto', 'uri': '/'}), 'name': '{{ atl_proxy_name }}'}"
+      location:
+        folder: "{{ checkmk_agent_folder }}"
+        position: "top"
+    state: "present"
   
 - name: Import checkmk agent role
   ansible.builtin.import_role:
     name: checkmk.general.agent
-
 
 - name: Download jolokia agent jar
   ansible.builtin.get_url:
