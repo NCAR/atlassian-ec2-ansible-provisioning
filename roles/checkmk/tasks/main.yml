@@ -48,7 +48,7 @@
 - name: Java jolokia startup
   ansible.builtin.copy:
     content: "-javaagent:{{ jolokia_agent_jar }}=port={{ jolokia_port }},host=localhost"
-    dest: "{{ atl_product_installation_versioned }}/bin/jvm_custom_opts.d/jolokia"
+    dest: "{{ atl_jvm_custom_opts_dir }}/jolokia"
 
 - name: Install checkmk jolokia plugin
   ansible.builtin.get_url:
