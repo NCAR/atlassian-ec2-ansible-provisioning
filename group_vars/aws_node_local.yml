@@ -92,7 +92,7 @@ atl_tomcat_connectiontimeout: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL
 atl_tomcat_contextpath: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_CONTEXTPATH', errors='ignore') | default('', true) }}"
 atl_tomcat_enablelookups: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_ENABLELOOKUPS', errors='ignore') | default(false, true) }}"
 atl_tomcat_lib_dir: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_LIB_DIR', errors='ignore') | default('lib', true) }}"
-atl_tomcat_maxthreads: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_MAXTHREADS', errors='ignore') | default(200, true) }}"
+atl_tomcat_maxthreads: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_MAXTHREADS', errors='ignore') | default(160, true) }}"
 atl_tomcat_minsparethreads: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_MINSPARETHREADS', errors='ignore') | default(10, true) }}"
 atl_tomcat_port: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_PORT', errors='ignore') | default(8080, true) }}"
 atl_tomcat_protocol: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_PROTOCOL', errors='ignore') | default('HTTP/1.1', true) }}"
