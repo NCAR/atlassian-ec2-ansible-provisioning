@@ -104,7 +104,7 @@ echo ">>> Finished at: " $(date)
 #
 echo ">>> Adding tags; starting $(date)"
 for bucket_key in $(aws s3 ls --recursive "${bucket_url}/" | awk '{print $4}'); do
-    aws s3api put-object-tagging --bucket $bucket_name --key "${bucket_key}" --tagging $OBJECT_TAGS
+    aws s3api put-object-tagging --bucket $bucket_name --key "${bucket_key}" --tagging "${OBJECT_TAGS}"
 done
 echo ">>> Finished at: " $(date)
 
