@@ -41,7 +41,7 @@ atl_s3_path: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_S3_PATH') }}"
 atl_tomcat_proxyport: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_PROXYPORT') }}"
 
 atl_adminserver_private_dns: "{{ lookup('amazon.aws.aws_ssm', '/infrastructure/adminserver_private_dns') }}"
-
+s3_batch_role_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'S3_BATCH_ROLE_ARN') }}"
 
 # Optionally add explicit entries to hosts file to override DNS for testing
 #atl_enable_hosts_overrides: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_ENABLE_HOSTS_OVERRIDES') | bool }}"
