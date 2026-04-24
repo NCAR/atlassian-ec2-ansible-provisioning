@@ -17,30 +17,32 @@ export TMPDIR=/tmp
 
 bucket_url="{{ atl_s3_path }}backups/$(date --iso-8601=seconds)-${tag}"
 bucket_name=$(echo $bucket_url  | cut -d '/' -f3)
-object_tags=$(cat <<OBJECT_TAGS
+
+object_tags_file=$(mktemp)
+cat << OBJECT_TAGS > $object_tags_file
 {
-  "TagSet": [
-    {
-      "Key": "created_by",
-      "Value": "backup_for_clone.sh"
-    },
-    {
-      "Key": "fqdn",
-      "Value": "{{ atl_proxy_name }}"
-    },
-    {
-      "Key": "product_edition",
-      "Value": "{{ atl_product_edition }}"
-    },
-    {
-      "Key": "version",
-      "Value": "{{ atl_product_version }}"
-    }
-  ]
+  "S3PutObjectTagging": {
+    "TagSet": [
+      {
+        "Key": "created_by",
+        "Value": "backup_for_clone.sh"
+      },
+      {
+        "Key": "fqdn",
+        "Value": "{{ atl_proxy_name }}"
+      },
+      {
+        "Key": "product_edition",
+        "Value": "{{ atl_product_edition }}"
+      },
+      {
+        "Key": "version",
+        "Value": "{{ atl_product_version }}"
+      }
+    ]
+  }
 }
 OBJECT_TAGS
-)
-object_tags_str=$(echo $object_tags | tr -d "\n" | sed -e 's/"/\\"/g')
 
 elapsed_time() {
     s_elapsed=$(($(date '+%s') - $1))
@@ -140,10 +142,11 @@ s3batchtmpfile="${atl_s3_path}${batchtmpfile}"
 for bucket_key in $(aws s3 ls --recursive "${bucket_url}/" | awk '{print $4}'); do
     echo "${bucket_name},${bucket_key}" >> $batchtmpfile
 done
-etag=$(openssl dgst -md5 -hex $batchtmpfile)
+etag=$(md5sum $batchtmpfile | awk '{print $1}')
 aws s3 cp $batchtmpfile $s3batchtmpfile
 
-batch_manifest_spec=$(cat <<SPEC
+batch_manifest_spec_file=$(mktemp)
+cat << SPEC > $batch_manifest_spec_file
 {
   "Spec": {
     "Format": "S3BatchOperations_CSV_20180820",
@@ -155,19 +158,17 @@ batch_manifest_spec=$(cat <<SPEC
   }
 }
 SPEC
-)		      
-batch_manifest_spec_str=$(echo $batch_manifest_spec | tr -d "\n")
 
 aws s3control create-job \
     --account-id $(aws sts get-caller-identity | jq -r .Account) \
-    --operation "{ \"S3PutObjectTagging\": ${object_tags_str}" \
+    --operation "file://${object_tags_file}" \
     --report "{ \"Enabled\": false }" \
-    --manifest "$batch_manifest_spec_str" \
+    --manifest "file://${batch_manifest_spec_file}" \
     --priority 0 \
     --role-arn "{{ s3_batch_role_arn }}"
 
 aws s3 rm $s3batchtmpfile
-rm $batchtmpfile
+rm $object_tags_file $batch_manifest_spec_file
 
 #
 # Finished
