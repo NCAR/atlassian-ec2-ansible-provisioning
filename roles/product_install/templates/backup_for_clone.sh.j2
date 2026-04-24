@@ -138,7 +138,7 @@ echo ">>> Finished backing up home filesystem; elapsed time: " $(elapsed_time $t
 echo ">>> Adding tags to s3 objects"
 t_start=$(date '+%s')
 batchtmpfile=$(mktemp)
-s3batchtmpfile="${atl_s3_path}${batchtmpfile}"
+s3batchtmpfile="{{ atl_s3_path }}${batchtmpfile}"
 for bucket_key in $(aws s3 ls --recursive "${bucket_url}/" | awk '{print $4}'); do
     echo "${bucket_name},${bucket_key}" >> $batchtmpfile
 done
@@ -160,6 +160,7 @@ cat << SPEC > $batch_manifest_spec_file
 SPEC
 
 aws s3control create-job \
+    --no-confirmation-required \
     --account-id $(aws sts get-caller-identity | jq -r .Account) \
     --operation "file://${object_tags_file}" \
     --report "{ \"Enabled\": false }" \
