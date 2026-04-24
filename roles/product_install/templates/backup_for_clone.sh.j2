@@ -40,7 +40,7 @@ object_tags=$(cat <<OBJECT_TAGS
 }
 OBJECT_TAGS
 )
-object_tags_str=$(echo $object_tags | tr -d "\n")
+object_tags_str=$(echo $object_tags | tr -d "\n" | sed -e 's/"/\\"/g')
 
 elapsed_time() {
     s_elapsed=$(($(date '+%s') - $1))
@@ -160,7 +160,7 @@ batch_manifest_spec_str=$(echo $batch_manifest_spec | tr -d "\n")
 
 aws s3control create-job \
     --account-id $(aws sts get-caller-identity | jq -r .Account) \
-    --operation "{ \"S3PutObjectTagging\": ${object_tags_str }" \
+    --operation "{ \"S3PutObjectTagging\": ${object_tags_str}" \
     --report "{ \"Enabled\": false }" \
     --manifest "$batch_manifest_spec_str" \
     --priority 0 \
