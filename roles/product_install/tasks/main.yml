@@ -394,7 +394,8 @@
     group: "{{ atl_product_user }}"
     mode: '0500'
 
-# FIXME need to move these into glacier after a month    
+# These are in addition to AWS Backup, and are moved to s3 Glacier
+# after two weeks and kept forever
 - name: Cron job for nightly backups (this is in addition to AWS Backups managed by pulumi)
   ansible.builtin.cron:
     name: Nightly Backup
