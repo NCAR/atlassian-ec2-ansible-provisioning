@@ -138,11 +138,11 @@ echo ">>> Finished backing up home filesystem; elapsed time: " $(elapsed_time $t
 echo ">>> Adding tags to s3 objects"
 t_start=$(date '+%s')
 batchtmpfile=$(mktemp)
-s3batchtmpfile="{{ atl_s3_path }}${batchtmpfile:1}" 
 for bucket_key in $(aws s3 ls --recursive "${bucket_url}/" | awk '{print $4}'); do
     echo "${bucket_name},${bucket_key}" >> $batchtmpfile
 done
 etag=$(md5sum $batchtmpfile | awk '{print $1}')
+s3batchtmpfile="{{ atl_s3_path }}${batchtmpfile:1}" 
 aws s3 cp $batchtmpfile $s3batchtmpfile
 
 batch_manifest_spec_file=$(mktemp)
@@ -153,7 +153,7 @@ cat << SPEC > $batch_manifest_spec_file
     "Fields": ["Bucket","Key"]
   },
   "Location": {
-    "ObjectArn": "arn:aws:s3:::${s3batchtmpfile}",
+  "ObjectArn": "arn:aws:s3:::${s3batchtmpfile:5}"
     "ETag": "${etag}"
   }
 }
