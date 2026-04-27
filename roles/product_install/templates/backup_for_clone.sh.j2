@@ -38,7 +38,12 @@ cat << OBJECT_TAGS > $object_tags_file
       {
         "Key": "version",
         "Value": "{{ atl_product_version }}"
+      },
+      {
+        "Key": "storage_rule",
+        "Value": "{{ s3_backup_storage_rule }}"
       }
+
     ]
   }
 }
