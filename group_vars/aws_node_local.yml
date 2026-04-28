@@ -174,7 +174,7 @@ atl_rds_master_password: "{{ atl_rds_master_credential['password'] }}"
 
 
 atl_jdbc_credential: "{{ lookup('amazon.aws.aws_secret', atl_dbuser_credential_secret_arn, on_denied='error') | from_json }}"
-atl_jdbc_user: "{{ atl_jdbc_credential['username'] }}"
+atl_jdbc_user: "{{ atl_jdbc_credential['user'] }}"
 atl_jdbc_password: "{{ atl_jdbc_credential['password'] }}"
 
 atl_clone_bucket_root: "{{ atl_clone_bucket }}/{{ atl_proxy_name }}"
