@@ -108,7 +108,7 @@ mycnf=$(/usr/local/bin/create_mycnf.sh)
 
 echo ">>> Backing up database to ${bucket_url}/database"
 t_start=$(date '+%s')
-mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd
+mysqlsh --defaults-file=$mycnf --javascript --file=$mysqlsh_cmd > /dev/null 2>&1
 mysqlsh_status=$?
 rm $mysqlsh_cmd
 rm $mycnf

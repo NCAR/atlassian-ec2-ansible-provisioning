@@ -401,4 +401,19 @@
     name: Nightly Backup
     minute: "30"
     hour: "23"
-    job: "/usr/local/bin/backup_site.sh nightly_backup"
+    job: "/usr/local/bin/backup_site.sh nightly_backup >> /var/log/backup_site.log"
+    
+- name: Rotate log from nightly backup job
+  community.general.logrotate:
+    name: backup_site
+    paths:
+      - /var/log/backup_site.log
+    rotation_period: daily
+    rotate_count: 14
+    compress: true
+    compress_options: "-9"
+    delay_compress: true
+    missing_ok: true
+    not_if_empty: true
+    shared_scripts: true
+    
