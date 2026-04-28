@@ -14,6 +14,7 @@ USAGE
 fi
 
 export TMPDIR=/tmp
+APP_API_TOKEN_SECRET_ARN="{{ app_api_token_secret_arn }}"
 
 bucket_url="{{ atl_s3_path }}backups/$(date --iso-8601=seconds)-${tag}"
 bucket_name=$(echo $bucket_url  | cut -d '/' -f3)
@@ -68,9 +69,10 @@ echo "{{ atl_product_version }}" | aws s3 cp - "${bucket_url}/VERSION"
 # Backup plugin list
 #
 if systemctl is-active --quiet {{ atl_product_family }}; then
-    if ! test -z $ATL_REST_TOKEN; then
+    if ! test -z $APP_API_TOKEN_SECRET_ARN; then
 	echo ">>> Backing up plugin list"
 	t_start=$(date '+%s')
+	export ATL_REST_TOKEN=$(aws secretsmanager get-secret-value --secret-id "${APP_API_TOKEN_SECRET_ARN}" | jq -r '.SecretString')
 	plugins_file=$(mktemp)
 	/usr/local/bin/get_upm_plugins.py {{ atl_proxy_name }} > $plugins_file
 	test $? -eq 0 || exit 1
@@ -80,7 +82,7 @@ if systemctl is-active --quiet {{ atl_product_family }}; then
 	echo ">>> Finished backing up plugin list; elapsed time: " $(elapsed_time $t_start)
     else
 	echo '{}' | aws s3 cp - "${bucket_url}/plugins.json"
-	echo ">>> Can't back up plugins because ATL_REST_TOKEN env var is not set; continuing anyway"
+	echo ">>> Can't back up plugins because APP_API_TOKEN_SECRET_ARN var is not set; continuing anyway"
     fi
 else
     echo '{}' | aws s3 cp - "${bucket_url}/plugins.json"

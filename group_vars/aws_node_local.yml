@@ -103,7 +103,8 @@ atl_tomcat_secure: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_TOMCAT_SEC
 atl_use_aws_secrets_for_db: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_USE_AWS_SECRETS_FOR_DB', errors='ignore') | default(true, true) }}"
 atl_default_tz: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'ATL_DEFAULT_TZ', errors='ignore') | default('America/Denver', true) }}"
 s3_backup_storage_rule: "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + ' s3_backup_storage_rule ', errors='ignore') | default('glacier-after-14', true) }}"
-  
+app_api_token_secret_arn: : "{{ lookup('amazon.aws.aws_ssm', ssm_prefix + 'APP_API_TOKEN_SECRET_ARN', errors='ignore') | default('', true) }}"
+
 #
 # Derived variables
 #
