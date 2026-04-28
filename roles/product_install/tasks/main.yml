@@ -27,7 +27,9 @@
 - name: Confirm marketplace is available
   ansible.builtin.uri:
     url: "{{ atl_marketplace_base }}/healthcheck"
-    status_code: 200
+    status_code:
+      - 200
+      - 202 
     return_content: no
     http_agent: "ansible-httpget_dc-deployments-automation_{{ ansible_play_name }}"
   register: marketplace_healthcheck
