@@ -12,7 +12,7 @@
   ansible.builtin.command: "readlink {{ item.key }}"
   register: nvme_device
 
-- name: "Create an xfs filesystem on /dev/{{ nvme_device,stdout }}"
+- name: "Create an xfs filesystem on /dev/{{ nvme_device.stdout }}"
   community.general.filesystem:
     fstype: "{{ atl_ebs_fstype }}"
     state: present
