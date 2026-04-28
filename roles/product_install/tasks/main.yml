@@ -418,4 +418,4 @@
     missing_ok: true
     not_if_empty: true
     shared_scripts: true
-    
+    su: "root syslog"
