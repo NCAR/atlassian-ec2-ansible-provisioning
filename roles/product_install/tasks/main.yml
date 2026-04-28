@@ -313,10 +313,10 @@
   ansible.builtin.include_tasks: "jira-servicedesk_as_obr.yml"
   when: atl_install_jsd_as_obr | bool
       
-- name: Install backup for clone script
+- name: Install backup_site.sh script
   ansible.builtin.template:
-    src: backup_for_clone.sh.j2
-    dest: "/usr/local/bin/backup_for_clone.sh"
+    src: backup_site.sh.j2
+    dest: "/usr/local/bin/backup_site.sh"
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
