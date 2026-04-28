@@ -313,7 +313,7 @@
 
 - name: Include if jsd is requested to be installed from OBR
   ansible.builtin.include_tasks: "jira-servicedesk_as_obr.yml"
-  when: {{ atl_install_jsd_as_obr | default(false) | bool }}
+  when: atl_install_jsd_as_obr | default(false) | bool
       
 - name: Install backup_site.sh script
   ansible.builtin.template:
