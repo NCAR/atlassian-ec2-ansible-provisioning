@@ -401,4 +401,4 @@
     name: Nightly Backup
     minute: "30"
     hour: "23"
-    job: "/usr/local/bin/backup_for_clone.sh nightly_backup"
+    job: "/usr/local/bin/backup_site.sh nightly_backup"
