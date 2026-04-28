@@ -6,13 +6,13 @@
     - notest
 
 - name: Install Amazon-Linux-specific prerequisites
-  ansible.builtin.include_tasks: "{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}.yml"
+  ansible.builtin.include_tasks: "{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts_['distribution_version'] }}.yml"
   when: ansible_distribution | lower == 'amazon'
 
 - name: Use EC2 instance ID for cluster node ID
   ansible.builtin.set_fact:
-    atl_cluster_node_id: "{{ ansible_ec2_instance_id }}"
-    atl_local_ipv4: "{{ ansible_ec2_local_ipv4 | default(ansible_default_ipv4.address) }}"
+    atl_cluster_node_id: "{{ ansible_facts['ec2_instance_id'] }}"
+    atl_local_ipv4: "{{ ansible_facts['ec2_local_ipv4'] | default(ansible_facts['default_ipv4.address']) }}"
 
 - name: Generate CloudWatch config
   ansible.builtin.template:
