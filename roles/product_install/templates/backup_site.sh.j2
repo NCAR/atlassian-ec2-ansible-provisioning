@@ -20,38 +20,7 @@ APP_API_TOKEN_SECRET_ARN="{{ app_api_token_secret_arn }}"
 bucket_url="{{ atl_s3_path }}backups/$(date --iso-8601=seconds)-${tag}"
 bucket_name=$(echo $bucket_url  | cut -d '/' -f3)
 
-#object_tags_file=$(mktemp)
-# cat << OBJECT_TAGS > $object_tags_file
-# {
-#   "S3PutObjectTagging": {
-#     "TagSet": [
-#       {
-#         "Key": "created_by",
-#         "Value": "backup_for_clone.sh"
-#       },
-#       {
-#         "Key": "fqdn",
-#         "Value": "{{ atl_proxy_name }}"
-#       },
-#       {
-#         "Key": "product_edition",
-#         "Value": "{{ atl_product_edition }}"
-#       },
-#       {
-#         "Key": "version",
-#         "Value": "{{ atl_product_version }}"
-#       },
-#       {
-#         "Key": "storage_rule",
-#         "Value": "{{ s3_backup_storage_rule }}"
-#       }
-
-#     ]
-#   }
-# }
-# OBJECT_TAGS
-
-obect_tags=$(cat << OBJECT_TAGS | jq -c .
+object_tags=$(cat << OBJECT_TAGS | jq -c .
 {
   "S3PutObjectTagging": {
     "TagSet": [
@@ -184,33 +153,7 @@ done
 etag=$(md5sum $batchtmpfile | awk '{print $1}')
 s3batchtmpfile="{{ atl_s3_path }}${batchtmpfile:1}" 
 aws s3 cp $batchtmpfile $s3batchtmpfile
-
-# batch_manifest_spec_file=$(mktemp)
-# cat << SPEC > $batch_manifest_spec_file
-# {
-#   "Spec": {
-#     "Format": "S3BatchOperations_CSV_20180820",
-#     "Fields": ["Bucket","Key"]
-#   },
-#   "Location": {
-#     "ObjectArn": "arn:aws:s3:::${s3batchtmpfile:5}",
-#     "ETag": "${etag}"
-#   }
-# }
-# SPEC
-
-# aws s3control create-job \
-#     --no-confirmation-required \
-#     --account-id $(aws sts get-caller-identity | jq -r .Account) \
-#     --operation "file://${object_tags_file}" \
-#     --report "{ \"Enabled\": false }" \
-#     --manifest "file://${batch_manifest_spec_file}" \
-#     --priority 0 \
-#     --role-arn "{{ s3_batch_role_arn }}"
-
-# aws s3 rm $s3batchtmpfile
-# rm $object_tags_file $batch_manifest_spec_file
-
+rm $batchtmpfile
 
 manifest=$(cat << SPEC | jq -c .
 {
@@ -235,8 +178,9 @@ aws s3control create-job \
     --priority 0 \
     --role-arn "{{ s3_batch_role_arn }}"
 
+# Deleting this seems to sometimes cause failures; racy?
 #aws s3 rm $s3batchtmpfile
-#rm $object_tags_file $batch_manifest_spec_file
+
 echo ">>> Finished adding tags to s3 objects; elapsed time: " $(elapsed_time $t_start)
 
 #
