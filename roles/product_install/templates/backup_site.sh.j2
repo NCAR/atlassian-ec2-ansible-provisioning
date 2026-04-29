@@ -13,6 +13,7 @@ USAGE
    exit 1
 fi
 
+script_start=$(date '+%s')
 export TMPDIR=/tmp
 APP_API_TOKEN_SECRET_ARN="{{ app_api_token_secret_arn }}"
 
@@ -160,7 +161,7 @@ cat << SPEC > $batch_manifest_spec_file
     "Fields": ["Bucket","Key"]
   },
   "Location": {
-  "ObjectArn": "arn:aws:s3:::${s3batchtmpfile:5}"
+    "ObjectArn": "arn:aws:s3:::${s3batchtmpfile:5}",
     "ETag": "${etag}"
   }
 }
@@ -177,13 +178,13 @@ aws s3control create-job \
 
 aws s3 rm $s3batchtmpfile
 rm $object_tags_file $batch_manifest_spec_file
+echo ">>> Finished adding tags to s3 objects; elapsed time: " $(elapsed_time $t_start)
 
 #
 # Finished
 #
-echo ">>> Finished adding tags to s3 objects; elapsed time: " $(elapsed_time $t_start)
 echo
-echo "Total elapsed time: " $(elapsed_time SECONDS)
+echo "Total elapsed time: " $(elapsed_time $script_start)
 echo "S3 backup URL is: ${bucket_url}"
 
 
