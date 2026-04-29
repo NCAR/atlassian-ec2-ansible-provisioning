@@ -6,8 +6,15 @@ if [ -z "$tag" ] || [ "$tag" = "-h" ]; then
 $0 tag
 
 Backup site for future restore or clone with restore_site.sh script.
-If the environment variable ATL_REST_TOKEN is set with an admin user's
-REST API token, the script will back up plugins.
+
+Backups will be named for the tag plus a date string, and will be
+dumped to the S3 bucket under the key __SITE_FQDN__/backups.
+
+In order to back up plugins, an admin REST API token must be provided
+in AWS secretsmanager. The secret is created by the pulumi stack and
+the ARN is listed in the pulumi stack output as "secret
+app_api_token_secret_arn". The secret must be manually populated with
+the API REST token.
 
 USAGE
    exit 1
