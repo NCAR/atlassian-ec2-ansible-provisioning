@@ -56,7 +56,7 @@ elapsed_time() {
     printf '%dh:%dm:%ds\n' $(($s_elapsed/3600)) $(($s_elapsed%3600/60)) $(($s_elapsed%60))
 }
 
-echo ">>> Backing up to $bucket_url"
+echo ">>>> Backing up to $bucket_url at $(date) <<<<"
 
 # Whatever version of the AWS API that mysqlsh is using, it needs
 # credentials in env vars instead of the instance role
@@ -64,7 +64,7 @@ aws_env_vars=$(/usr/local/bin/aws_env_credentials_from_instance_role.sh)
 source $aws_env_vars
 rm $aws_env_vars
 
-echo "{{ atl_product_version }}" | aws s3 cp - "${bucket_url}/VERSION"
+echo "{{ atl_product_version }}" | aws s3 cp - "${bucket_url}/VERSION" >/dev/null 2>&
 
 #
 # Backup plugin list
@@ -186,7 +186,7 @@ echo ">>> Finished adding tags to s3 objects; elapsed time: " $(elapsed_time $t_
 echo
 echo "Total elapsed time: " $(elapsed_time $script_start)
 echo "S3 backup URL is: ${bucket_url}"
-
+echo ">>>> Finishged at $(date) <<<<"
 
 
 
