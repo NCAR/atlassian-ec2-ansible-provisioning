@@ -64,7 +64,8 @@ aws_env_vars=$(/usr/local/bin/aws_env_credentials_from_instance_role.sh)
 source $aws_env_vars
 rm $aws_env_vars
 
-echo "{{ atl_product_version }}" | aws s3 cp - "${bucket_url}/VERSION" >/dev/null 2>&
+echo ">>> Copying product version"
+echo "{{ atl_product_version }}" | aws s3 cp - "${bucket_url}/VERSION"
 
 #
 # Backup plugin list
