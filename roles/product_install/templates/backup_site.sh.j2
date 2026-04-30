@@ -77,25 +77,30 @@ echo "{{ atl_product_version }}" | aws s3 cp - "${bucket_url}/VERSION"
 #
 # Backup plugin list
 #
-if systemctl is-active --quiet {{ atl_product_family }}; then
-    if ! test -z $APP_API_TOKEN_SECRET_ARN; then
-	echo ">>> Backing up plugin list"
-	t_start=$(date '+%s')
-	export ATL_REST_TOKEN=$(aws secretsmanager get-secret-value --secret-id "${APP_API_TOKEN_SECRET_ARN}" | jq -r '.SecretString')
-	plugins_file=$(mktemp)
-	/usr/local/bin/get_upm_plugins.py {{ atl_proxy_name }} > $plugins_file
-	test $? -eq 0 || exit 1
-	aws s3 cp $plugins_file "${bucket_url}/plugins.json"
-	rm $plugins_file
-	
-	echo ">>> Finished backing up plugin list; elapsed time: " $(elapsed_time $t_start)
-    else
-	echo '{}' | aws s3 cp - "${bucket_url}/plugins.json"
-	echo ">>> Can't back up plugins because APP_API_TOKEN_SECRET_ARN var is not set; continuing anyway"
-    fi
-else
-    echo '{}' | aws s3 cp - "${bucket_url}/plugins.json"
+echo '{}' | aws s3 cp - "${bucket_url}/plugins.json" # Default to empty plugin list
+if ! systemctl is-active --quiet {{ atl_product_family }}; then
     echo ">>> Can't back up plugins because service isn't running so no access to REST API; continuing anyway"
+else
+    if test -z $APP_API_TOKEN_SECRET_ARN; then
+	echo ">>> Can't back up plugins because APP_API_TOKEN_SECRET_ARN var is not set; continuing anyway"
+    else
+	export ATL_REST_TOKEN=$(aws secretsmanager get-secret-value --secret-id "${APP_API_TOKEN_SECRET_ARN}" | jq -r '.SecretString')
+	if test -z $ATL_REST_TOKEN; then
+	    echo ">>> Can't back up plugins because ATL_REST_TOKEN var is empty; continuing anyway"
+	else
+	    echo ">>> Backing up plugin list"
+	    t_start=$(date '+%s')
+	    plugins_file=$(mktemp)
+	    /usr/local/bin/get_upm_plugins.py {{ atl_proxy_name }} > $plugins_file
+	    if test $? -ne 0; then
+		echo ">>> !!! FAILED to get plugins; script \"get_upm_plugins.py\" exited with error; continuing anyway"
+	    else
+		aws s3 cp $plugins_file "${bucket_url}/plugins.json"
+		rm $plugins_file
+		echo ">>> Finished backing up plugin list; elapsed time: " $(elapsed_time $t_start)
+	    fi
+	fi
+    fi
 fi
 
 #
