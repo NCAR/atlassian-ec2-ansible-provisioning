@@ -89,8 +89,8 @@
   block:
     - name: Install mk-sql plugin file
       ansible.builtin.get_url:
-        url: "{{ checkmk_server_url }}/{{ checkmk_agent_site }}/check_mk/agents/plugins/mk-sql"
-        dest: /usr/lib/check_mk_agent/plugins/mk-sql
+        url: "{{ checkmk_server_url }}/{{ checkmk_agent_site }}/check_mk/agents/plugins/mk_mysql"
+        dest: /usr/lib/check_mk_agent/plugins/mk_mysql
         mode: "0750"
         owner: "{{ checkmk_agent_user }}"
         group: "{{ checkmk_agent_user }}"
