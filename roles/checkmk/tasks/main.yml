@@ -79,3 +79,33 @@
     url: "{{ jolokia_checkmk_plugin_url }}"
     dest: /usr/lib/check_mk_agent/plugins/mk_jolokia.py
     mode: "0755"
+
+- name: Register status of mk-sql config file
+  ansible.builtin.stat:
+    path: /usr/lib/check_mk_agent/plugins/mk-sql
+  register: mk_sql_plugin
+
+- name: Install mk-sql plugin for mysql monitoring
+  block:
+    - name: Install mk-sql plugin file
+      ansible.builtin.get_url:
+        url: "{{ checkmk_server_url }}/{{ checkmk_agent_site }}/check_mk/agents/plugins/mk-sql"
+        dest: /usr/lib/check_mk_agent/plugins/mk-sql
+        mode: "0750"
+        owner: "{{ checkmk_agent_user }}"
+        group: "{{ checkmk_agent_user }}"
+    - name: Create mycnf for mk-sql
+      ansible.builtin.command: /usr/local/bin/create_mycnf.sh
+      register: mk_sql_cnf_tmp_path
+    - name: Move mycnf for mk-sql into config directory
+      ansible.builtin.command: "mv {{  mk_sql_cnf_tmp_path }} /etc/check_mk/mysql.cfg"
+    - name: Set ownership/perms for mk-sql config file
+      ansible.builtin.file:
+        path: /etc/check_mk/mysql.cfg
+        owner: "{{ checkmk_agent_user }}"
+        group: "{{ checkmk_agent_user }}"
+        mode: "0400"
+  when: not mk_sql_plugin.stat.exists
+
+  
+  
