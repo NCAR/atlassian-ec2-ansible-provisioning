@@ -82,30 +82,29 @@
 
 - name: Register status of mk-sql config file
   ansible.builtin.stat:
-    path: /usr/lib/check_mk_agent/plugins/mk-sql
+    path: /usr/lib/check_mk_agent/plugins/mk_mysql
   register: mk_sql_plugin
 
-- name: Install mk-sql plugin for mysql monitoring
-  block:
-    - name: Install mk-sql plugin file
-      ansible.builtin.get_url:
-        url: "{{ checkmk_server_url }}/{{ checkmk_agent_site }}/check_mk/agents/plugins/mk_mysql"
-        dest: /usr/lib/check_mk_agent/plugins/mk_mysql
-        mode: "0750"
-        owner: checkmk
-        group: checkmk
-    - name: Create mycnf for mk-sql
-      ansible.builtin.command: /usr/local/bin/create_mycnf.sh
-      register: mk_sql_cnf_tmp_path
-    - name: Move mycnf for mk-sql into config directory
-      ansible.builtin.command: "mv {{  mk_sql_cnf_tmp_path }} /etc/check_mk/mysql.cfg"
-    - name: Set ownership/perms for mk-sql config file
-      ansible.builtin.file:
-        path: /etc/check_mk/mysql.cfg
-        owner: checkmk
-        group: checkmk
-        mode: "0400"
+- name: Install mk-sql plugin file
+  ansible.builtin.get_url:
+    url: "{{ checkmk_server_url }}/{{ checkmk_agent_site }}/check_mk/agents/plugins/mk_mysql"
+    dest: /usr/lib/check_mk_agent/plugins/mk_mysql
+    mode: "0750"
+    owner: checkmk
+    group: checkmk
   when: not mk_sql_plugin.stat.exists
+  
+- name: Create mycnf for mk-sql
+  ansible.builtin.shell:
+    cmd: |
+      mv $(/usr/local/bin/create_mycnf.sh) /etc/check_mk/mysql.cfg
+      chown checkmk:checkmk /etc/check_mk/mysql.cfg
+      chmod 400 /etc/check_mk/mysql.cfg
+    creates: /etc/check_mk/mysql.cfg
+
+    
+
+
 
   
   
