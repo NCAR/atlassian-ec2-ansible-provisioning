@@ -92,8 +92,8 @@
         url: "{{ checkmk_server_url }}/{{ checkmk_agent_site }}/check_mk/agents/plugins/mk_mysql"
         dest: /usr/lib/check_mk_agent/plugins/mk_mysql
         mode: "0750"
-        owner: "{{ checkmk_agent_user }}"
-        group: "{{ checkmk_agent_user }}"
+        owner: checkmk
+        group: checkmk
     - name: Create mycnf for mk-sql
       ansible.builtin.command: /usr/local/bin/create_mycnf.sh
       register: mk_sql_cnf_tmp_path
@@ -102,8 +102,8 @@
     - name: Set ownership/perms for mk-sql config file
       ansible.builtin.file:
         path: /etc/check_mk/mysql.cfg
-        owner: "{{ checkmk_agent_user }}"
-        group: "{{ checkmk_agent_user }}"
+        owner: checkmk
+        group: checkmk
         mode: "0400"
   when: not mk_sql_plugin.stat.exists
 
