@@ -90,8 +90,6 @@
     url: "{{ checkmk_server_url }}/{{ checkmk_agent_site }}/check_mk/agents/plugins/mk_mysql"
     dest: /usr/lib/check_mk_agent/plugins/mk_mysql
     mode: "0750"
-    owner: checkmk
-    group: checkmk
   when: not mk_sql_plugin.stat.exists
   
 - name: Create mycnf for mk-sql
