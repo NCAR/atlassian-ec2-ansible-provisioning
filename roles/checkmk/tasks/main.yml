@@ -96,7 +96,6 @@
   ansible.builtin.shell:
     cmd: |
       mv $(/usr/local/bin/create_mycnf.sh) /etc/check_mk/mysql.cfg
-      chown checkmk:checkmk /etc/check_mk/mysql.cfg
       chmod 400 /etc/check_mk/mysql.cfg
     creates: /etc/check_mk/mysql.cfg
 
