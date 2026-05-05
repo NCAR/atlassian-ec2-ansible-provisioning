@@ -222,7 +222,7 @@ atl_upm_cert_bundles:
 #
 checkmk_agent_version: 2.4.0p21
 checkmk_agent_edition: cre
-checkmk_agent_server_protocol: https
+checkmk_agent_server_protocol: http
 checkmk_agent_server: "{{ atl_adminserver_private_dns }}"
 
 #checkmk_agent_server_port: 8001
