@@ -99,9 +99,8 @@
       chmod 400 /etc/check_mk/mysql.cfg
     creates: /etc/check_mk/mysql.cfg
 
-    
-
-
-
-  
-  
+- name: Install checkmk plugin upgradeable_packages
+  ansible.builtin.copy:
+    src: upgradeable_packages.pl
+    dest: /usr/lib/check_mk_agent/local/upgradeable_packages.pl
+    mode: '0500'
