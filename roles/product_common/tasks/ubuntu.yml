@@ -42,8 +42,8 @@
     name:
       - fonts-dejavu-core  # Required by installer
 
-- name: Install script to hold packages
-  ansible.builtin.template:
-    src: hold_pkgs.sh.j2
-    dest: /usr/local/bin/hold_pkgs.sh
-    mode: 0750
+# - name: Install script to hold packages
+#   ansible.builtin.template:
+#     src: hold_pkgs.sh.j2
+#     dest: /usr/local/bin/hold_pkgs.sh
+#     mode: 0750
