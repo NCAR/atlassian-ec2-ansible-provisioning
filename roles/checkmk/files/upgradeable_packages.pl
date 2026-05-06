@@ -8,6 +8,19 @@ use English;
 
 my $check_name = "upgradeable_packages";
 
+# Get list of deferred-for-phasing packages
+my $deferred = {};
+open(my $apt_get_fh, 'apt-get --dry-run upgrade 2>/dev/null |') 
+    or ( print("3 $check_name - Failed to open pipe from \"apt-get --dry-run upgrade\"\n") and exit(1) );
+while (my $line = <$apt_get_fh>) {
+    if( $line =~ /deferred due to phasing/ ){
+	my @dp = split(/\s+/, <$apt_get_fh>);
+	for my $p (@dp) {
+	    $deferred->{$p} = '';
+	}
+    }
+}
+    
 
 open(my $apt_fh, 'apt list --upgradable 2>/dev/null |') 
     or ( print("3 $check_name - Failed to open pipe from \"apt list\"\n") and exit(1) );
@@ -19,10 +32,10 @@ while (my $line = <$apt_fh>) {
 	my $package = $1;
 	my $repos = $2;
 	if( $repos =~ /security/i ){
-	    push(@security_updates, $package);
+	    push(@security_updates, $package) unless defined($deferred->{$package});
 	}
 	else {
-	    push(@regular_updates, $package);
+	    push(@regular_updates, $package) unless defined($deferred->{$package});
 	}
     };
 }
@@ -36,4 +49,3 @@ elsif( @regular_updates ){
 else {
     print("0 $check_name - No pending updates\n");
 }
-
