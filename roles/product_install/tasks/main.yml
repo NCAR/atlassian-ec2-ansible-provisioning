@@ -31,7 +31,7 @@
       - 200
       - 202 
     return_content: no
-    http_agent: "ansible-httpget_dc-deployments-automation_{{ ansible_play_name }}"
+    http_agent: "ansible-httpget_dc-deployments-automation_{{ ansible_facts['play_name'] }}"
   # register: marketplace_healthcheck
   # until: marketplace_healthcheck.status == 200
   # retries: 5
@@ -199,8 +199,8 @@
     # optionally grab basic_auth creds from secrets_manager secret called 'download_atlassian'
     - name: set basic_auth facts if the secret exists
       ansible.builtin.set_fact:
-        download_atlassian_password: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.password', region=ansible_ec2_placement_region, bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
-        download_atlassian_username: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.username', region=ansible_ec2_placement_region, bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
+        download_atlassian_password: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.password', region=ansible_facts['ec2_placement_region'], bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
+        download_atlassian_username: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.username', region=ansible_facts['ec2_placement_region'], bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
       failed_when: false
       ignore_errors: yes
       no_log: true
