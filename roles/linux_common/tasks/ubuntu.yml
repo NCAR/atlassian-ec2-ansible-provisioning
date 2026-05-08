@@ -40,3 +40,10 @@
        && git pull \
        && ansible-galaxy collection install --requirements-file requirements.yml \
        && for pb in $ATL_PLAYBOOKS; do ansible-playbook -i inv/aws_node_local $pb; done)'
+
+- name: Mitigations for kernel vuln Dirty Frag
+  ansible.builtin.copy:
+    content: "install esp4 /bin/false\ninstall esp6 /bin/false\ninstall rxrpc /bin/false\n"
+    dest: /etc/modprobe.d/mitigate_dirty_frag.conf
+    mode: '0644'
+    
