@@ -205,7 +205,7 @@
       ignore_errors: yes
       no_log: true
       when:
-        - ansible_ec2_placement_region is defined
+        - ansible_facts['ec2_placement_region'] is defined
         - atl_download_secret_name is defined
       tags:
         - runtime_pkg
