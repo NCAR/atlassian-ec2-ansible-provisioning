@@ -23,7 +23,7 @@ case $ACTION in
 	if test -e $tomcat_var_file; then
 	    echo 'REST API already enabled for upm plugin install'
 	else
-	    echo '-Dupm.plugin.upload.enabled=true' > $tomcat_var_file
+	    echo ' -Dupm.plugin.upload.enabled=true ' > $tomcat_var_file
 	fi
 	;;
     *)

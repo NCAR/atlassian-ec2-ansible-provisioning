@@ -21,7 +21,7 @@ case $ACTION in
 	    exit 1
 	else
 	    recovery_admin_password=$(pwgen -s 32 1)
-	    echo "-Datlassian.recovery.password='$recovery_admin_password'" > $tomcat_var_file
+	    echo " -Datlassian.recovery.password='$recovery_admin_password' " > $tomcat_var_file
 	    echo "recovery_admin password is: $recovery_admin_password"
 	fi
 	echo "When confluence is restarted, find recovery admin user name like this:"

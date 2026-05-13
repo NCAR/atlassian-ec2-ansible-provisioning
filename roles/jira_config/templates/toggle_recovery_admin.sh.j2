@@ -19,7 +19,7 @@ case $ACTION in
 	    echo "recovery_admin user already enabled; password is: ${recovery_admin_password}"
 	else
 	    recovery_admin_password=$(pwgen -s 32 1)
-	    echo "-Datlassian.recovery.password='$recovery_admin_password' -Datlassian.authentication.legacy.mode=true" > $tomcat_var_file
+	    echo " -Datlassian.recovery.password='$recovery_admin_password' -Datlassian.authentication.legacy.mode=true " > $tomcat_var_file
 	    echo "recovery_admin password is: $recovery_admin_password"
 	    
 	    # Toggle internal directory on, external off
