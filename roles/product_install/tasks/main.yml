@@ -322,7 +322,7 @@
     owner: "{{ atl_product_user }}"
     group: "{{ atl_product_user }}"
     mode: '0500'
-    tags: install_backup_script
+  tags: install_backup_script
 
 - name: Install restore_site.sh script
   ansible.builtin.template:
