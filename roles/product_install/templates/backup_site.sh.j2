@@ -158,7 +158,7 @@ echo ">>> Finished backing up home filesystem; elapsed time: " $(elapsed_time $t
 #
 echo ">>> Backing up product software filesystem"
 t_start=$(date '+%s')
-productdir="{{ atl_product_installation_base }}"
+productdir="{{ atl_installation_base }}"
 product_size=$(df --output=used -B 1 $productdir | grep -v Used)
 echo ">>> Expected size of product software backup (for aws cp): ${product_size}"
 tar --one-file-system \
