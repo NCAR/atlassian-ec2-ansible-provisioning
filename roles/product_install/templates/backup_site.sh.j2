@@ -136,7 +136,7 @@ fi
 echo ">>> Finished backing up database; elapsed time: " $(elapsed_time $t_start)
 
 #
-# FS backup; use tar to preserve symlinks
+# Home filesystem backup; use tar to preserve symlinks
 #
 echo ">>> Backing up home filesystem"
 t_start=$(date '+%s')
@@ -152,6 +152,21 @@ tar --one-file-system \
     --use-compress-program='/usr/bin/zstd -T$(nproc)' \
     --file - . | aws s3 cp - "${bucket_url}/home.zst" --expected-size $home_size
 echo ">>> Finished backing up home filesystem; elapsed time: " $(elapsed_time $t_start)
+
+#
+# Software filesystem backup
+#
+echo ">>> Backing up product software filesystem"
+t_start=$(date '+%s')
+productdir="{{ atl_product_installation_base }}"
+product_size=$(df --output=used -B 1 $productdir | grep -v Used)
+echo ">>> Expected size of product software backup (for aws cp): ${product_size}"
+tar --one-file-system \
+    --directory $productdir \
+    --create \
+    --use-compress-program='/usr/bin/zstd -T$(nproc)' \
+    --file - . | aws s3 cp - "${bucket_url}/product_software.zst" --expected-size $product_size
+echo ">>> Finished backing up product software filesystem; elapsed time: " $(elapsed_time $t_start)
 
 #
 # Add tags
