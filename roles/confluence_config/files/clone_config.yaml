@@ -46,6 +46,7 @@ clone:
 refresh:
   filesystem:
     retained:
+      - '*/authentication-plugin-keys/*'
       - '*/confluence.cfg.xml'
       - '*/synchrony-args.properties'
       - '*/keys/*'
