@@ -94,9 +94,11 @@ echo ">> Restoring home directory from clone backup"
 retained_files="${TEMPDIR}/retained_files_list"
 retained_files_tar="${TEMPDIR}/retained_files.zst"
 if [ "$clone_mode" != "raw" ]; then
+    set -f  # Disable globbing for patterns
     for pattern in $(yq -r ".${clone_mode}.filesystem.retained[]" /var/clone_config.yaml); do
 	(cd {{ atl_product_home }}; find . -type f -wholename "$pattern" >> $retained_files)
     done
+    set +f
 
     if test -e $retained_files; then
 	echo ">>> Retaining files: "
