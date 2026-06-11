@@ -55,7 +55,6 @@ refresh:
   database:
     retained:
       tables:
-        - 'cwd_%'
         - AO_ED669C_IDP_CONFIG
         - BANDANA
       queries: {}
