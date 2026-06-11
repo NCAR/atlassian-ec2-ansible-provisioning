@@ -48,16 +48,18 @@ clone:
 refresh:
   filesystem:
     retained:
+      - '*/authentication-plugin-keys/*'
       - '*/cluster.properties'
       - '*/dbconfig.xml'
+      - '*/jira.jks'
       - '*/keys/*'
       - '*/secrets-config.yaml'
       - '*/secured/*'
+
       # - '*/filestore-config.yaml' # For s3 attachments 
   database:
     retained:
       tables:
-        - 'cwd_%'
         - AO_ED669C_IDP_CONFIG
         - mailserver
       queries:
