@@ -18,7 +18,9 @@
 atl_proxy_name: "{{ lookup('env', 'ATL_PROXY_NAME') }}"
 atl_playbooks: "{{ lookup('env', 'ATL_PLAYBOOKS') }}"
 atl_aws_region: "{{ lookup('env', 'AWS_REGION') }}"
-ssm_path: "{{ lookup('env', 'SSM_PATH') }}"
+pulumi_stack: "{{ lookup('env', 'PULUMI_STACK') }}"
+
+ssm_path: "/{{ pulumi_stack }}/{{ atl_proxy_name }}/"
 
 #
 # Vars from ssm (mandatory)
@@ -40,7 +42,7 @@ atl_rds_master_credential_secret_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_path 
 atl_s3_path: "{{ lookup('amazon.aws.aws_ssm', ssm_path + 'ATL_S3_PATH') }}"
 atl_tomcat_proxyport: "{{ lookup('amazon.aws.aws_ssm', ssm_path + 'ATL_TOMCAT_PROXYPORT') }}"
 
-atl_adminserver_private_dns: "{{ lookup('amazon.aws.aws_ssm', '/infrastructure/adminserver_private_dns') }}"
+atl_adminserver_private_dns: "{{ lookup('amazon.aws.aws_ssm', '/{{ pulumi_stack }}/infrastructure/adminserver_private_dns') }}"
 s3_batch_role_arn: "{{ lookup('amazon.aws.aws_ssm', ssm_path + 'S3_BATCH_ROLE_ARN') }}"
 
 
