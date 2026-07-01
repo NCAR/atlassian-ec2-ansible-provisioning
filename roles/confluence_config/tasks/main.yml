@@ -93,11 +93,13 @@
     recurse: true
   changed_when: false  # For Molecule idempotence check
 
+# Per  https://support.atlassian.com/confluence/kb/how-to-set-file-system-permissions-for-confluence-data-center/
+# confluence needs to own its software directories
 - name: Limit permissions on the installation directory, non-recursively
   ansible.builtin.file:
     path: "{{ atl_product_installation_versioned }}"
-    owner: "root"
-    group: "root"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
     mode: "u=rwX,g=rX,o=rX"
   changed_when: false  # For Molecule idempotence check
 
@@ -112,8 +114,8 @@
 - name: Limit permissions on files and directories in the installation directory, recursively, excluding working directories
   ansible.builtin.file:
     path: "{{ item.path }}"
-    owner: "root"
-    group: "root"
+    owner: "{{ atl_product_user }}"
+    group: "{{ atl_product_user }}"
     mode: "u=rwX,g=rX,o=rX"
     recurse: "{{ item.isdir }}"
   loop: "{{ atl_product_installation_versioned_file_list.files }}"
