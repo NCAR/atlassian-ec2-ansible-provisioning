@@ -113,6 +113,9 @@
     - "{{ atl_product_shared_plugins }}"
   changed_when: false  # For Molecule idempotence check
 
+#
+# App signing certs
+#
 - name: Create /upmconfig/truststore directory hierarchy + import
   ansible.builtin.file:
     path: "{{ item }}"
