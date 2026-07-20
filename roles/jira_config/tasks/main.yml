@@ -96,7 +96,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: 0750
+    mode: 0755
     owner: root
     group: "{{ atl_product_user }}"
   with_items:
@@ -110,7 +110,7 @@
     dest: "{{ atl_product_home }}/upmconfig/truststore"
     owner: root
     group: "{{ atl_product_user }}"
-    mode: '640'
+    mode: '644'
     remote_src: yes
   with_items: "{{ atl_upm_cert_bundles }}"
 
