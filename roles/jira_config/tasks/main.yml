@@ -5,10 +5,10 @@
 #     dest: "{{ atl_product_home }}/cluster.properties"
 #     owner: "{{ atl_product_user }}"
 
-# - name: Ensure cluster config file is ABSENT
-#   ansible.builtin.file:
-#     path: "{{ atl_product_home }}/cluster.properties"
-#     state: absent
+- name: Ensure cluster config file is ABSENT
+  ansible.builtin.file:
+    path: "{{ atl_product_home }}/cluster.properties"
+    state: absent
 
 - name: Create server config
   ansible.builtin.template:
@@ -100,8 +100,8 @@
     owner: root
     group: "{{ atl_product_user }}"
   with_items:
-    - "{{ atl_product_home_shared }}/upmconfig"
-    - "{{ atl_product_home_shared }}/upmconfig/truststore"
+    - "{{ atl_product_home }}/upmconfig"
+    - "{{ atl_product_home }}/upmconfig/truststore"
     - "{{ atl_product_home_shared }}/import"
 
 - name: Install Atlassian UPM cert bundles   
