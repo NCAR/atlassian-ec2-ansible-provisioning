@@ -1,9 +1,14 @@
 ---
-- name: Create cluster config
-  ansible.builtin.template:
-    src: cluster.properties.j2
-    dest: "{{ atl_product_home }}/cluster.properties"
-    owner: "{{ atl_product_user }}"
+# - name: Create cluster config
+#   ansible.builtin.template:
+#     src: cluster.properties.j2
+#     dest: "{{ atl_product_home }}/cluster.properties"
+#     owner: "{{ atl_product_user }}"
+
+# - name: Ensure cluster config file is ABSENT
+#   ansible.builtin.file:
+#     path: "{{ atl_product_home }}/cluster.properties"
+#     state: absent
 
 - name: Create server config
   ansible.builtin.template:
