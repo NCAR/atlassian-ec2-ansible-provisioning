@@ -87,7 +87,7 @@
     - "{{ atl_product_home }}"
     - "{{ atl_product_home_shared }}"
     - "{{ atl_product_shared_plugins }}"
-  changed_when: false  # For Molecule idempotence check
+    - "{{ atl_product_home_shared }}/import"
 
 #
 # App signing certs
@@ -102,7 +102,6 @@
   with_items:
     - "{{ atl_product_home }}/upmconfig"
     - "{{ atl_product_home }}/upmconfig/truststore"
-    - "{{ atl_product_home_shared }}/import"
 
 - name: Install Atlassian UPM cert bundles   
   ansible.builtin.unarchive:

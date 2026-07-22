@@ -9,10 +9,10 @@
     group: "{{ atl_product_user }}"
   with_items:
     - "{{ atl_product_home }}"
+    - "{{ atl_product_home }}/import"
     - "{{ atl_product_home_shared }}"
     - "{{ atl_product_home_shared }}/attachments"
     - "{{ atl_product_shared_plugins }}"
-  changed_when: false  # For Molecule idempotence check
 
 # # Create symlink to force single (unclustered) Confluence to store
 # # shared-data and attachments in the shared drive.
@@ -29,7 +29,6 @@
 #     - {src: "{{ atl_product_home_shared }}/", dest: "{{ atl_product_home }}/shared-home"}
 #     - {src: "{{ atl_product_home_shared }}/attachments/", dest: "{{ atl_product_home }}/attachments"}
 
-
 #
 # App signing certs
 #
@@ -43,7 +42,6 @@
   with_items:
     - "{{ atl_product_home }}/upmconfig"
     - "{{ atl_product_home }}/upmconfig/truststore"
-    - "{{ atl_product_home }}/import"
 
 - name: Install Atlassian UPM cert bundles   
   ansible.builtin.unarchive:
