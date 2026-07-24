@@ -81,7 +81,7 @@
     timeout: 600
     
 - name: Create application DB user
-  mysql_user:
+  ansible.mysql.mysql_user:
     config_file: ""
     login_host: "{{ atl_db_host }}"
     login_user: "{{ atl_rds_master_user }}"
@@ -98,7 +98,7 @@
 # idempotence can not be relied upon as we cant be certain the
 # collation of the existing db
 - name: Create new application database
-  mysql_db:
+  ansible.mysql.mysql_db:
     config_file: ""
     login_host: "{{ atl_db_host }}"
     login_user: "{{ atl_rds_master_user }}"
