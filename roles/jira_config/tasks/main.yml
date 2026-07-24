@@ -92,7 +92,7 @@
 #
 # App signing certs
 #
-- name: Create /upmconfig/truststore directory hierarchy + import
+- name: Create /upmconfig/truststore directory hierarchy
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory

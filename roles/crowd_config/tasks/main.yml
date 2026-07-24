@@ -28,7 +28,7 @@
 - name: Add access logging options
   ansible.builtin.copy:
     content: "-Dcrowd.username.header=true -Dcrowd.appname.header=true"
-    dest: "{{ atl_product_installation_versioned }}/apache-tomcat/bin/jvm_custom_opts.d/access_logging"
+    dest: "{{ atl_jvm_custom_opts_dir }}/access_logging"
     
 #
 # Create index.jsp; make sure it's the only file

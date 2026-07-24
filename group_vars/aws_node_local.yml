@@ -128,6 +128,10 @@ atl_installer_temp: "{{ atl_installation_base }}/tmp"
 atl_java_home: "{{ '/usr/lib/jvm/java' if atl_use_system_jdk | bool else (atl_product_installation_current + '/jre') }}"
 atl_java_binary: "{{ atl_java_home }}/bin/java"
 
+# This needs to be outside of the current versioned directory so opts
+# carry over after upgrades
+atl_jvm_custom_opts_dir: "{{ atl_product_installation_base }}/jvm_custom_opts"
+
 atl_product_logs_default: &logs_default
   - path: "{{ atl_product_installation_current }}/logs/*"
     type: product
@@ -170,7 +174,6 @@ atl_product_jvm_bindir_map:
   jira: "{{ atl_product_installation_current }}/bin"
   crowd: "{{ atl_product_installation_current }}/apache-tomcat/bin"
 atl_product_jvm_bindir: "{{ atl_product_jvm_bindir_map[atl_product_family] }}"
-atl_jvm_custom_opts_dir: "{{ atl_product_jvm_bindir }}/jvm_custom_opts.d"
 
 atl_rds_master_credential: "{{ lookup('amazon.aws.aws_secret', atl_rds_master_credential_secret_arn, on_denied='error') | from_json }}"
 atl_rds_master_user: "{{ atl_rds_master_credential['username'] }}"
