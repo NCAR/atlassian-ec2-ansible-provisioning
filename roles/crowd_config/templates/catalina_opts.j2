@@ -4,5 +4,5 @@ CATALINA_OPTS="${CATALINA_OPTS} -{{ item }}"
 
 CATALINA_OPTS="${CATALINA_OPTS} -Dcluster.node.name={{ ansible_facts['ec2_instance_id'] }}-{{ ansible_facts['ec2_local_ipv4'] }}"
 
-JVM_CUSTOM_ARGS=$(cat {{ atl_jvm_custom_opts_dir }}/* 2>/dev/null  | tr "\n" " ")
+JVM_CUSTOM_ARGS=$(awk 1 {{ atl_jvm_custom_opts_dir }}/* 2>/dev/null  | tr "\n" " ")
 CATALINA_OPTS="${CATALINA_OPTS} ${JVM_CUSTOM_ARGS}"
