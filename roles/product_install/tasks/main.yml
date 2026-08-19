@@ -196,19 +196,19 @@
 - name: download_binary is true so fetch and do all the things
   block:
 
-    # optionally grab basic_auth creds from secrets_manager secret called 'download_atlassian'
-    - name: set basic_auth facts if the secret exists
-      ansible.builtin.set_fact:
-        download_atlassian_password: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.password', region=ansible_facts['ec2_placement_region'], bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
-        download_atlassian_username: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.username', region=ansible_facts['ec2_placement_region'], bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
-      failed_when: false
-      ignore_errors: yes
-      no_log: true
-      when:
-        - ansible_facts['ec2_placement_region'] is defined
-        - atl_download_secret_name is defined
-      tags:
-        - runtime_pkg
+    # # optionally grab basic_auth creds from secrets_manager secret called 'download_atlassian'
+    # - name: set basic_auth facts if the secret exists
+    #   ansible.builtin.set_fact:
+    #     download_atlassian_password: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.password', region=ansible_facts['ec2_placement_region'], bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
+    #     download_atlassian_username: "{{ lookup('amazon.aws.secretsmanager_secret', atl_download_secret_name + '.username', region=ansible_facts['ec2_placement_region'], bypath=false, nested=true, on_denied='skip', on_missing='skip') }}"
+    #   failed_when: false
+    #   ignore_errors: yes
+    #   no_log: true
+    #   when:
+    #     - ansible_facts['ec2_placement_region'] is defined
+    #     - atl_download_secret_name is defined
+    #   tags:
+    #     - runtime_pkg
 
     # Fetch binary and copy to temp
     # optionally use basic_auth creds from secrets_manager
@@ -216,8 +216,8 @@
       ansible.builtin.get_url:
         url: "{{ atl_product_download_url }}"
         dest: "{{ atl_product_temp_download }}"
-        url_password: "{{ download_atlassian_password | default(omit) }}"
-        url_username: "{{ download_atlassian_username | default(omit) }}"
+#        url_password: "{{ download_atlassian_password | default(omit) }}"
+#        url_username: "{{ download_atlassian_username | default(omit) }}"
         mode: 0755
         force: false
         http_agent: "ansible-httpget_{{ ansible_play_name }}"
