@@ -104,3 +104,10 @@
     src: upgradeable_packages.pl
     dest: /usr/lib/check_mk_agent/local/upgradeable_packages.pl
     mode: '0500'
+
+- name: Install checkmk plugin upgradeable_snap_packages
+  ansible.builtin.copy:
+    src: upgradeable_snap_packages.sh
+    dest: /usr/lib/check_mk_agent/local/upgradeable_snap_packages.sh
+    mode: '0500'
+    
