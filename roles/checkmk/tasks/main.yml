@@ -80,34 +80,56 @@
     dest: /usr/lib/check_mk_agent/plugins/mk_jolokia.py
     mode: "0750"
 
-- name: Register status of mk-sql config file
+- name: Register status of mk_sql plugin
   ansible.builtin.stat:
     path: /usr/lib/check_mk_agent/plugins/mk_mysql
   register: mk_sql_plugin
 
-- name: Install mk-sql plugin file
+- name: Install mk_sql plugin file
   ansible.builtin.get_url:
     url: "{{ checkmk_server_url }}/{{ checkmk_agent_site }}/check_mk/agents/plugins/mk_mysql"
     dest: /usr/lib/check_mk_agent/plugins/mk_mysql
     mode: "0750"
   when: not mk_sql_plugin.stat.exists
   
-- name: Create mycnf for mk-sql
+- name: Create mycnf for mk_sql plugin
   ansible.builtin.shell:
     cmd: |
       mv $(/usr/local/bin/create_mycnf.sh) /etc/check_mk/mysql.cfg
       chmod 400 /etc/check_mk/mysql.cfg
     creates: /etc/check_mk/mysql.cfg
 
-- name: Install checkmk plugin upgradeable_packages
-  ansible.builtin.copy:
-    src: upgradeable_packages.pl
-    dest: /usr/lib/check_mk_agent/local/upgradeable_packages.pl
-    mode: '0500'
-
 - name: Install checkmk plugin upgradeable_snap_packages
   ansible.builtin.copy:
     src: upgradeable_snap_packages.sh
     dest: /usr/lib/check_mk_agent/local/upgradeable_snap_packages.sh
     mode: '0500'
+
+- name: Fact for apt plugin interval directory path
+  ansible.builtin.set_fact:
+    mk_apt_directory: "/usr/lib/check_mk_agent/plugins/{{ checkmk_agent_apt_plugin_interval }}"
     
+- name: Create plugin interval directory for apt plugin 
+  ansible.builtin.file:
+    path: "{{ mk_apt_directory }}"
+    state: directory
+    mode: '0755'
+
+- name: Register status of mk_apt plugin file
+  ansible.builtin.stat:
+    path: /usr/lib/check_mk_agent/plugins/mk_apt
+  register: mk_apt_plugin
+    
+- name: Install mk_apt plugin file
+  ansible.builtin.get_url:
+    url: "{{ checkmk_server_url }}/{{ checkmk_agent_site }}/check_mk/agents/plugins/mk_apt"
+    dest: "{{ mk_apt_directory }}/mk_apt"
+    mode: '0750'
+  when: not mk_apt_plugin.stat.exists
+
+
+- name: Install checkmk plugin upgradeable_packages
+  ansible.builtin.copy:
+    src: upgradeable_packages.pl
+    dest: /usr/lib/check_mk_agent/local/upgradeable_packages.pl
+    mode: '0500'
