@@ -127,9 +127,8 @@
     mode: '0750'
   when: not mk_apt_plugin.stat.exists
 
-
-- name: Install checkmk plugin upgradeable_packages
-  ansible.builtin.copy:
-    src: upgradeable_packages.pl
-    dest: /usr/lib/check_mk_agent/local/upgradeable_packages.pl
-    mode: '0500'
+# USE MK_APT INSTEAD
+- name: Delete obsolete plugin upgradeable_packages.pl
+  ansible.builtin.file:
+    path: /usr/lib/check_mk_agent/local/upgradeable_packages.pl
+    state: absent
