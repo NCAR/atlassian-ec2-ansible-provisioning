@@ -1,0 +1,4 @@
+# retrigger mk-apt (check_mk)
+# REF: https://forum.checkmk.com/t/reducing-frequent-warn-status-alerts-in-checkmk-services-mk-apt/51084/5
+
+DPkg::Post-Invoke {"touch -t 197012181200 /var/lib/check_mk_agent/cache/*mk_apt.cache"; };

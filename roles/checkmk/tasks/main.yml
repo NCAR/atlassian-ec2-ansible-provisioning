@@ -132,3 +132,8 @@
   ansible.builtin.file:
     path: /usr/lib/check_mk_agent/local/upgradeable_packages.pl
     state: absent
+
+- name: Invalidate mk_apt cache after package installs
+  ansible.builtin.copy:
+    src: 98mk-apt
+    dest: /etc/apt/apt.conf.d/98mk-apt
