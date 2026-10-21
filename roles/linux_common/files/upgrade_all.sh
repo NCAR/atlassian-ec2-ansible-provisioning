@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "Updating snap packages"
+snap refresh
+
+echo "Updating apt packages"
 apt-get update
 apt-get -y dist-upgrade
 apt-get -y autoremove
