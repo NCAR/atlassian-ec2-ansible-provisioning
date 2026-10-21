@@ -56,11 +56,13 @@
 - name: Set needrestart default mode to list
   ansible.builtin.copy:
     content: "# Created by ansible\n$nrconf{restart} = 'l';\n"
+    dest: /etc/needrestart/conf.d/list_mode_default.conf
 
 # Primarily to be run via ssm
 - name: Script to upgrade all packages, restart services and reboot if necessary
   ansible.builtin.copy:
     src: upgrade_all.sh
+    dest: /usr/local/bin/upgrade_all.sh
     owner: root
     group: root
     mode: "750" 
