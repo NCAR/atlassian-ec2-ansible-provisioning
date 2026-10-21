@@ -1,26 +1,26 @@
 # disable_unnecessary_services.yml - Disable services not needed on servers
 # REF: https://oneuptime.com/blog/post/2026-02-21-how-to-use-ansible-to-disable-unnecessary-services/view
 ---
-- name: Disable unnecessary services
-  vars:
-    unnecessary_services:
+
+- name: Set var for unneccessary services to disable
+  ansible.builtin.set_fact:
+    services_to_disable:
       - fwupd-refresh.service
       - fwupd-refresh.timer
       - ModemManager.service
 
-  tasks:
-    - name: Stop and disable unnecessary services
-      ansible.builtin.systemd_service:
-        name: "{{ item }}"
-        state: stopped
-        enabled: false
-        masked: true
-      loop: "{{ unnecessary_services }}"
-      failed_when: false
-      register: service_results
+- name: Stop and disable unnecessary services
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+    masked: true
+  loop: "{{ unnecessary_services }}"
+  failed_when: false
+  register: service_results
 
-    - name: Report disabled services
-      ansible.builtin.debug:
-        msg: "Disabled: {{ item.item }}"
-      loop: "{{ service_results.results }}"
-      when: item.changed | default(false)
+- name: Report disabled services
+  ansible.builtin.debug:
+    msg: "Disabled: {{ item.item }}"
+  loop: "{{ service_results.results }}"
+  when: item.changed | default(false)
