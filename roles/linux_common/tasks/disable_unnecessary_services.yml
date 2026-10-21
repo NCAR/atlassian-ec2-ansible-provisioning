@@ -2,25 +2,25 @@
 # REF: https://oneuptime.com/blog/post/2026-02-21-how-to-use-ansible-to-disable-unnecessary-services/view
 ---
 
-- name: Set var for unneccessary services to disable
+- name: Set var for unneccessary systemd units to disable
   ansible.builtin.set_fact:
-    services_to_disable:
+    units_to_disable:
       - fwupd-refresh.service
       - fwupd-refresh.timer
       - ModemManager.service
 
-- name: Stop and disable unnecessary services
+- name: Stop and disable unnecessary systemd units
   ansible.builtin.systemd_service:
     name: "{{ item }}"
     state: stopped
     enabled: false
     masked: true
-  loop: "{{ unnecessary_services }}"
+  loop: "{{ units_to_disable }}"
   failed_when: false
-  register: service_results
+  register: unit_results
 
-- name: Report disabled services
+- name: Report disabled systemd units
   ansible.builtin.debug:
     msg: "Disabled: {{ item.item }}"
-  loop: "{{ service_results.results }}"
+  loop: "{{ unit_results.results }}"
   when: item.changed | default(false)
