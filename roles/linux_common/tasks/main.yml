@@ -1,6 +1,7 @@
 ---
 - name: Install Ubuntu/Debian-specific prerequisites
-  ansible.builtin.include_tasks: ubuntu.yml
+  ansible.builtin.include_tasks:
+    file: ubuntu.yml
 
 - name: Install common support packages
   ansible.builtin.package:
@@ -15,7 +16,8 @@
       - yq
 
 - name: Disable unneeded services
-  ansible.builtin.include_tasks: disable_unneccessary_services.yml  
+  ansible.builtin.include_tasks:
+    file: disable_unneccessary_services.yml  
       
 - name: Create product group
   ansible.builtin.group:
