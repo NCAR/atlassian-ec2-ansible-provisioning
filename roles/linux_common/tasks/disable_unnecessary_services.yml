@@ -7,6 +7,7 @@
     units_to_disable:
       - fwupd-refresh.service
       - fwupd-refresh.timer
+      - fwupd.service
       - ModemManager.service
 
 - name: Stop and disable unnecessary systemd units
