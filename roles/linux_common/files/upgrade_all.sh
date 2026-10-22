@@ -20,6 +20,9 @@ if test -e /var/run/reboot-required; then
 fi
 
 restart_services=$(needrestart -b | grep NEEDRESTART-SVC | awk '{print $2}')
-echo ">>>>> Restarting services: ${restart_services} <<<<<" 
-systemctl restart $restart_services
-
+if test -z "$restart_services"; then
+    echo ">>>>> No services to restart <<<<<"
+else
+    echo ">>>>> Restarting services: ${restart_services} <<<<<" 
+    systemctl restart $restart_services
+fi
