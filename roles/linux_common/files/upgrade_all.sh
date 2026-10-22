@@ -8,6 +8,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get -y dist-upgrade
 apt-get -y autoremove
+systemctl daemon-reload
 
 #
 # This covers the kernel plus other related pkgs
