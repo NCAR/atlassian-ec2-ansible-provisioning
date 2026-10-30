@@ -3,16 +3,16 @@
 # Install custom packages from s3
 
 S3_PATH="{{ atl_s3_path }}"
-s3_pkg_base="$(dirname $S3_PATH)/packages/"
+s3_pkg_base="$(dirname $S3_PATH)/packages"
 
 #
 # apt packages
 #
 tmpdir=$(mktemp -d)
-s3_deb_base="${s3_pkg_base}/deb/"
-for pkgfile in $(aws s3 ls $s3_deb_base | awk '{print $4}'); do
+s3_deb_base="${s3_pkg_base}/deb"
+for pkgfile in $(aws s3 ls "${s3_deb_base}/" | awk '{print $4}'); do
     aws s3 cp "${s3_deb_base}/${pkgfile}" $tmpdir
-    dpkg --install "${tmpdir}/${pkgfile}"
+    dpkg --install --skip-same-version "${tmpdir}/${pkgfile}"
     apt-get -f install
 done
 rm -rf $tmpdir
