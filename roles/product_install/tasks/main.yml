@@ -404,7 +404,7 @@
     name: Nightly Backup
     minute: "30"
     hour: "23"
-    job: "/usr/local/bin/backup_site.sh nightly_backup >> /var/log/backup_site.log"
+    job: "/usr/bin/mk-job Nightly_Backup /usr/local/bin/backup_site.sh nightly_backup >> /var/log/backup_site.log"
     
 - name: Rotate log from nightly backup job
   community.general.logrotate:

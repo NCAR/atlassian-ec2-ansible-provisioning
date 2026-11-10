@@ -70,7 +70,7 @@
   ansible.builtin.script: /usr/local/bin/install_custom_pkgs.sh
     
 # Primarily to be run via ssm
-- name: Script to upgrade all packages, restart services and reboot if necessary
+- name: Script to upgrade all packages and reboot
   ansible.builtin.copy:
     src: upgrade_all.sh
     dest: /usr/local/bin/upgrade_all.sh
